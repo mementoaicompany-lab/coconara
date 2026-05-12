@@ -253,7 +253,7 @@ body {
 .fade-up:nth-child(5){animation-delay:0.25s} .fade-up:nth-child(6){animation-delay:0.3s}
 
 /* ===== 관리자 시스템 ===== */
-.admin-fab { position: fixed; bottom: 80px; right: 16px; width: 48px; height: 48px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; z-index: 600; box-shadow: 0 4px 18px rgba(0,0,0,0.4); opacity: 0.85; transition: opacity 0.2s; border: none; }
+.admin-fab { position: fixed; bottom: 80px; right: 16px; width: 48px; height: 48px; background: #333; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; z-index: 600; box-shadow: 0 4px 18px rgba(0,0,0,0.4); opacity: 0.85; transition: opacity 0.2s; border: none; }
 .admin-fab:active { opacity: 1; }
 
 /* 관리자 로그인 모달 */
@@ -1083,8 +1083,8 @@ body.admin-mode .dalkom-edit-btn { display:block; }
 
 
 </svg>
-    </div>
     <button class="map-add-pin-btn" id="map-add-btn" onclick="openPinAdd()" title="핀 추가">＋</button>
+    </div>
     <!-- 반납 마감시간 — 지도 하단에 자연스럽게 -->
     <div style="margin:0 0 0;padding:8px 14px 12px;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:6px;">
@@ -1767,16 +1767,17 @@ function showPage(id, btn) {
   el.style.display = 'block';
   if(btn) btn.classList.add('active');
   window.scrollTo(0,0);
-  // fade-up 애니메이션 리셋 (display:none 이었던 페이지 대응)
   el.querySelectorAll('.fade-up').forEach(function(fel) {
     fel.style.animation = 'none';
     fel.style.opacity   = '1';
     fel.style.transform = 'translateY(0)';
   });
   if (id === 'ferry') { updateFerryPage(); }
-  // 선물박스: 홈탭에서만 표시
   var gf = document.getElementById('giftFab');
   if (gf) gf.classList.add('visible');
+  // 톱니바퀴 FAB: 맛집 탭에서만 표시
+  var fab = document.querySelector('.admin-fab');
+  if (fab) fab.style.display = (id === 'food') ? 'flex' : 'none';
 }
 // 취소환불 접기/펼치기
 function toggleRefund() {
@@ -3551,7 +3552,7 @@ window.addEventListener('load', function() {
 
     <!-- 코코 스쿠터 -->
     <div style="background:white;border-radius:18px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,0.08);">
-      <div style="width:100%;position:relative;cursor:pointer;" onclick="openGallery('scooter')">
+      <div style="width:100%;position:relative;">
         <img src="gif_coco.gif" alt="코코 스쿠터" style="width:100%;height:220px;object-fit:cover;display:block;">
         <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.45);color:white;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;" id="scooter-count-badge"></div>
       </div>
@@ -3565,7 +3566,7 @@ window.addEventListener('load', function() {
 
     <!-- 파미 -->
     <div style="background:white;border-radius:18px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,0.08);">
-      <div style="width:100%;position:relative;cursor:pointer;" onclick="openGallery('fami')">
+      <div style="width:100%;position:relative;">
         <img src="gif_fami.gif" alt="파미" style="width:100%;height:220px;object-fit:cover;display:block;">
         <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.45);color:white;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;" id="fami-count-badge"></div>
       </div>
@@ -3579,7 +3580,7 @@ window.addEventListener('load', function() {
 
     <!-- 오픈카 -->
     <div style="background:white;border-radius:18px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,0.08);">
-      <div style="width:100%;position:relative;cursor:pointer;" onclick="openGallery('open')">
+      <div style="width:100%;position:relative;">
         <img src="gif_open.gif" alt="오픈카" style="width:100%;height:220px;object-fit:cover;display:block;">
         <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.45);color:white;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;" id="open-count-badge"></div>
       </div>
@@ -4128,6 +4129,17 @@ window.addEventListener('load', function() {
 <!-- ===== 관리자 홈 페이지 ===== -->
 
 
+<!-- ===== 핀 관리 패널 ===== -->
+<div id="pinManagePanel" onclick="if(event.target===this)closePinManage()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1250;flex-direction:column;align-items:flex-end;justify-content:flex-end;">
+  <div style="background:white;border-radius:22px 22px 0 0;width:100%;max-width:430px;padding:20px 18px 36px;max-height:80vh;overflow-y:auto;margin:0 auto;">
+    <div style="width:36px;height:4px;background:#E0E0E0;border-radius:2px;margin:0 auto 16px;"></div>
+    <div style="font-size:15px;font-weight:900;color:#1A1A1A;margin-bottom:6px;">📍 핀 위치 관리</div>
+    <div style="font-size:11px;color:#AAA;margin-bottom:14px;">편집할 핀을 선택하거나 지도에서 직접 드래그하세요.</div>
+    <div id="pinManageList"></div>
+    <button onclick="closePinManage()" style="width:100%;margin-top:8px;padding:12px;background:#F5F5F5;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">닫기</button>
+  </div>
+</div>
+
 <!-- ===== 차량 갤러리 팝업 ===== -->
 <div class="gallery-overlay" id="galleryOverlay">
   <button class="gallery-close" onclick="closeGallery()">✕</button>
@@ -4250,20 +4262,25 @@ function getPins() {
 }
 function savePins(pins) { localStorage.setItem('coco_pins', JSON.stringify(pins)); }
 
-// 기본 핀 데이터 (SVG 좌표)
+// 기본 핀 데이터 (SVG 좌표) - 확정 위치
 var DEFAULT_PINS = [
-  { id:'biyang',       emoji:'🏝', name:'비양도',           cx:316, cy:108, lx:316, ly:130, labelSide:'below', color:'#6644AA', desc:'우도와 다리로 이어진 작은 섬', imgs:[] },
-  { id:'haumok',       emoji:'⚓', name:'하우목동항',        cx:84,  cy:148, lx:31,  ly:147, labelSide:'left',  color:'#1A4A88', desc:'코코나라 탑승 항구', imgs:[] },
-  { id:'coconara',     emoji:'🛵', name:'코코나라',          cx:86,  cy:168, lx:166, ly:197, labelSide:'right', color:'#E91E8C', desc:'우도 프리미엄 전기차·스쿠터 렌탈', imgs:[] },
-  { id:'mangru',       emoji:'🔦', name:'망루등대',          cx:175, cy:18,  lx:175, ly:43,  labelSide:'below', color:'#8B7000', desc:'우도 북쪽 등대 전망대', imgs:[] },
-  { id:'hagosudong',   emoji:'🏖', name:'하고수동 해수욕장', cx:258, cy:100, lx:196, ly:122, labelSide:'below', color:'#1A77AA', desc:'에메랄드빛 바다와 흰 모래', imgs:[] },
-  { id:'dalkom',       emoji:'🍦', name:'달콤아재',          cx:258, cy:122, lx:203, ly:153, labelSide:'left',  color:'#C45A00', desc:'수제 아이스크림 전문점', imgs:[] },
-  { id:'seobinbaeksa', emoji:'🏖', name:'서빈백사 해수욕장', cx:85,  cy:218, lx:43,  ly:236, labelSide:'below', color:'#7A5A20', desc:'홍조단괴 해변', imgs:[] },
-  { id:'hundert',      emoji:'🌿', name:'훈데르트',          cx:225, cy:284, lx:178, ly:265, labelSide:'above', color:'#1A6B3A', desc:'친환경 예술 테마파크', imgs:[] },
-  { id:'geomulrae',    emoji:'🪨', name:'검멀래 해수욕장',   cx:269, cy:242, lx:317, ly:246, labelSide:'right', color:'#444',    desc:'검은 모래 해변과 동굴', imgs:[] },
-  { id:'dolkani',      emoji:'🌊', name:'돌칸이',            cx:210, cy:284, lx:189, ly:305, labelSide:'below', color:'#8B4444', desc:'우도 남단 해안', imgs:[] },
-  { id:'cheonjin',     emoji:'⚓', name:'천진항',            cx:152, cy:273, lx:81,  ly:277, labelSide:'left',  color:'#2255AA', desc:'우도 남서쪽 항구', imgs:[] },
+  { id:'mangru',       emoji:'🔦', name:'망루등대',          cx:175, cy:22,  lx:175, ly:46,  labelSide:'below', color:'#8B7000', desc:'우도 북쪽 등대 전망대', imgs:[] },
+  { id:'hagosudong',   emoji:'🏖', name:'하고수동 해수욕장', cx:268, cy:108, lx:316, ly:118, labelSide:'right', color:'#1A77AA', desc:'에메랄드빛 바다와 흰 모래', imgs:[] },
+  { id:'dalkom',       emoji:'🍦', name:'달콤아재',          cx:218, cy:118, lx:173, ly:105, labelSide:'above', color:'#C45A00', desc:'수제 아이스크림 전문점', imgs:[] },
+  { id:'biyang',       emoji:'🏝', name:'비양도',            cx:318, cy:162, lx:318, ly:186, labelSide:'below', color:'#6644AA', desc:'우도와 다리로 이어진 작은 섬', imgs:[] },
+  { id:'haumok',       emoji:'⚓', name:'하우목동항',         cx:68,  cy:188, lx:24,  ly:188, labelSide:'left',  color:'#1A4A88', desc:'코코나라 탑승 항구', imgs:[] },
+  { id:'coconara',     emoji:'🛵', name:'코코나라',           cx:138, cy:195, lx:138, ly:222, labelSide:'below', color:'#E91E8C', desc:'우도 프리미엄 전기차·스쿠터 렌탈', imgs:[] },
+  { id:'seobinbaeksa', emoji:'🏖', name:'서빈백사 해수욕장',  cx:72,  cy:242, lx:30,  ly:258, labelSide:'left',  color:'#7A5A20', desc:'홍조단괴 해변', imgs:[] },
+  { id:'geomulrae',    emoji:'🪨', name:'검멀래 해수욕장',    cx:288, cy:252, lx:336, ly:258, labelSide:'right', color:'#444',    desc:'검은 모래 해변과 동굴', imgs:[] },
+  { id:'cheonjin',     emoji:'⚓', name:'천진항',             cx:148, cy:268, lx:88,  ly:272, labelSide:'left',  color:'#2255AA', desc:'우도 남서쪽 항구', imgs:[] },
+  { id:'hundert',      emoji:'🌿', name:'훈데르트',           cx:198, cy:270, lx:198, ly:252, labelSide:'above', color:'#1A6B3A', desc:'친환경 예술 테마파크', imgs:[] },
+  { id:'dolkani',      emoji:'🌊', name:'돌칸이',             cx:214, cy:298, lx:214, ly:318, labelSide:'below', color:'#8B4444', desc:'우도 남단 해안', imgs:[] },
 ];
+
+// localStorage 핀 데이터 강제 초기화 (DEFAULT_PINS로 리셋)
+(function() {
+  localStorage.setItem('coco_pins', JSON.stringify(DEFAULT_PINS));
+})();
 
 // ── 핀 색상 맵 ──
 var PIN_COLORS = {
@@ -4546,18 +4563,69 @@ function openPinEdit(id) {
 
 function openPinAdd() {
   if (!isAdminLoggedIn) return;
-  _editPinId = null;
-  document.getElementById('pinEditTitle').textContent = '📍 새 핀 추가';
-  document.getElementById('pe-emoji').value = '📍';
-  document.getElementById('pe-name').value  = '';
-  document.getElementById('pe-cx').value    = '184';
-  document.getElementById('pe-cy').value    = '160';
-  document.getElementById('pe-lx').value    = '184';
-  document.getElementById('pe-ly').value    = '150';
-  document.getElementById('pe-desc').value  = '';
-  renderPinImgList([]);
-  document.getElementById('pe-del-btn').style.display = 'none';
-  document.getElementById('pinEditModalBg').classList.add('open');
+  // 핀 관리 패널 열기
+  var pins = getPins() || DEFAULT_PINS;
+  var panel = document.getElementById('pinManagePanel');
+  var list = document.getElementById('pinManageList');
+  if (!panel || !list) return;
+  list.innerHTML = '';
+  pins.forEach(function(pin) {
+    var btn = document.createElement('button');
+    btn.style.cssText = 'width:100%;background:#F8F8F8;border:1px solid #EEE;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:8px;';
+    btn.innerHTML = '<span style="font-size:20px;">' + pin.emoji + '</span>'
+      + '<div><div style="font-size:13px;font-weight:800;color:#1A1A1A;">' + pin.name + '</div>'
+      + '<div style="font-size:10px;color:#AAA;margin-top:2px;">드래그로 위치 조정 가능</div></div>'
+      + '<span style="margin-left:auto;font-size:11px;color:#FF8FAD;font-weight:700;">편집 ›</span>';
+    btn.onclick = function() {
+      var pinId = pin.id;
+      var pinData = pin;
+      closePinManage();
+      setTimeout(function() {
+        _editPinId = pinData.id;
+        document.getElementById('pinEditTitle').textContent = '📍 ' + pinData.name + ' 위치 편집';
+        document.getElementById('pe-emoji').value = pinData.emoji;
+        document.getElementById('pe-name').value  = pinData.name;
+        document.getElementById('pe-cx').value    = pinData.cx;
+        document.getElementById('pe-cy').value    = pinData.cy;
+        document.getElementById('pe-lx').value    = pinData.lx;
+        document.getElementById('pe-ly').value    = pinData.ly;
+        document.getElementById('pe-desc').value  = pinData.desc || '';
+        renderPinImgList(pinData.imgs || []);
+        _pinEditImgs = (pinData.imgs || []).slice();
+        document.getElementById('pe-del-btn').style.display = 'block';
+        document.getElementById('pinEditModalBg').classList.add('open');
+      }, 50);
+    };
+    list.appendChild(btn);
+  });
+  // 새 핀 추가 버튼
+  var addBtn = document.createElement('button');
+  addBtn.style.cssText = 'width:100%;background:linear-gradient(135deg,#FF8FAD,#FFB5C8);border:none;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;color:white;font-size:13px;font-weight:800;margin-top:4px;';
+  addBtn.innerHTML = '＋ 새 핀 추가';
+  addBtn.onclick = function() {
+    closePinManage();
+    setTimeout(function() {
+      _editPinId = null;
+      document.getElementById('pinEditTitle').textContent = '📍 새 핀 추가';
+      document.getElementById('pe-emoji').value = '📍';
+      document.getElementById('pe-name').value  = '';
+      document.getElementById('pe-cx').value    = '184';
+      document.getElementById('pe-cy').value    = '160';
+      document.getElementById('pe-lx').value    = '184';
+      document.getElementById('pe-ly').value    = '150';
+      document.getElementById('pe-desc').value  = '';
+      renderPinImgList([]);
+      document.getElementById('pe-del-btn').style.display = 'none';
+      document.getElementById('pinEditModalBg').classList.add('open');
+    }, 50);
+  };
+  list.appendChild(addBtn);
+  panel.style.display = 'flex';
+}
+
+function closePinManage() {
+  var panel = document.getElementById('pinManagePanel');
+  if (panel) panel.style.display = 'none';
 }
 
 function closePinEdit() {
