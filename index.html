@@ -4558,7 +4558,9 @@ function openPinEdit(id) {
 
   // 기존 핀은 삭제 가능, 새 핀은 추가 모드
   document.getElementById('pe-del-btn').style.display = id ? 'block' : 'none';
-  document.getElementById('pinEditModalBg').classList.add('open');
+  var modal = document.getElementById('pinEditModalBg');
+  document.body.appendChild(modal);
+  modal.classList.add('open');
 }
 
 function openPinAdd() {
@@ -4594,7 +4596,9 @@ function openPinAdd() {
         renderPinImgList(pinData.imgs || []);
         _pinEditImgs = (pinData.imgs || []).slice();
         document.getElementById('pe-del-btn').style.display = 'block';
-        document.getElementById('pinEditModalBg').classList.add('open');
+        var modal = document.getElementById('pinEditModalBg');
+        document.body.appendChild(modal);
+        modal.classList.add('open');
       }, 50);
     };
     list.appendChild(btn);
@@ -4617,7 +4621,9 @@ function openPinAdd() {
       document.getElementById('pe-desc').value  = '';
       renderPinImgList([]);
       document.getElementById('pe-del-btn').style.display = 'none';
-      document.getElementById('pinEditModalBg').classList.add('open');
+      var modal = document.getElementById('pinEditModalBg');
+      document.body.appendChild(modal);
+      modal.classList.add('open');
     }, 50);
   };
   list.appendChild(addBtn);
