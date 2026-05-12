@@ -4568,6 +4568,7 @@ function openPinAdd() {
   var panel = document.getElementById('pinManagePanel');
   var list = document.getElementById('pinManageList');
   if (!panel || !list) return;
+  document.body.appendChild(panel); // body에 직접 붙여서 탭 영향 차단
   list.innerHTML = '';
   pins.forEach(function(pin) {
     var btn = document.createElement('button');
