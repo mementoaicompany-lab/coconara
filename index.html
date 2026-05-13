@@ -4264,17 +4264,17 @@ function savePins(pins) { localStorage.setItem('coco_pins', JSON.stringify(pins)
 
 // 기본 핀 데이터 (SVG 좌표) - 확정 위치
 var DEFAULT_PINS = [
-  { id:'mangru',       emoji:'🔦', name:'망루등대',          cx:175, cy:22,  lx:175, ly:46,  labelSide:'below', color:'#8B7000', desc:'우도 북쪽 등대 전망대', imgs:[] },
-  { id:'hagosudong',   emoji:'🏖', name:'하고수동 해수욕장', cx:268, cy:108, lx:316, ly:118, labelSide:'right', color:'#1A77AA', desc:'에메랄드빛 바다와 흰 모래', imgs:[] },
-  { id:'dalkom',       emoji:'🍦', name:'달콤아재',          cx:218, cy:118, lx:173, ly:105, labelSide:'above', color:'#C45A00', desc:'수제 아이스크림 전문점', imgs:[] },
-  { id:'biyang',       emoji:'🏝', name:'비양도',            cx:318, cy:162, lx:318, ly:186, labelSide:'below', color:'#6644AA', desc:'우도와 다리로 이어진 작은 섬', imgs:[] },
-  { id:'haumok',       emoji:'⚓', name:'하우목동항',         cx:68,  cy:188, lx:24,  ly:188, labelSide:'left',  color:'#1A4A88', desc:'코코나라 탑승 항구', imgs:[] },
-  { id:'coconara',     emoji:'🛵', name:'코코나라',           cx:138, cy:195, lx:138, ly:222, labelSide:'below', color:'#E91E8C', desc:'우도 프리미엄 전기차·스쿠터 렌탈', imgs:[] },
-  { id:'seobinbaeksa', emoji:'🏖', name:'서빈백사 해수욕장',  cx:72,  cy:242, lx:30,  ly:258, labelSide:'left',  color:'#7A5A20', desc:'홍조단괴 해변', imgs:[] },
-  { id:'geomulrae',    emoji:'🪨', name:'검멀래 해수욕장',    cx:288, cy:252, lx:336, ly:258, labelSide:'right', color:'#444',    desc:'검은 모래 해변과 동굴', imgs:[] },
-  { id:'cheonjin',     emoji:'⚓', name:'천진항',             cx:148, cy:268, lx:88,  ly:272, labelSide:'left',  color:'#2255AA', desc:'우도 남서쪽 항구', imgs:[] },
-  { id:'hundert',      emoji:'🌿', name:'훈데르트',           cx:198, cy:270, lx:198, ly:252, labelSide:'above', color:'#1A6B3A', desc:'친환경 예술 테마파크', imgs:[] },
-  { id:'dolkani',      emoji:'🌊', name:'돌칸이',             cx:214, cy:298, lx:214, ly:318, labelSide:'below', color:'#8B4444', desc:'우도 남단 해안', imgs:[] },
+  { id:'mangru',       emoji:'🔦', name:'망루등대',          cx:168, cy:19,  lx:168, ly:43,  labelSide:'below', color:'#8B7000', desc:'우도 북쪽 등대 전망대', imgs:[] },
+  { id:'hagosudong',   emoji:'🏖', name:'하고수동 해수욕장', cx:233, cy:87,  lx:284, ly:91,  labelSide:'right', color:'#1A77AA', desc:'에메랄드빛 바다와 흰 모래', imgs:[] },
+  { id:'dalkom',       emoji:'🍦', name:'달콤아재',          cx:247, cy:95,  lx:202, ly:82,  labelSide:'left',  color:'#C45A00', desc:'수제 아이스크림 전문점', imgs:[] },
+  { id:'biyang',       emoji:'🏝', name:'비양도',            cx:312, cy:130, lx:312, ly:154, labelSide:'below', color:'#6644AA', desc:'우도와 다리로 이어진 작은 섬', imgs:[] },
+  { id:'haumok',       emoji:'⚓', name:'하우목동항',         cx:81,  cy:183, lx:46,  ly:187, labelSide:'left',  color:'#1A4A88', desc:'코코나라 탑승 항구', imgs:[] },
+  { id:'coconara',     emoji:'🛵', name:'코코나라',           cx:121, cy:127, lx:121, ly:154, labelSide:'below', color:'#E91E8C', desc:'우도 프리미엄 전기차·스쿠터 렌탈', imgs:[] },
+  { id:'seobinbaeksa', emoji:'🏖', name:'서빈백사 해수욕장',  cx:101, cy:212, lx:50,  ly:216, labelSide:'left',  color:'#7A5A20', desc:'홍조단괴 해변', imgs:[] },
+  { id:'geomulrae',    emoji:'🪨', name:'검멀래 해수욕장',    cx:269, cy:228, lx:317, ly:232, labelSide:'right', color:'#444',    desc:'검은 모래 해변과 동굴', imgs:[] },
+  { id:'cheonjin',     emoji:'⚓', name:'천진항',             cx:101, cy:253, lx:71,  ly:257, labelSide:'left',  color:'#2255AA', desc:'우도 남서쪽 항구', imgs:[] },
+  { id:'hundert',      emoji:'🌿', name:'훈데르트',           cx:153, cy:258, lx:153, ly:240, labelSide:'above', color:'#1A6B3A', desc:'친환경 예술 테마파크', imgs:[] },
+  { id:'dolkani',      emoji:'🌊', name:'돌칸이',             cx:186, cy:276, lx:186, ly:296, labelSide:'below', color:'#8B4444', desc:'우도 남단 해안', imgs:[] },
 ];
 
 // localStorage 핀 데이터 강제 초기화 (DEFAULT_PINS로 리셋)
