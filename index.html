@@ -4726,8 +4726,9 @@ function handlePinImg(e) {
 }
 function viewDalkomPhoto_generic(src) {
   var overlay = document.createElement('div');
+  overlay.id = 'photoViewerOverlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:1400;display:flex;align-items:center;justify-content:center;cursor:pointer;';
-  overlay.onclick = function(){ document.body.removeChild(overlay); };
+  overlay.onclick = function(){ if(document.body.contains(overlay)) document.body.removeChild(overlay); popPopupState && popPopupState(); };
   var img = document.createElement('img');
   img.src = src;
   img.style.cssText = 'max-width:95%;max-height:88vh;object-fit:contain;border-radius:8px;';
@@ -4973,6 +4974,129 @@ window.addEventListener('load', initHundert);
 
 
 
+
+<script>
+// ── 안드로이드 뒤로가기 팝업 닫기 ──
+(function() {
+  var _popupOpen = false;
+
+  function pushPopupState() {
+    if (!_popupOpen) {
+      history.pushState({ popup: true }, '');
+      _popupOpen = true;
+    }
+  }
+
+  function popPopupState() {
+    _popupOpen = false;
+  }
+  window.popPopupState = popPopupState;
+
+  // 뒤로가기 감지
+  window.addEventListener('popstate', function(e) {
+    if (_popupOpen) {
+      _popupOpen = false;
+      closeAllPopups();
+    }
+  });
+
+  // 열려있는 팝업 전부 닫기
+  function closeAllPopups() {
+    // spot 팝업
+    var spotPopup = document.getElementById('spotPopup');
+    if (spotPopup && spotPopup.classList.contains('open')) { closeSpot(); return; }
+    // 갤러리
+    var gallery = document.getElementById('galleryOverlay');
+    if (gallery && gallery.classList.contains('open')) { closeGallery(); return; }
+    // 사진 전체화면 (동적 overlay)
+    var photoViewer = document.getElementById('photoViewerOverlay');
+    if (photoViewer) { document.body.removeChild(photoViewer); return; }
+    // 쿠폰 팝업
+    var coupon = document.getElementById('couponPopupBg');
+    if (coupon && coupon.classList.contains('open')) { closeCouponPopup(); return; }
+    // 인터뷰 팝업
+    var interview = document.getElementById('interviewPopupBg');
+    if (interview && interview.classList.contains('open')) { closeInterviewPopup(); return; }
+    // 달콤 편집
+    var dalEdit = document.getElementById('dalkomEditBg');
+    if (dalEdit && dalEdit.classList.contains('open')) { closeDalkomEdit(); return; }
+    // 달콤 미디어
+    var dalMedia = document.getElementById('dalkomMediaBg');
+    if (dalMedia && dalMedia.classList.contains('open')) { closeDalkomMediaAdmin(); return; }
+    // 핀 편집
+    var pinEdit = document.getElementById('pinEditModalBg');
+    if (pinEdit && pinEdit.classList.contains('open')) { closePinEdit(); return; }
+    // 핀 관리 패널
+    var pinManage = document.getElementById('pinManagePanel');
+    if (pinManage && pinManage.style.display !== 'none') { closePinManage(); return; }
+    // QNA 팝업
+    var qnaPopup = document.getElementById('qna-popup');
+    if (qnaPopup && qnaPopup.style.display !== 'none') { closeQnaPopup(); return; }
+    // 맛집 폼
+    var foodForm = document.getElementById('foodFormBg');
+    if (foodForm && foodForm.classList.contains('open')) { closeFoodForm(); return; }
+    // 패널들 (panel-directions, panel-hundert 등)
+    document.querySelectorAll('.panel.open').forEach(function(p) {
+      closePanel(p.id);
+    });
+  }
+
+  // 각 팝업 열기 함수에 훅 추가 (window 로드 후 실행)
+  window.addEventListener('load', function() {
+    var _origOpenSpotH = window.openSpot;
+    window.openSpot = function() { pushPopupState(); _origOpenSpotH.apply(this, arguments); };
+
+    var _origOpenGalleryH = window.openGallery;
+    window.openGallery = function() { pushPopupState(); _origOpenGalleryH.apply(this, arguments); };
+
+    var _origOpenCouponH = window.openCouponPopup;
+    window.openCouponPopup = function() { pushPopupState(); _origOpenCouponH.apply(this, arguments); };
+
+    var _origOpenInterviewH = window.openInterviewPopup;
+    if (_origOpenInterviewH) window.openInterviewPopup = function() { pushPopupState(); _origOpenInterviewH.apply(this, arguments); };
+
+    var _origViewDalkomPhotoH = window.viewDalkomPhoto_generic;
+    window.viewDalkomPhoto_generic = function() { pushPopupState(); _origViewDalkomPhotoH.apply(this, arguments); };
+
+    var _origOpenDalkomEditH = window.openDalkomEdit;
+    if (_origOpenDalkomEditH) window.openDalkomEdit = function() { pushPopupState(); _origOpenDalkomEditH.apply(this, arguments); };
+
+    var _origOpenDalkomMediaH = window.openDalkomMediaAdmin;
+    if (_origOpenDalkomMediaH) window.openDalkomMediaAdmin = function() { pushPopupState(); _origOpenDalkomMediaH.apply(this, arguments); };
+
+    var _origOpenPinAddH = window.openPinAdd;
+    window.openPinAdd = function() { pushPopupState(); _origOpenPinAddH.apply(this, arguments); };
+
+    var _origOpenPanelH = window.openPanel;
+    window.openPanel = function() { pushPopupState(); _origOpenPanelH.apply(this, arguments); };
+
+    var _origCloseSpotH = window.closeSpot;
+    window.closeSpot = function() { popPopupState(); _origCloseSpotH.apply(this, arguments); };
+
+    var _origCloseGalleryH = window.closeGallery;
+    window.closeGallery = function() { popPopupState(); _origCloseGalleryH.apply(this, arguments); };
+
+    var _origCloseCouponH = window.closeCouponPopup;
+    window.closeCouponPopup = function() { popPopupState(); _origCloseCouponH.apply(this, arguments); };
+
+    var _origCloseInterviewH = window.closeInterviewPopup;
+    if (_origCloseInterviewH) window.closeInterviewPopup = function() { popPopupState(); _origCloseInterviewH.apply(this, arguments); };
+
+    var _origClosePanelH = window.closePanel;
+    window.closePanel = function() { popPopupState(); _origClosePanelH.apply(this, arguments); };
+
+    var _origClosePinManageH = window.closePinManage;
+    window.closePinManage = function() { popPopupState(); _origClosePinManageH.apply(this, arguments); };
+
+    var _origClosePinEditH = window.closePinEdit;
+    window.closePinEdit = function() { popPopupState(); _origClosePinEditH.apply(this, arguments); };
+
+    var _origCloseFoodFormH = window.closeFoodForm;
+    if (_origCloseFoodFormH) window.closeFoodForm = function() { popPopupState(); _origCloseFoodFormH.apply(this, arguments); };
+  });
+
+})();
+</script>
 </body>
 </html
 
