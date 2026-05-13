@@ -1774,7 +1774,10 @@ function showPage(id, btn) {
   });
   if (id === 'ferry') { updateFerryPage(); }
   var gf = document.getElementById('giftFab');
-  if (gf) gf.classList.add('visible');
+  if (gf) {
+    if (id === 'home') gf.classList.add('visible');
+    else gf.classList.remove('visible');
+  }
   // 톱니바퀴 FAB: 맛집 탭에서만 표시
   var fab = document.querySelector('.admin-fab');
   if (fab) fab.style.display = (id === 'food') ? 'flex' : 'none';
@@ -3064,7 +3067,8 @@ function initApp() {
   var sd = document.getElementById('sales-date');
   if (sd) sd.value = new Date().toISOString().slice(0,10);
   updateHomeReturnTime();
-  var gf = document.getElementById('giftFab'); if (gf) gf.classList.add('visible');
+  var gf = document.getElementById('giftFab');
+  if (gf) gf.classList.add('visible');
 }
 
 
