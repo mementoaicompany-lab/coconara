@@ -4067,32 +4067,7 @@ window.addEventListener('load', function() {
     </div>
   </div>
 
-  <!-- 바코드 팝업 -->
-  <div id="barcode-overlay" onclick="closeBarcodePopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1500;"></div>
-  <div id="barcode-popup" style="display:none;position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-radius:22px 22px 0 0;z-index:1501;padding:24px 20px 36px;">
-    <div style="width:36px;height:4px;background:#E0E0E0;border-radius:2px;margin:0 auto 18px;"></div>
-
-    <!-- 파크 바코드 -->
-    <div id="barcode-park" style="display:none;">
-      <div style="font-size:15px;font-weight:900;color:#2E8B57;text-align:center;margin-bottom:16px;">🎟 훈데르트바서파크 입장료 20% 할인</div>
-      <div style="margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">대인 바코드</div>
-        <img src="barcode_park_adult.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
-      </div>
-      <div>
-        <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">소인 바코드</div>
-        <img src="barcode_park_child.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
-      </div>
-    </div>
-
-    <!-- 카페 바코드 -->
-    <div id="barcode-cafe" style="display:none;">
-      <div style="font-size:15px;font-weight:900;color:#2E8B57;text-align:center;margin-bottom:16px;">☕ 훈데르트윈즈 카페 20% 할인</div>
-      <img src="barcode_cafe.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
-    </div>
-
-    <button onclick="closeBarcodePopup()" style="margin-top:20px;width:100%;padding:13px;background:#F0F8F4;border:none;border-radius:12px;font-size:14px;font-weight:700;color:#2E8B57;cursor:pointer;font-family:inherit;">닫기</button>
-  </div>
+  <!-- 바코드 팝업 → body 최하단으로 이동 (탭 page 안에 있으면 display:none 탭에 가려짐) -->
 
   <div class="section-label fade-up">파크 소개</div>
   <div style="background:white;border-radius:16px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:10px;" class="fade-up">
@@ -4690,6 +4665,8 @@ function closeBarcodePopup() {
   document.getElementById('barcode-popup').style.display = 'none';
   if (window.popPopupState) window.popPopupState();
 }
+
+function closePinManage() {
   var panel = document.getElementById('pinManagePanel');
   if (panel) panel.style.display = 'none';
 }
@@ -5029,6 +5006,33 @@ window.addEventListener('load', initHundert);
 
 
 
+
+<!-- ══ 바코드 팝업 (body 최상위 — 탭 page 밖) ══ -->
+<div id="barcode-overlay" onclick="closeBarcodePopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1500;"></div>
+<div id="barcode-popup" style="display:none;position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-radius:22px 22px 0 0;z-index:1501;padding:24px 20px 36px;">
+  <div style="width:36px;height:4px;background:#E0E0E0;border-radius:2px;margin:0 auto 18px;"></div>
+
+  <!-- 파크 바코드 -->
+  <div id="barcode-park" style="display:none;">
+    <div style="font-size:15px;font-weight:900;color:#2E8B57;text-align:center;margin-bottom:16px;">🎟 훈데르트바서파크 입장료 20% 할인</div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">대인 바코드</div>
+      <img src="barcode_park_adult.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">소인 바코드</div>
+      <img src="barcode_park_child.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
+    </div>
+  </div>
+
+  <!-- 카페 바코드 -->
+  <div id="barcode-cafe" style="display:none;">
+    <div style="font-size:15px;font-weight:900;color:#2E8B57;text-align:center;margin-bottom:16px;">☕ 훈데르트윈즈 카페 20% 할인</div>
+    <img src="barcode_cafe.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
+  </div>
+
+  <button onclick="closeBarcodePopup()" style="margin-top:20px;width:100%;padding:13px;background:#F0F8F4;border:none;border-radius:12px;font-size:14px;font-weight:700;color:#2E8B57;cursor:pointer;font-family:inherit;">닫기</button>
+</div>
 
 <script>
 // ── 안드로이드 뒤로가기 팝업 닫기 ──
