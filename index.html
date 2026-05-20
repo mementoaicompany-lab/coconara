@@ -671,6 +671,136 @@ body.admin-mode .dalkom-edit-btn { display:block; }
 .dal-open .dal-intro-body { display: block !important; }
 .dal-open .dal-arrow { transform: rotate(180deg); }
 </style>
+
+<!-- ══ Firebase SDK ══ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCIr2DZGFPbv1Sw-XZOTfBa73cqyvfQuXM",
+  authDomain: "coconara-52bc4.firebaseapp.com",
+  databaseURL: "https://coconara-52bc4-default-rtdb.firebaseio.com",
+  projectId: "coconara-52bc4",
+  storageBucket: "coconara-52bc4.firebasestorage.app",
+  messagingSenderId: "461448808298",
+  appId: "1:461448808298:web:a03dd3d84eda0ac9dc4713",
+  measurementId: "G-N206GNJT8N"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ── 오늘 날짜 키 ──
+function todayKey() { return new Date().toISOString().slice(0,10); }
+
+// ════════════════════════════════════════
+// 방문자 카운터 (Firebase)
+// ════════════════════════════════════════
+function fbInitVisitor() {
+  var today = todayKey();
+  var todayRef = ref(db, 'visitors/byDate/' + today);
+  var totalRef = ref(db, 'visitors/total');
+
+  // 오늘 방문 중복 방지: 세션당 1회만 카운트
+  if (!sessionStorage.getItem('coco_visited')) {
+    sessionStorage.setItem('coco_visited', '1');
+    // 오늘 카운트 +1
+    runTransaction(todayRef, function(cur) { return (cur || 0) + 1; });
+    // 누적 카운트 +1
+    runTransaction(totalRef, function(cur) { return (cur || 0) + 1; });
+  }
+
+  // 실시간 리스닝 — 화면 업데이트
+  onValue(ref(db, 'visitors'), function(snap) {
+    var data = snap.val() || {};
+    var todayCount = (data.byDate && data.byDate[today]) || 0;
+    var totalCount = data.total || 0;
+
+    // 헤더
+    var h1 = document.getElementById('header-visitor-today');
+    var h2 = document.getElementById('header-visitor-total');
+    if (h1) h1.textContent = todayCount;
+    if (h2) h2.textContent = totalCount;
+
+    // 홈 방문자바
+    var v1 = document.getElementById('visitor-today-count');
+    var v2 = document.getElementById('visitor-total-count');
+    if (v1) v1.textContent = todayCount;
+    if (v2) v2.textContent = totalCount;
+
+    // 관리자 패널
+    var a1 = document.getElementById('adm-today');
+    var a2 = document.getElementById('adm-total');
+    if (a1) a1.textContent = todayCount;
+    if (a2) a2.textContent = totalCount;
+  });
+}
+
+// ════════════════════════════════════════
+// 운항 상태 (Firebase)
+// ════════════════════════════════════════
+function fbInitFerryStatus() {
+  var ferryRef = ref(db, 'ferryStatus');
+
+  // 실시간 리스닝
+  onValue(ferryRef, function(snap) {
+    var data = snap.val();
+    if (!data) return;
+
+    // 날짜 바뀌면 정상운항으로 자동 리셋 (손님 화면에서)
+    var today = todayKey();
+    var status = (data.date === today) ? (data.status || 'normal') : 'normal';
+    var memo   = (data.date === today) ? (data.memo   || '')        : '';
+
+    if (window.applyFerryStatus) window.applyFerryStatus(status);
+    if (window.applyFerryMemo)   window.applyFerryMemo(memo);
+
+    // 관리자 메모 입력창 동기화
+    var memoInput = document.getElementById('edit-ferry-memo');
+    if (memoInput && window.isAdminLoggedIn) memoInput.value = memo;
+  });
+}
+
+// ── 관리자가 운항 상태 저장할 때 Firebase에도 쓰기 ──
+window.fbSetFerryStatus = function(status) {
+  var today = todayKey();
+  var memo = '';
+  var memoInput = document.getElementById('edit-ferry-memo');
+  if (memoInput) memo = memoInput.value.trim();
+  set(ref(db, 'ferryStatus'), { status: status, memo: memo, date: today });
+};
+
+window.fbSaveFerryMemo = function() {
+  var today = todayKey();
+  var memo = '';
+  var memoInput = document.getElementById('edit-ferry-memo');
+  if (memoInput) memo = memoInput.value.trim();
+  // 현재 status 읽어서 같이 저장
+  get(ref(db, 'ferryStatus')).then(function(snap) {
+    var cur = snap.val() || {};
+    var status = (cur.date === today) ? (cur.status || 'normal') : 'normal';
+    set(ref(db, 'ferryStatus'), { status: status, memo: memo, date: today });
+  });
+};
+
+window.fbClearFerryMemo = function() {
+  var today = todayKey();
+  get(ref(db, 'ferryStatus')).then(function(snap) {
+    var cur = snap.val() || {};
+    var status = (cur.date === today) ? (cur.status || 'normal') : 'normal';
+    set(ref(db, 'ferryStatus'), { status: status, memo: '', date: today });
+    var memoInput = document.getElementById('edit-ferry-memo');
+    if (memoInput) memoInput.value = '';
+  });
+};
+
+// ── 앱 로드 후 초기화 ──
+window.addEventListener('load', function() {
+  fbInitVisitor();
+  fbInitFerryStatus();
+});
+</script>
 </head>
 <body>
 
@@ -2160,6 +2290,8 @@ function saveFerryMemo() {
   d.ferryMemo = memo;
   saveData(d);
   applyFerryMemo(memo);
+  // Firebase 실시간 저장
+  if (window.fbSaveFerryMemo) window.fbSaveFerryMemo();
   alert('메모가 저장됐어요! ✅');
 }
 function clearFerryMemo() {
@@ -2168,6 +2300,8 @@ function clearFerryMemo() {
   saveData(d);
   applyFerryMemo('');
   document.getElementById('edit-ferry-memo').value = '';
+  // Firebase 실시간 저장
+  if (window.fbClearFerryMemo) window.fbClearFerryMemo();
   alert('메모를 지웠어요!');
 }
 function applyFerryMemo(memo) {
@@ -2275,6 +2409,8 @@ function setFerryStatus(status) {
   d.ferryStatusDate = new Date().toDateString();
   saveData(d);
   applyFerryStatus(status);
+  // Firebase 실시간 저장
+  if (window.fbSetFerryStatus) window.fbSetFerryStatus(status);
   closeAdminPanel();
 }
 function applyFerryStatus(status) {
@@ -2489,22 +2625,18 @@ function initFerryDrag() {
 // 방문자 카운터
 // ════════════════════════════════════════
 function initVisitorCount() {
+  // Firebase 연동 시 fbInitVisitor()가 처리하므로 로컬 카운트는 스킵
+  // (Firebase 미연결 시 폴백으로만 동작)
+  if (window._fbVisitorReady) return;
   var today = new Date().toISOString().slice(0,10);
   var vData = JSON.parse(localStorage.getItem('coco_visitors') || '{"byDate":{},"total":0}');
   if (!vData.byDate) vData.byDate = {};
-  vData.byDate[today] = (vData.byDate[today] || 0) + 1;
-  vData.total = (vData.total || 0) + 1;
-  localStorage.setItem('coco_visitors', JSON.stringify(vData));
-  var todayCount = vData.byDate[today];
+  var todayCount = vData.byDate[today] || 0;
   var el1 = document.getElementById('visitor-today-count');
   var el2 = document.getElementById('visitor-total-count');
   if (el1) el1.textContent = todayCount;
-  if (el2) el2.textContent = vData.total;
-  updateHeaderVisitorCount(todayCount, vData.total);
-  var m = today.slice(0,7);
-  var monthCount = Object.keys(vData.byDate).filter(function(d){ return d.startsWith(m); }).reduce(function(s,d){ return s+vData.byDate[d]; },0);
-  var a1=document.getElementById('adm-today'), a2=document.getElementById('adm-month'), a3=document.getElementById('adm-total');
-  if(a1) a1.textContent=todayCount; if(a2) a2.textContent=monthCount; if(a3) a3.textContent=vData.total;
+  if (el2) el2.textContent = vData.total || 0;
+  updateHeaderVisitorCount(todayCount, vData.total || 0);
 }
 function getVisitorData() { return JSON.parse(localStorage.getItem('coco_visitors') || '{"byDate":{},"total":0}'); }
 
