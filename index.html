@@ -4654,15 +4654,36 @@ function openPinAdd() {
 }
 
 function openBarcodePopup(type) {
-  document.getElementById('barcode-park').style.display = type === 'park' ? 'block' : 'none';
-  document.getElementById('barcode-cafe').style.display = type === 'cafe' ? 'block' : 'none';
-  document.getElementById('barcode-overlay').style.display = 'block';
-  document.getElementById('barcode-popup').style.display = 'block';
+  // 기존 팝업 제거
+  var old = document.getElementById('_barcodeModal');
+  if (old && old.parentNode) old.parentNode.removeChild(old);
+
+  var isPark = (type === 'park');
+  var title = isPark ? '🎟 훈데르트바서파크 입장료 20% 할인' : '☕ 훈데르트윈즈 카페 20% 할인';
+
+  var inner = isPark
+    ? '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">대인 바코드</div><img src="barcode_park_adult.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;"></div>'
+    + '<div><div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">소인 바코드</div><img src="barcode_park_child.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;"></div>'
+    : '<img src="barcode_cafe.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">';
+
+  var wrap = document.createElement('div');
+  wrap.id = '_barcodeModal';
+  wrap.innerHTML =
+    '<div id="_barcodeOvl" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9998;"></div>'
+  + '<div id="_barcodeBox" style="position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-radius:22px 22px 0 0;z-index:9999;padding:24px 20px 36px;box-sizing:border-box;">'
+  +   '<div style="width:36px;height:4px;background:#E0E0E0;border-radius:2px;margin:0 auto 18px;"></div>'
+  +   '<div style="font-size:15px;font-weight:900;color:#2E8B57;text-align:center;margin-bottom:16px;">' + title + '</div>'
+  +   inner
+  +   '<button style="margin-top:20px;width:100%;padding:13px;background:#F0F8F4;border:none;border-radius:12px;font-size:14px;font-weight:700;color:#2E8B57;cursor:pointer;font-family:inherit;" onclick="closeBarcodePopup()">닫기</button>'
+  + '</div>';
+
+  document.documentElement.appendChild(wrap);
+  document.getElementById('_barcodeOvl').addEventListener('click', closeBarcodePopup);
   if (window.pushPopupState) window.pushPopupState();
 }
 function closeBarcodePopup() {
-  document.getElementById('barcode-overlay').style.display = 'none';
-  document.getElementById('barcode-popup').style.display = 'none';
+  var old = document.getElementById('_barcodeModal');
+  if (old && old.parentNode) old.parentNode.removeChild(old);
   if (window.popPopupState) window.popPopupState();
 }
 
@@ -5007,32 +5028,8 @@ window.addEventListener('load', initHundert);
 
 
 
-<!-- ══ 바코드 팝업 (body 최상위 — 탭 page 밖) ══ -->
-<div id="barcode-overlay" onclick="closeBarcodePopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1500;"></div>
-<div id="barcode-popup" style="display:none;position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-radius:22px 22px 0 0;z-index:1501;padding:24px 20px 36px;">
-  <div style="width:36px;height:4px;background:#E0E0E0;border-radius:2px;margin:0 auto 18px;"></div>
 
-  <!-- 파크 바코드 -->
-  <div id="barcode-park" style="display:none;">
-    <div style="font-size:15px;font-weight:900;color:#2E8B57;text-align:center;margin-bottom:16px;">🎟 훈데르트바서파크 입장료 20% 할인</div>
-    <div style="margin-bottom:16px;">
-      <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">대인 바코드</div>
-      <img src="barcode_park_adult.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
-    </div>
-    <div>
-      <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">소인 바코드</div>
-      <img src="barcode_park_child.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
-    </div>
-  </div>
-
-  <!-- 카페 바코드 -->
-  <div id="barcode-cafe" style="display:none;">
-    <div style="font-size:15px;font-weight:900;color:#2E8B57;text-align:center;margin-bottom:16px;">☕ 훈데르트윈즈 카페 20% 할인</div>
-    <img src="barcode_cafe.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
-  </div>
-
-  <button onclick="closeBarcodePopup()" style="margin-top:20px;width:100%;padding:13px;background:#F0F8F4;border:none;border-radius:12px;font-size:14px;font-weight:700;color:#2E8B57;cursor:pointer;font-family:inherit;">닫기</button>
-</div>
+<!-- 바코드 팝업은 JS openBarcodePopup()이 동적으로 body에 생성/제거함 -->
 
 <script>
 // ── 안드로이드 뒤로가기 팝업 닫기 ──
@@ -5089,8 +5086,8 @@ window.addEventListener('load', initHundert);
     var pinManage = document.getElementById('pinManagePanel');
     if (pinManage && pinManage.style.display !== 'none') { closePinManage(); return; }
     // 바코드 팝업
-    var barcodePopup = document.getElementById('barcode-popup');
-    if (barcodePopup && barcodePopup.style.display !== 'none') { closeBarcodePopup(); return; }
+    var barcodePopup = document.getElementById('_barcodeModal');
+    if (barcodePopup) { closeBarcodePopup(); return; }
     // QNA 팝업
     var qnaPopup = document.getElementById('qna-popup');
     if (qnaPopup && qnaPopup.style.display !== 'none') { closeQnaPopup(); return; }
