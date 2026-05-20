@@ -1264,7 +1264,7 @@ body.admin-mode .dalkom-edit-btn { display:block; }
           <div style="font-size:11px;color:#888;margin-bottom:6px;">우도 남쪽 · 친환경 예술 테마파크</div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
             <span style="background:#2E8B57;color:white;font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;">입장료 20% 할인</span>
-            <span style="background:#2E8B57;color:white;font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;">음료 2,000원 할인</span>
+            <span style="background:#2E8B57;color:white;font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;">음료 20% 할인</span>
           </div>
         </div>
         <span style="color:#CCC;font-size:18px;">›</span>
@@ -1339,8 +1339,8 @@ body.admin-mode .dalkom-edit-btn { display:block; }
     <div style="font-size:14px;font-weight:800;color:#2E8B57;margin-top:4px;">훈데르트바서파크 입장료 할인</div>
   </div>
   <div style="background:linear-gradient(135deg,#E0F5EC,#C8EDD8);border-radius:16px;padding:20px;text-align:center;margin-bottom:14px;">
-    <div style="font-size:30px;font-weight:900;color:#2E8B57;">2,000원</div>
-    <div style="font-size:14px;font-weight:800;color:#2E8B57;margin-top:4px;">훈데르트윈즈 카페 음료 할인</div>
+    <div style="font-size:30px;font-weight:900;color:#2E8B57;">20%</div>
+    <div style="font-size:14px;font-weight:800;color:#2E8B57;margin-top:4px;">훈데르트윈즈 카페 음료 20% 할인</div>
   </div>
   <div class="pink-box">💕 모든 할인 비용은 <strong>코코나라가 100% 자체 부담</strong>합니다.</div>
 </div>
@@ -1433,7 +1433,7 @@ const spots = {
     desc:'오스트리아 예술가 훈데르트바서의 작품 세계를 담은 친환경 테마파크입니다. 독특하고 화려한 건축물과 자연이 어우러진 우도의 핫플레이스! 코코나라 고객은 20% 할인!',
     tips:[
       {i:'🎫', t:'코코나라 고객 전용 입장료 20% 할인!'},
-      {i:'☕', t:'훈데르트윈즈 카페 음료 2,000원 할인'},
+      {i:'☕', t:'훈데르트윈즈 카페 음료 20% 할인'},
       {i:'📸', t:'독특한 건축물과 함께 인생사진 명소'}
     ]
   },
@@ -2680,6 +2680,13 @@ function toggleCautionHome() {
   var isOpen = body.style.display !== 'none';
   body.style.display    = isOpen ? 'none' : 'block';
   arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+  if (!isOpen) {
+    // 열릴 때 히스토리 추가
+    if (window.pushPopupState) window.pushPopupState();
+  } else {
+    // 닫힐 때 히스토리 정리
+    if (window.popPopupState) window.popPopupState();
+  }
 }
 
 // ── 지도 이용 안내 접기/펼치기 ──
@@ -3338,8 +3345,21 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('adminLoginBg').classList.contains('open')) adminLogin();
 });
 
+// 코코나라 운항 상태 기본 세팅
+// 요청사항: 관리자 설정값을 '정상운항'으로 적용하고, 관리자 메모는 비운 상태로 시작합니다.
+function presetFerryStatusNormalAndClearMemo() {
+  try {
+    var d = loadData();
+    d.ferryStatus = 'normal';
+    d.ferryStatusDate = new Date().toDateString();
+    d.ferryMemo = '';
+    saveData(d);
+  } catch(e) {}
+}
+
 // 앱 시작 - 모든 스크립트 로드 완료 후 실행
 window.addEventListener('load', function() {
+  presetFerryStatusNormalAndClearMemo();
   initApp();
   initDalCoupon();
 });
@@ -3773,10 +3793,12 @@ window.addEventListener('load', function() {
     document.getElementById('qna-popup-a').innerHTML = QNA_DATA[i].a.replace(/\n/g, '<br>');
     document.getElementById('qna-popup-overlay').style.display = 'block';
     document.getElementById('qna-popup').style.display = 'block';
+    if (window.pushPopupState) window.pushPopupState();
   }
   function closeQnaPopup(){
     document.getElementById('qna-popup-overlay').style.display = 'none';
     document.getElementById('qna-popup').style.display = 'none';
+    if (window.popPopupState) window.popPopupState();
   }
   </script>
 
@@ -4014,40 +4036,62 @@ window.addEventListener('load', function() {
     </div>
   </div>
 
-  <!-- 예약자 전용 쿠폰 카드 1: 파크 입장료 -->
+  <!-- 바코드 쿠폰 카드 1: 파크 입장료 -->
   <div class="fade-up" style="background:white;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);margin-bottom:12px;">
     <div style="background:linear-gradient(135deg,#2E8B57,#52B788);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
       <div>
         <div style="font-size:9px;font-weight:900;color:rgba(255,255,255,0.85);letter-spacing:1.5px;margin-bottom:2px;">🎟 예약 고객 전용</div>
         <div style="font-size:18px;font-weight:900;color:white;">입장료 <span style="font-size:26px;">20%</span> 할인!</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.85);margin-top:2px;">대인 / 소인 각각 바코드 확인</div>
       </div>
-      <div style="text-align:right;">
-        <div style="background:white;color:#2E8B57;font-size:10px;font-weight:900;padding:4px 10px;border-radius:20px;margin-bottom:4px;">현장 쿠폰 제공</div>
-        <div style="font-size:9px;color:rgba(255,255,255,0.85);">코코나라에서 받아가세요!</div>
-      </div>
+      <button onclick="openBarcodePopup('park')" style="background:white;color:#2E8B57;border:none;border-radius:12px;padding:8px 14px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit;">바코드 보기 →</button>
     </div>
     <div style="padding:10px 14px;background:#F5FBF7;display:flex;align-items:center;gap:8px;">
       <span style="font-size:15px;">ℹ️</span>
-      <div style="font-size:11px;color:#555;line-height:1.65;"><strong>훈데르트바서파크</strong> 입장권 구매 시 쿠폰 제시 · 일행 전원 동일 혜택<br><strong style="color:#2E8B57;">할인 비용은 코코나라가 전액 부담합니다.</strong></div>
+      <div style="font-size:11px;color:#555;line-height:1.65;"><strong>훈데르트바서파크</strong> 입장권 구매 시 바코드 제시 · 일행 전원 동일 혜택<br><strong style="color:#2E8B57;">할인 비용은 코코나라가 전액 부담합니다.</strong></div>
     </div>
   </div>
 
-  <!-- 예약자 전용 쿠폰 카드 2: 카페 음료 -->
+  <!-- 바코드 쿠폰 카드 2: 카페 20% 할인 -->
   <div class="fade-up" style="background:white;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);margin-bottom:16px;">
     <div style="background:linear-gradient(135deg,#52B788,#95D5B2);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
       <div>
         <div style="font-size:9px;font-weight:900;color:rgba(255,255,255,0.85);letter-spacing:1.5px;margin-bottom:2px;">☕ 예약 고객 전용</div>
-        <div style="font-size:18px;font-weight:900;color:white;">음료 <span style="font-size:26px;">2,000원</span> 할인!</div>
+        <div style="font-size:18px;font-weight:900;color:white;">음료 <span style="font-size:26px;">20%</span> 할인!</div>
       </div>
-      <div style="text-align:right;">
-        <div style="background:white;color:#2E8B57;font-size:10px;font-weight:900;padding:4px 10px;border-radius:20px;margin-bottom:4px;">현장 쿠폰 제공</div>
-        <div style="font-size:9px;color:rgba(255,255,255,0.85);">코코나라에서 받아가세요!</div>
-      </div>
+      <button onclick="openBarcodePopup('cafe')" style="background:white;color:#2E8B57;border:none;border-radius:12px;padding:8px 14px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit;">바코드 보기 →</button>
     </div>
     <div style="padding:10px 14px;background:#F5FBF7;display:flex;align-items:center;gap:8px;">
       <span style="font-size:15px;">ℹ️</span>
-      <div style="font-size:11px;color:#555;line-height:1.65;"><strong>훈데르트윈즈 카페</strong> 음료 주문 시 쿠폰 제시 · 일행 전원 동일 혜택<br><strong style="color:#2E8B57;">할인 비용은 코코나라가 전액 부담합니다.</strong></div>
+      <div style="font-size:11px;color:#555;line-height:1.65;"><strong>훈데르트윈즈 카페</strong> 음료 주문 시 바코드 제시 · 일행 전원 동일 혜택<br><strong style="color:#2E8B57;">할인 비용은 코코나라가 전액 부담합니다.</strong></div>
     </div>
+  </div>
+
+  <!-- 바코드 팝업 -->
+  <div id="barcode-overlay" onclick="closeBarcodePopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1500;"></div>
+  <div id="barcode-popup" style="display:none;position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-radius:22px 22px 0 0;z-index:1501;padding:24px 20px 36px;">
+    <div style="width:36px;height:4px;background:#E0E0E0;border-radius:2px;margin:0 auto 18px;"></div>
+
+    <!-- 파크 바코드 -->
+    <div id="barcode-park" style="display:none;">
+      <div style="font-size:15px;font-weight:900;color:#2E8B57;text-align:center;margin-bottom:16px;">🎟 훈데르트바서파크 입장료 20% 할인</div>
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">대인 바코드</div>
+        <img src="barcode_park_adult.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:8px;text-align:center;">소인 바코드</div>
+        <img src="barcode_park_child.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
+      </div>
+    </div>
+
+    <!-- 카페 바코드 -->
+    <div id="barcode-cafe" style="display:none;">
+      <div style="font-size:15px;font-weight:900;color:#2E8B57;text-align:center;margin-bottom:16px;">☕ 훈데르트윈즈 카페 20% 할인</div>
+      <img src="barcode_cafe.jpg" style="width:100%;border-radius:8px;border:1px solid #EEE;">
+    </div>
+
+    <button onclick="closeBarcodePopup()" style="margin-top:20px;width:100%;padding:13px;background:#F0F8F4;border:none;border-radius:12px;font-size:14px;font-weight:700;color:#2E8B57;cursor:pointer;font-family:inherit;">닫기</button>
   </div>
 
   <div class="section-label fade-up">파크 소개</div>
@@ -4634,7 +4678,18 @@ function openPinAdd() {
   panel.style.display = 'flex';
 }
 
-function closePinManage() {
+function openBarcodePopup(type) {
+  document.getElementById('barcode-park').style.display = type === 'park' ? 'block' : 'none';
+  document.getElementById('barcode-cafe').style.display = type === 'cafe' ? 'block' : 'none';
+  document.getElementById('barcode-overlay').style.display = 'block';
+  document.getElementById('barcode-popup').style.display = 'block';
+  if (window.pushPopupState) window.pushPopupState();
+}
+function closeBarcodePopup() {
+  document.getElementById('barcode-overlay').style.display = 'none';
+  document.getElementById('barcode-popup').style.display = 'none';
+  if (window.popPopupState) window.popPopupState();
+}
   var panel = document.getElementById('pinManagePanel');
   if (panel) panel.style.display = 'none';
 }
@@ -5029,9 +5084,20 @@ window.addEventListener('load', initHundert);
     // 핀 관리 패널
     var pinManage = document.getElementById('pinManagePanel');
     if (pinManage && pinManage.style.display !== 'none') { closePinManage(); return; }
+    // 바코드 팝업
+    var barcodePopup = document.getElementById('barcode-popup');
+    if (barcodePopup && barcodePopup.style.display !== 'none') { closeBarcodePopup(); return; }
     // QNA 팝업
     var qnaPopup = document.getElementById('qna-popup');
     if (qnaPopup && qnaPopup.style.display !== 'none') { closeQnaPopup(); return; }
+    // 필독사항 (홈탭)
+    var cautionBody = document.getElementById('caution-home-body');
+    if (cautionBody && cautionBody.style.display !== 'none') {
+      cautionBody.style.display = 'none';
+      var arrow = document.getElementById('caution-home-arrow');
+      if (arrow) arrow.style.transform = '';
+      return;
+    }
     // 맛집 폼
     var foodForm = document.getElementById('foodFormBg');
     if (foodForm && foodForm.classList.contains('open')) { closeFoodForm(); return; }
