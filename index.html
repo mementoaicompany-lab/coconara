@@ -3792,18 +3792,18 @@ window.addEventListener('load', function() {
       list.appendChild(btn);
     });
   })();
-  function openQnaPopup(i){
+  window.openQnaPopup = function(i){
     document.getElementById('qna-popup-q').textContent = 'Q. ' + QNA_DATA[i].q;
     document.getElementById('qna-popup-a').innerHTML = QNA_DATA[i].a.replace(/\n/g, '<br>');
     document.getElementById('qna-popup-overlay').style.display = 'block';
     document.getElementById('qna-popup').style.display = 'block';
-    if (window.pushPopupState) window.pushPopupState();
-  }
-  function closeQnaPopup(){
+  };
+  window.closeQnaPopup = function(){
     document.getElementById('qna-popup-overlay').style.display = 'none';
     document.getElementById('qna-popup').style.display = 'none';
-    if (window.popPopupState) window.popPopupState();
-  }
+  };
+  function openQnaPopup(i){ window.openQnaPopup(i); }
+  function closeQnaPopup(){ window.closeQnaPopup(); }
   </script>
 
 
@@ -5036,66 +5036,67 @@ window.addEventListener('load', initHundert);
 <!-- 바코드 팝업은 JS openBarcodePopup()이 동적으로 body에 생성/제거함 -->
 
 <script>
-// ── 안드로이드 뒤로가기 팝업 닫기 ──
+// ── 안드로이드 뒤로가기 팝업 닫기 (스택 방식) ──
 (function() {
-  var _popupOpen = false;
+  // 열린 팝업을 스택으로 관리
+  var _stack = 0;
 
   function pushPopupState() {
-    if (!_popupOpen) {
-      history.pushState({ popup: true }, '');
-      _popupOpen = true;
-    }
+    history.pushState({ popup: true, depth: _stack }, '');
+    _stack++;
   }
 
   function popPopupState() {
-    _popupOpen = false;
+    if (_stack > 0) _stack--;
   }
-  window.popPopupState = popPopupState;
 
-  // 뒤로가기 감지
+  window.pushPopupState = pushPopupState;
+  window.popPopupState  = popPopupState;
+
+  // 뒤로가기 감지 → 현재 열린 팝업 닫기
   window.addEventListener('popstate', function(e) {
-    if (_popupOpen) {
-      _popupOpen = false;
-      closeAllPopups();
+    if (_stack > 0) {
+      _stack--;
+      closeTopPopup();
     }
   });
 
-  // 열려있는 팝업 전부 닫기
-  function closeAllPopups() {
-    // spot 팝업
-    var spotPopup = document.getElementById('spotPopup');
-    if (spotPopup && spotPopup.classList.contains('open')) { closeSpot(); return; }
-    // 갤러리
+  // 현재 열려있는 최상위 팝업 하나만 닫기
+  function closeTopPopup() {
+    // 1. 바코드 팝업 (동적 생성)
+    if (document.getElementById('_barcodeModal')) { closeBarcodePopup(); return; }
+
+    // 2. QNA 팝업
+    var qna = document.getElementById('qna-popup');
+    if (qna && qna.style.display !== 'none') { closeQnaPopup(); return; }
+
+    // 3. spot 팝업
+    var spot = document.getElementById('spotPopup');
+    if (spot && spot.classList.contains('open')) { closeSpot(); return; }
+
+    // 4. 갤러리
     var gallery = document.getElementById('galleryOverlay');
     if (gallery && gallery.classList.contains('open')) { closeGallery(); return; }
-    // 사진 전체화면 (동적 overlay)
-    var photoViewer = document.getElementById('photoViewerOverlay');
-    if (photoViewer) { document.body.removeChild(photoViewer); return; }
-    // 쿠폰 팝업
+
+    // 5. 쿠폰/인터뷰
     var coupon = document.getElementById('couponPopupBg');
     if (coupon && coupon.classList.contains('open')) { closeCouponPopup(); return; }
-    // 인터뷰 팝업
     var interview = document.getElementById('interviewPopupBg');
     if (interview && interview.classList.contains('open')) { closeInterviewPopup(); return; }
-    // 달콤 편집
+
+    // 6. 달콤 편집/미디어
     var dalEdit = document.getElementById('dalkomEditBg');
     if (dalEdit && dalEdit.classList.contains('open')) { closeDalkomEdit(); return; }
-    // 달콤 미디어
     var dalMedia = document.getElementById('dalkomMediaBg');
     if (dalMedia && dalMedia.classList.contains('open')) { closeDalkomMediaAdmin(); return; }
-    // 핀 편집
+
+    // 7. 핀 편집/관리
     var pinEdit = document.getElementById('pinEditModalBg');
     if (pinEdit && pinEdit.classList.contains('open')) { closePinEdit(); return; }
-    // 핀 관리 패널
     var pinManage = document.getElementById('pinManagePanel');
     if (pinManage && pinManage.style.display !== 'none') { closePinManage(); return; }
-    // 바코드 팝업
-    var barcodePopup = document.getElementById('_barcodeModal');
-    if (barcodePopup) { closeBarcodePopup(); return; }
-    // QNA 팝업
-    var qnaPopup = document.getElementById('qna-popup');
-    if (qnaPopup && qnaPopup.style.display !== 'none') { closeQnaPopup(); return; }
-    // 필독사항 (홈탭)
+
+    // 8. 필독사항 (caution-home 접기)
     var cautionBody = document.getElementById('caution-home-body');
     if (cautionBody && cautionBody.style.display !== 'none') {
       cautionBody.style.display = 'none';
@@ -5103,67 +5104,101 @@ window.addEventListener('load', initHundert);
       if (arrow) arrow.style.transform = '';
       return;
     }
-    // 맛집 폼
+
+    // 9. 맛집 폼
     var foodForm = document.getElementById('foodFormBg');
     if (foodForm && foodForm.classList.contains('open')) { closeFoodForm(); return; }
-    // 패널들 (panel-directions, panel-hundert 등)
-    document.querySelectorAll('.panel.open').forEach(function(p) {
-      closePanel(p.id);
-    });
+
+    // 10. 패널들 (panel-directions, panel-caution, panel-hundert 등)
+    var openPanels = document.querySelectorAll('.panel.open');
+    if (openPanels.length > 0) {
+      closePanel(openPanels[openPanels.length - 1].id);
+      return;
+    }
+
+    // 11. 동적 photo viewer
+    var photoViewer = document.getElementById('photoViewerOverlay');
+    if (photoViewer) { document.body.removeChild(photoViewer); return; }
   }
 
-  // 각 팝업 열기 함수에 훅 추가 (window 로드 후 실행)
+  // ── 열기 함수에 pushPopupState 자동 훅 ──
   window.addEventListener('load', function() {
-    var _origOpenSpotH = window.openSpot;
-    window.openSpot = function() { pushPopupState(); _origOpenSpotH.apply(this, arguments); };
 
-    var _origOpenGalleryH = window.openGallery;
-    window.openGallery = function() { pushPopupState(); _origOpenGalleryH.apply(this, arguments); };
+    // openPanel 훅
+    var _origOpenPanel = window.openPanel;
+    window.openPanel = function() { pushPopupState(); _origOpenPanel.apply(this, arguments); };
 
-    var _origOpenCouponH = window.openCouponPopup;
-    window.openCouponPopup = function() { pushPopupState(); _origOpenCouponH.apply(this, arguments); };
+    // closePanel 훅
+    var _origClosePanel = window.closePanel;
+    window.closePanel = function() { popPopupState(); _origClosePanel.apply(this, arguments); };
 
-    var _origOpenInterviewH = window.openInterviewPopup;
-    if (_origOpenInterviewH) window.openInterviewPopup = function() { pushPopupState(); _origOpenInterviewH.apply(this, arguments); };
+    // openSpot / closeSpot
+    var _origOpenSpot = window.openSpot;
+    window.openSpot = function() { pushPopupState(); _origOpenSpot.apply(this, arguments); };
+    var _origCloseSpot = window.closeSpot;
+    window.closeSpot = function() { popPopupState(); _origCloseSpot.apply(this, arguments); };
 
-    var _origViewDalkomPhotoH = window.viewDalkomPhoto_generic;
-    window.viewDalkomPhoto_generic = function() { pushPopupState(); _origViewDalkomPhotoH.apply(this, arguments); };
+    // openGallery / closeGallery
+    var _origOpenGallery = window.openGallery;
+    window.openGallery = function() { pushPopupState(); _origOpenGallery.apply(this, arguments); };
+    var _origCloseGallery = window.closeGallery;
+    window.closeGallery = function() { popPopupState(); _origCloseGallery.apply(this, arguments); };
 
-    var _origOpenDalkomEditH = window.openDalkomEdit;
-    if (_origOpenDalkomEditH) window.openDalkomEdit = function() { pushPopupState(); _origOpenDalkomEditH.apply(this, arguments); };
+    // openCouponPopup / closeCouponPopup
+    var _origOpenCoupon = window.openCouponPopup;
+    window.openCouponPopup = function() { pushPopupState(); _origOpenCoupon.apply(this, arguments); };
+    var _origCloseCoupon = window.closeCouponPopup;
+    window.closeCouponPopup = function() { popPopupState(); _origCloseCoupon.apply(this, arguments); };
 
-    var _origOpenDalkomMediaH = window.openDalkomMediaAdmin;
-    if (_origOpenDalkomMediaH) window.openDalkomMediaAdmin = function() { pushPopupState(); _origOpenDalkomMediaH.apply(this, arguments); };
+    // openInterviewPopup / closeInterviewPopup
+    if (window.openInterviewPopup) {
+      var _origOpenInterview = window.openInterviewPopup;
+      window.openInterviewPopup = function() { pushPopupState(); _origOpenInterview.apply(this, arguments); };
+    }
+    if (window.closeInterviewPopup) {
+      var _origCloseInterview = window.closeInterviewPopup;
+      window.closeInterviewPopup = function() { popPopupState(); _origCloseInterview.apply(this, arguments); };
+    }
 
-    var _origOpenPinAddH = window.openPinAdd;
-    window.openPinAdd = function() { pushPopupState(); _origOpenPinAddH.apply(this, arguments); };
+    // openBarcodePopup / closeBarcodePopup
+    var _origOpenBarcode = window.openBarcodePopup;
+    window.openBarcodePopup = function() { pushPopupState(); _origOpenBarcode.apply(this, arguments); };
+    var _origCloseBarcode = window.closeBarcodePopup;
+    window.closeBarcodePopup = function() { popPopupState(); _origCloseBarcode.apply(this, arguments); };
 
-    var _origOpenPanelH = window.openPanel;
-    window.openPanel = function() { pushPopupState(); _origOpenPanelH.apply(this, arguments); };
+    // openQnaPopup / closeQnaPopup
+    if (window.openQnaPopup) {
+      var _origOpenQna = window.openQnaPopup;
+      window.openQnaPopup = function() { pushPopupState(); _origOpenQna.apply(this, arguments); };
+    }
+    if (window.closeQnaPopup) {
+      var _origCloseQna = window.closeQnaPopup;
+      window.closeQnaPopup = function() { popPopupState(); _origCloseQna.apply(this, arguments); };
+    }
 
-    var _origCloseSpotH = window.closeSpot;
-    window.closeSpot = function() { popPopupState(); _origCloseSpotH.apply(this, arguments); };
+    // toggleCautionHome — 열릴 때만 push
+    var _origToggleCaution = window.toggleCautionHome;
+    if (_origToggleCaution) {
+      window.toggleCautionHome = function() {
+        var body = document.getElementById('caution-home-body');
+        var isOpen = body && body.style.display !== 'none';
+        if (!isOpen) pushPopupState(); // 닫혀있으면 열리는 것 → push
+        else popPopupState();           // 열려있으면 닫히는 것 → pop
+        _origToggleCaution.apply(this, arguments);
+      };
+    }
 
-    var _origCloseGalleryH = window.closeGallery;
-    window.closeGallery = function() { popPopupState(); _origCloseGalleryH.apply(this, arguments); };
+    // dalkomEdit / dalkomMedia / pinManage / pinEdit / foodForm
+    if (window.openDalkomEdit)   { var _o=window.openDalkomEdit;   window.openDalkomEdit   = function(){ pushPopupState(); _o.apply(this,arguments); }; }
+    if (window.closeDalkomEdit)  { var _c=window.closeDalkomEdit;  window.closeDalkomEdit  = function(){ popPopupState();  _c.apply(this,arguments); }; }
+    if (window.openDalkomMediaAdmin)  { var _o2=window.openDalkomMediaAdmin;  window.openDalkomMediaAdmin  = function(){ pushPopupState(); _o2.apply(this,arguments); }; }
+    if (window.closeDalkomMediaAdmin) { var _c2=window.closeDalkomMediaAdmin; window.closeDalkomMediaAdmin = function(){ popPopupState();  _c2.apply(this,arguments); }; }
+    if (window.closePinManage)   { var _cm=window.closePinManage;  window.closePinManage   = function(){ popPopupState();  _cm.apply(this,arguments); }; }
+    if (window.closePinEdit)     { var _ce=window.closePinEdit;    window.closePinEdit     = function(){ popPopupState();  _ce.apply(this,arguments); }; }
+    if (window.closeFoodForm)    { var _cf=window.closeFoodForm;   window.closeFoodForm    = function(){ popPopupState();  _cf.apply(this,arguments); }; }
+    if (window.openPinAdd)       { var _op=window.openPinAdd;      window.openPinAdd       = function(){ pushPopupState(); _op.apply(this,arguments); }; }
+    if (window.viewDalkomPhoto_generic) { var _vd=window.viewDalkomPhoto_generic; window.viewDalkomPhoto_generic = function(){ pushPopupState(); _vd.apply(this,arguments); }; }
 
-    var _origCloseCouponH = window.closeCouponPopup;
-    window.closeCouponPopup = function() { popPopupState(); _origCloseCouponH.apply(this, arguments); };
-
-    var _origCloseInterviewH = window.closeInterviewPopup;
-    if (_origCloseInterviewH) window.closeInterviewPopup = function() { popPopupState(); _origCloseInterviewH.apply(this, arguments); };
-
-    var _origClosePanelH = window.closePanel;
-    window.closePanel = function() { popPopupState(); _origClosePanelH.apply(this, arguments); };
-
-    var _origClosePinManageH = window.closePinManage;
-    window.closePinManage = function() { popPopupState(); _origClosePinManageH.apply(this, arguments); };
-
-    var _origClosePinEditH = window.closePinEdit;
-    window.closePinEdit = function() { popPopupState(); _origClosePinEditH.apply(this, arguments); };
-
-    var _origCloseFoodFormH = window.closeFoodForm;
-    if (_origCloseFoodFormH) window.closeFoodForm = function() { popPopupState(); _origCloseFoodFormH.apply(this, arguments); };
   });
 
 })();
