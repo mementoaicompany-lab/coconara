@@ -5058,6 +5058,11 @@ window.addEventListener('load', initHundert);
   // 열린 팝업을 스택으로 관리
   var _stack = 0;
 
+  // ★ 핵심: 페이지 로드 시 현재 state를 base로 교체하고 dummy를 하나 더 push
+  // → 뒤로가기하면 base state로 가고, popstate에서 dummy를 다시 push해 앱 종료 방지
+  history.replaceState({ base: true }, '');
+  history.pushState({ guard: true }, '');
+
   function pushPopupState() {
     history.pushState({ popup: true, depth: _stack }, '');
     _stack++;
@@ -5070,12 +5075,16 @@ window.addEventListener('load', initHundert);
   window.pushPopupState = pushPopupState;
   window.popPopupState  = popPopupState;
 
-  // 뒤로가기 감지 → 현재 열린 팝업 닫기
+  // 뒤로가기 감지
   window.addEventListener('popstate', function(e) {
     if (_stack > 0) {
+      // 팝업 열려있음 → 닫기
       _stack--;
       closeTopPopup();
     }
+    // 항상 guard state를 다시 push → 다음 뒤로가기도 여기서 잡힘
+    // (팝업 유무 상관없이 앱이 절대 종료되지 않음)
+    history.pushState({ guard: true }, '');
   });
 
   // 현재 열려있는 최상위 팝업 하나만 닫기
