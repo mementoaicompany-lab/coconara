@@ -1792,6 +1792,8 @@ function toggleRefund() {
   var isOpen = body.style.display !== 'none';
   body.style.display    = isOpen ? 'none' : 'block';
   arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+  if (!isOpen) { if (window.pushPopupState) window.pushPopupState(); }
+  else          { if (window.popPopupState)  window.popPopupState();  }
 }
 // 달콤아재 방송 영상
 function getDalBroadcasts(){ return JSON.parse(localStorage.getItem('coco_dal_broadcasts')||'[null,null]'); }
@@ -1933,6 +1935,8 @@ function toggleYuui() {
 function toggleQna() {
   var b=document.getElementById('qna-body'), a=document.getElementById('qna-arrow');
   if(!b) return; var o=b.style.display!=='none'; b.style.display=o?'none':'block'; if(a) a.style.transform=o?'':'rotate(180deg)';
+  if (!o) { if (window.pushPopupState) window.pushPopupState(); }
+  else     { if (window.popPopupState)  window.popPopupState();  }
 }
 // 방송 영상
 function getBroadcasts(){ return JSON.parse(localStorage.getItem('coco_broadcasts')||'[null,null]'); }
@@ -2867,6 +2871,19 @@ function toggleCaution() {
   var isOpen = body.style.display !== 'none';
   body.style.display  = isOpen ? 'none' : 'block';
   arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+  if (!isOpen) { if (window.pushPopupState) window.pushPopupState(); }
+  else          { if (window.popPopupState)  window.popPopupState();  }
+}
+
+function toggleNoCustomer(btn) {
+  var body  = document.getElementById('no-customer-body');
+  var arrow = btn ? btn.querySelector('.no-arrow') : null;
+  if (!body) return;
+  var isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  if (arrow) arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  if (!isOpen) { if (window.pushPopupState) window.pushPopupState(); }
+  else          { if (window.popPopupState)  window.popPopupState();  }
 }
 
 // 차량 사진 업로드 (관리자 모드에서만 동작)
@@ -3649,11 +3666,11 @@ window.addEventListener('load', function() {
   <!-- 이용 불가 고객님 안내 -->
   <div class="section-label fade-up">이용 불가 안내</div>
   <div class="fade-up" style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:10px;">
-    <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.no-arrow').style.transform=this.nextElementSibling.style.display==='block'?'rotate(180deg)':'rotate(0deg)'" style="width:100%;padding:16px;background:none;border:none;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:inherit;">
+    <button onclick="toggleNoCustomer(this)" style="width:100%;padding:16px;background:none;border:none;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:inherit;">
       <span style="font-size:14px;font-weight:800;color:#1A1A1A;">🚫 이용 불가 고객님 안내</span>
       <span class="no-arrow" style="font-size:18px;color:#999;transition:transform 0.3s;">▼</span>
     </button>
-    <div style="display:none;border-top:1px solid #F5F5F5;padding:14px 16px;">
+    <div id="no-customer-body" style="display:none;border-top:1px solid #F5F5F5;padding:14px 16px;">
       <div style="font-size:11.5px;color:#555;line-height:2;">
         <div style="margin-bottom:6px;font-size:11px;color:#888;">아래에 해당하시는 고객님께서는 안전을 위해 이용이 제한됩니다.</div>
         <div style="margin-bottom:10px;font-size:11px;color:#888;">동반 탑승도 불가합니다.</div>
@@ -5102,6 +5119,42 @@ window.addEventListener('load', initHundert);
       cautionBody.style.display = 'none';
       var arrow = document.getElementById('caution-home-arrow');
       if (arrow) arrow.style.transform = '';
+      return;
+    }
+
+    // 8-1. 이용불가 고객 안내
+    var noCustomerBody = document.getElementById('no-customer-body');
+    if (noCustomerBody && noCustomerBody.style.display !== 'none') {
+      noCustomerBody.style.display = 'none';
+      var noArrow = document.querySelector('.no-arrow');
+      if (noArrow) noArrow.style.transform = 'rotate(0deg)';
+      return;
+    }
+
+    // 8-2. 탑승전 꼭 확인 (caution-body)
+    var cautionBody2 = document.getElementById('caution-body');
+    if (cautionBody2 && cautionBody2.style.display !== 'none') {
+      cautionBody2.style.display = 'none';
+      var cautArrow = document.getElementById('caution-arrow');
+      if (cautArrow) cautArrow.style.transform = '';
+      return;
+    }
+
+    // 8-3. 취소환불 (refund-body)
+    var refundBody = document.getElementById('refund-body');
+    if (refundBody && refundBody.style.display !== 'none') {
+      refundBody.style.display = 'none';
+      var refArrow = document.getElementById('refund-arrow');
+      if (refArrow) refArrow.style.transform = '';
+      return;
+    }
+
+    // 8-4. 자주묻는질문 목록 (qna-body)
+    var qnaBody = document.getElementById('qna-body');
+    if (qnaBody && qnaBody.style.display !== 'none') {
+      qnaBody.style.display = 'none';
+      var qnaArrow = document.getElementById('qna-arrow');
+      if (qnaArrow) qnaArrow.style.transform = '';
       return;
     }
 
