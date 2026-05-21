@@ -5053,214 +5053,163 @@ window.addEventListener('load', initHundert);
 <!-- 바코드 팝업은 JS openBarcodePopup()이 동적으로 body에 생성/제거함 -->
 
 <script>
-// ── 안드로이드 뒤로가기 팝업 닫기 (스택 방식) ──
+// ── 안드로이드 뒤로가기: 탭 + 팝업 통합 관리 ──
 (function() {
-  // 열린 팝업을 스택으로 관리
-  var _stack = 0;
 
-  // ★ 핵심: 페이지 로드 시 현재 state를 base로 교체하고 dummy를 하나 더 push
-  // → 뒤로가기하면 base state로 가고, popstate에서 dummy를 다시 push해 앱 종료 방지
-  history.replaceState({ base: true }, '');
-  history.pushState({ guard: true }, '');
+  var TAB_ORDER = ['home','ferry','coconara','dalkom','hundert','food'];
+  var _currentPage = 'home';
+  var _popupDepth  = 0;  // 현재 떠있는 팝업 개수
 
+  // ── 페이지 초기 state 세팅 ──
+  history.replaceState({ page: 'home', popupDepth: 0 }, '');
+
+  // ── showPage 훅: 탭 전환 시 history push ──
+  var _origShowPage = window.showPage;
+  window.showPage = function(id, btn) {
+    if (id === _currentPage) {
+      // 같은 탭 재클릭 → 그냥 실행
+      _origShowPage.apply(this, arguments);
+      return;
+    }
+    // 팝업 열려있으면 먼저 전부 닫기
+    _popupDepth = 0;
+    _currentPage = id;
+    history.pushState({ page: id, popupDepth: 0 }, '');
+    _origShowPage.apply(this, arguments);
+  };
+
+  // ── 팝업 열기/닫기 ──
   function pushPopupState() {
-    history.pushState({ popup: true, depth: _stack }, '');
-    _stack++;
+    _popupDepth++;
+    history.pushState({ page: _currentPage, popupDepth: _popupDepth }, '');
   }
-
   function popPopupState() {
-    if (_stack > 0) _stack--;
+    if (_popupDepth > 0) _popupDepth--;
   }
-
   window.pushPopupState = pushPopupState;
   window.popPopupState  = popPopupState;
 
-  // 뒤로가기 감지
+  // ── popstate: 뒤로가기 감지 ──
   window.addEventListener('popstate', function(e) {
-    if (_stack > 0) {
-      // 팝업 열려있음 → 닫기
-      _stack--;
-      closeTopPopup();
+    var state = e.state;
+
+    if (!state) {
+      // state 없음 = 완전한 첫 페이지 이전 → 앱 종료 허용 (정상)
+      return;
     }
-    // 항상 guard state를 다시 push → 다음 뒤로가기도 여기서 잡힘
-    // (팝업 유무 상관없이 앱이 절대 종료되지 않음)
-    history.pushState({ guard: true }, '');
+
+    if (state.popupDepth > 0 || _popupDepth > 0) {
+      // 팝업 닫기
+      if (_popupDepth > 0) {
+        _popupDepth--;
+        closeTopPopup();
+      }
+      return;
+    }
+
+    if (state.page && state.page !== _currentPage) {
+      // 탭 전환 (뒤로가기로 이전 탭 복원)
+      _currentPage = state.page;
+      var idx = TAB_ORDER.indexOf(state.page);
+      var btn = document.querySelectorAll('.tab-item')[idx] || null;
+      _origShowPage(state.page, btn);
+      return;
+    }
   });
 
-  // 현재 열려있는 최상위 팝업 하나만 닫기
+  // ── 현재 열린 최상위 팝업 닫기 ──
   function closeTopPopup() {
     // 1. 바코드 팝업 (동적 생성)
     if (document.getElementById('_barcodeModal')) { closeBarcodePopup(); return; }
-
     // 2. QNA 팝업
     var qna = document.getElementById('qna-popup');
-    if (qna && qna.style.display !== 'none') { closeQnaPopup(); return; }
-
+    if (qna && qna.style.display !== 'none') { window.closeQnaPopup && window.closeQnaPopup(); return; }
     // 3. spot 팝업
     var spot = document.getElementById('spotPopup');
     if (spot && spot.classList.contains('open')) { closeSpot(); return; }
-
     // 4. 갤러리
     var gallery = document.getElementById('galleryOverlay');
     if (gallery && gallery.classList.contains('open')) { closeGallery(); return; }
-
-    // 5. 쿠폰/인터뷰
+    // 5. 쿠폰
     var coupon = document.getElementById('couponPopupBg');
     if (coupon && coupon.classList.contains('open')) { closeCouponPopup(); return; }
+    // 6. 인터뷰
     var interview = document.getElementById('interviewPopupBg');
-    if (interview && interview.classList.contains('open')) { closeInterviewPopup(); return; }
-
-    // 6. 달콤 편집/미디어
+    if (interview && interview.classList.contains('open')) { closeInterviewPopup && closeInterviewPopup(); return; }
+    // 7. 달콤 편집/미디어
     var dalEdit = document.getElementById('dalkomEditBg');
-    if (dalEdit && dalEdit.classList.contains('open')) { closeDalkomEdit(); return; }
+    if (dalEdit && dalEdit.classList.contains('open')) { closeDalkomEdit && closeDalkomEdit(); return; }
     var dalMedia = document.getElementById('dalkomMediaBg');
-    if (dalMedia && dalMedia.classList.contains('open')) { closeDalkomMediaAdmin(); return; }
-
-    // 7. 핀 편집/관리
+    if (dalMedia && dalMedia.classList.contains('open')) { closeDalkomMediaAdmin && closeDalkomMediaAdmin(); return; }
+    // 8. 핀 편집/관리
     var pinEdit = document.getElementById('pinEditModalBg');
     if (pinEdit && pinEdit.classList.contains('open')) { closePinEdit(); return; }
     var pinManage = document.getElementById('pinManagePanel');
     if (pinManage && pinManage.style.display !== 'none') { closePinManage(); return; }
-
-    // 8. 필독사항 (caution-home 접기)
-    var cautionBody = document.getElementById('caution-home-body');
-    if (cautionBody && cautionBody.style.display !== 'none') {
-      cautionBody.style.display = 'none';
-      var arrow = document.getElementById('caution-home-arrow');
-      if (arrow) arrow.style.transform = '';
-      return;
+    // 9. 맛집 폼
+    var foodForm = document.getElementById('foodFormBg');
+    if (foodForm && foodForm.classList.contains('open')) { closeFoodForm && closeFoodForm(); return; }
+    // 10. 패널 (panel-directions, panel-hundert 등)
+    var openPanels = document.querySelectorAll('.panel.open');
+    if (openPanels.length > 0) { closePanel(openPanels[openPanels.length-1].id); return; }
+    // 11. 동적 photo viewer
+    var pv = document.getElementById('photoViewerOverlay');
+    if (pv) { document.body.removeChild(pv); return; }
+    // 12. 아코디언 항목들 (접기/펼치기)
+    var noCustomer = document.getElementById('no-customer-body');
+    if (noCustomer && noCustomer.style.display !== 'none') {
+      noCustomer.style.display = 'none';
+      var na = document.querySelector('.no-arrow'); if (na) na.style.transform = 'rotate(0deg)'; return;
     }
-
-    // 8-1. 이용불가 고객 안내
-    var noCustomerBody = document.getElementById('no-customer-body');
-    if (noCustomerBody && noCustomerBody.style.display !== 'none') {
-      noCustomerBody.style.display = 'none';
-      var noArrow = document.querySelector('.no-arrow');
-      if (noArrow) noArrow.style.transform = 'rotate(0deg)';
-      return;
-    }
-
-    // 8-2. 탑승전 꼭 확인 (caution-body)
     var cautionBody2 = document.getElementById('caution-body');
     if (cautionBody2 && cautionBody2.style.display !== 'none') {
       cautionBody2.style.display = 'none';
-      var cautArrow = document.getElementById('caution-arrow');
-      if (cautArrow) cautArrow.style.transform = '';
-      return;
+      var ca = document.getElementById('caution-arrow'); if (ca) ca.style.transform = ''; return;
     }
-
-    // 8-3. 취소환불 (refund-body)
     var refundBody = document.getElementById('refund-body');
     if (refundBody && refundBody.style.display !== 'none') {
       refundBody.style.display = 'none';
-      var refArrow = document.getElementById('refund-arrow');
-      if (refArrow) refArrow.style.transform = '';
-      return;
+      var ra = document.getElementById('refund-arrow'); if (ra) ra.style.transform = ''; return;
     }
-
-    // 8-4. 자주묻는질문 목록 (qna-body)
     var qnaBody = document.getElementById('qna-body');
     if (qnaBody && qnaBody.style.display !== 'none') {
       qnaBody.style.display = 'none';
-      var qnaArrow = document.getElementById('qna-arrow');
-      if (qnaArrow) qnaArrow.style.transform = '';
-      return;
+      var qa = document.getElementById('qna-arrow'); if (qa) qa.style.transform = ''; return;
     }
-
-    // 9. 맛집 폼
-    var foodForm = document.getElementById('foodFormBg');
-    if (foodForm && foodForm.classList.contains('open')) { closeFoodForm(); return; }
-
-    // 10. 패널들 (panel-directions, panel-caution, panel-hundert 등)
-    var openPanels = document.querySelectorAll('.panel.open');
-    if (openPanels.length > 0) {
-      closePanel(openPanels[openPanels.length - 1].id);
-      return;
+    var cautionHome = document.getElementById('caution-home-body');
+    if (cautionHome && cautionHome.style.display !== 'none') {
+      cautionHome.style.display = 'none';
+      var cha = document.getElementById('caution-home-arrow'); if (cha) cha.style.transform = ''; return;
     }
-
-    // 11. 동적 photo viewer
-    var photoViewer = document.getElementById('photoViewerOverlay');
-    if (photoViewer) { document.body.removeChild(photoViewer); return; }
   }
 
-  // ── 열기 함수에 pushPopupState 자동 훅 ──
+  // ── 팝업 열기 함수에 훅 연결 (load 후) ──
   window.addEventListener('load', function() {
-
-    // openPanel 훅
-    var _origOpenPanel = window.openPanel;
-    window.openPanel = function() { pushPopupState(); _origOpenPanel.apply(this, arguments); };
-
-    // closePanel 훅
-    var _origClosePanel = window.closePanel;
-    window.closePanel = function() { popPopupState(); _origClosePanel.apply(this, arguments); };
-
-    // openSpot / closeSpot
-    var _origOpenSpot = window.openSpot;
-    window.openSpot = function() { pushPopupState(); _origOpenSpot.apply(this, arguments); };
-    var _origCloseSpot = window.closeSpot;
-    window.closeSpot = function() { popPopupState(); _origCloseSpot.apply(this, arguments); };
-
-    // openGallery / closeGallery
-    var _origOpenGallery = window.openGallery;
-    window.openGallery = function() { pushPopupState(); _origOpenGallery.apply(this, arguments); };
-    var _origCloseGallery = window.closeGallery;
-    window.closeGallery = function() { popPopupState(); _origCloseGallery.apply(this, arguments); };
-
-    // openCouponPopup / closeCouponPopup
-    var _origOpenCoupon = window.openCouponPopup;
-    window.openCouponPopup = function() { pushPopupState(); _origOpenCoupon.apply(this, arguments); };
-    var _origCloseCoupon = window.closeCouponPopup;
-    window.closeCouponPopup = function() { popPopupState(); _origCloseCoupon.apply(this, arguments); };
-
-    // openInterviewPopup / closeInterviewPopup
-    if (window.openInterviewPopup) {
-      var _origOpenInterview = window.openInterviewPopup;
-      window.openInterviewPopup = function() { pushPopupState(); _origOpenInterview.apply(this, arguments); };
+    function wrap(openFn, closeFn) {
+      if (openFn)  window[openFn]  = (function(orig) { return function() { pushPopupState(); orig.apply(this, arguments); }; })(window[openFn]);
+      if (closeFn) window[closeFn] = (function(orig) { return function() { popPopupState();  orig.apply(this, arguments); }; })(window[closeFn]);
     }
-    if (window.closeInterviewPopup) {
-      var _origCloseInterview = window.closeInterviewPopup;
-      window.closeInterviewPopup = function() { popPopupState(); _origCloseInterview.apply(this, arguments); };
-    }
+    wrap('openSpot',             'closeSpot');
+    wrap('openGallery',          'closeGallery');
+    wrap('openCouponPopup',      'closeCouponPopup');
+    wrap('openInterviewPopup',   'closeInterviewPopup');
+    wrap('openBarcodePopup',     'closeBarcodePopup');
+    wrap('openQnaPopup',         'closeQnaPopup');
+    wrap('openDalkomEdit',       'closeDalkomEdit');
+    wrap('openDalkomMediaAdmin', 'closeDalkomMediaAdmin');
+    wrap('openPinAdd',           null);
+    wrap('viewDalkomPhoto_generic', null);
 
-    // openBarcodePopup / closeBarcodePopup
-    var _origOpenBarcode = window.openBarcodePopup;
-    window.openBarcodePopup = function() { pushPopupState(); _origOpenBarcode.apply(this, arguments); };
-    var _origCloseBarcode = window.closeBarcodePopup;
-    window.closeBarcodePopup = function() { popPopupState(); _origCloseBarcode.apply(this, arguments); };
+    // openPanel / closePanel
+    var _op = window.openPanel;
+    window.openPanel = function() { pushPopupState(); _op.apply(this, arguments); };
+    var _cp = window.closePanel;
+    window.closePanel = function() { popPopupState(); _cp.apply(this, arguments); };
 
-    // openQnaPopup / closeQnaPopup
-    if (window.openQnaPopup) {
-      var _origOpenQna = window.openQnaPopup;
-      window.openQnaPopup = function() { pushPopupState(); _origOpenQna.apply(this, arguments); };
-    }
-    if (window.closeQnaPopup) {
-      var _origCloseQna = window.closeQnaPopup;
-      window.closeQnaPopup = function() { popPopupState(); _origCloseQna.apply(this, arguments); };
-    }
-
-    // toggleCautionHome — 열릴 때만 push
-    var _origToggleCaution = window.toggleCautionHome;
-    if (_origToggleCaution) {
-      window.toggleCautionHome = function() {
-        var body = document.getElementById('caution-home-body');
-        var isOpen = body && body.style.display !== 'none';
-        if (!isOpen) pushPopupState(); // 닫혀있으면 열리는 것 → push
-        else popPopupState();           // 열려있으면 닫히는 것 → pop
-        _origToggleCaution.apply(this, arguments);
-      };
-    }
-
-    // dalkomEdit / dalkomMedia / pinManage / pinEdit / foodForm
-    if (window.openDalkomEdit)   { var _o=window.openDalkomEdit;   window.openDalkomEdit   = function(){ pushPopupState(); _o.apply(this,arguments); }; }
-    if (window.closeDalkomEdit)  { var _c=window.closeDalkomEdit;  window.closeDalkomEdit  = function(){ popPopupState();  _c.apply(this,arguments); }; }
-    if (window.openDalkomMediaAdmin)  { var _o2=window.openDalkomMediaAdmin;  window.openDalkomMediaAdmin  = function(){ pushPopupState(); _o2.apply(this,arguments); }; }
-    if (window.closeDalkomMediaAdmin) { var _c2=window.closeDalkomMediaAdmin; window.closeDalkomMediaAdmin = function(){ popPopupState();  _c2.apply(this,arguments); }; }
-    if (window.closePinManage)   { var _cm=window.closePinManage;  window.closePinManage   = function(){ popPopupState();  _cm.apply(this,arguments); }; }
-    if (window.closePinEdit)     { var _ce=window.closePinEdit;    window.closePinEdit     = function(){ popPopupState();  _ce.apply(this,arguments); }; }
-    if (window.closeFoodForm)    { var _cf=window.closeFoodForm;   window.closeFoodForm    = function(){ popPopupState();  _cf.apply(this,arguments); }; }
-    if (window.openPinAdd)       { var _op=window.openPinAdd;      window.openPinAdd       = function(){ pushPopupState(); _op.apply(this,arguments); }; }
-    if (window.viewDalkomPhoto_generic) { var _vd=window.viewDalkomPhoto_generic; window.viewDalkomPhoto_generic = function(){ pushPopupState(); _vd.apply(this,arguments); }; }
-
+    // closePinManage / closePinEdit / closeFoodForm
+    if (window.closePinManage) { var _cm=window.closePinManage; window.closePinManage=function(){ popPopupState(); _cm.apply(this,arguments); }; }
+    if (window.closePinEdit)   { var _ce=window.closePinEdit;   window.closePinEdit  =function(){ popPopupState(); _ce.apply(this,arguments); }; }
+    if (window.closeFoodForm)  { var _cf=window.closeFoodForm;  window.closeFoodForm =function(){ popPopupState(); _cf.apply(this,arguments); }; }
   });
 
 })();
