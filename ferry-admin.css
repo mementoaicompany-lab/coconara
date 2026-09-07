@@ -1,0 +1,66 @@
+/* Secure daily ferry management; isolated from the site's other editor panels. */
+.coco-ferry-login,.coco-ferry-admin-backdrop{z-index:1400;background:rgba(26,45,39,.5);backdrop-filter:blur(5px)}
+body:has(.coco-ferry-login.open),body:has(.coco-ferry-admin.open){overflow:hidden}
+.coco-ferry-login{padding:20px;box-sizing:border-box;overflow-y:auto;overscroll-behavior:contain}
+.coco-ferry-login .admin-modal{width:100%;max-width:410px;padding:28px;border:1px solid #eadbd5;border-radius:24px;background:#fffdfa;box-shadow:0 24px 80px #183c332b;box-sizing:border-box}
+.coco-ferry-login .admin-modal h2{text-align:left;margin:6px 0 8px;color:#234e42;font-size:23px;letter-spacing:-.6px}
+.coco-ferry-login .admin-modal p{text-align:left;font-size:13px;color:#66796f;line-height:1.7;margin:0 0 24px}
+.ferry-admin-eyebrow{color:#a34c64;font-size:10px;font-weight:900;letter-spacing:1.7px}
+.coco-ferry-login form label{display:block;font-size:13px;font-weight:800;color:#334e43;margin-bottom:7px}
+.coco-ferry-login .admin-input{margin-bottom:17px;border:1px solid #d7dfd8;border-radius:12px;background:#fff;padding:13px 14px;font:inherit;font-size:16px;color:#263e34;min-height:48px}
+.coco-ferry-login .admin-input:focus{border-color:#438568;box-shadow:0 0 0 3px #43856820}
+.coco-ferry-login .admin-login-btn{background:#285d48;font:inherit;font-size:15px;font-weight:850;min-height:48px;border-radius:12px;margin-top:3px}
+.coco-ferry-login .admin-err{font-size:12px;line-height:1.6;min-height:20px;margin:13px 0 0;color:#9b354b}
+.ferry-admin-text-button{display:block;border:0;background:none;color:#64796e;font:inherit;font-size:13px;padding:10px 18px;margin:5px auto 0;cursor:pointer;min-height:44px}
+.coco-ferry-admin{z-index:1410;box-sizing:border-box;max-width:540px;width:calc(100% - 24px);bottom:max(12px,env(safe-area-inset-bottom));max-height:calc(100dvh - 30px - env(safe-area-inset-top));border-radius:26px;background:#fcfbf7;padding:12px 24px 22px;box-shadow:0 24px 80px #183c3340;border:1px solid #e4e9dd;overscroll-behavior:contain;scroll-padding:20px;-webkit-overflow-scrolling:touch}
+.coco-ferry-admin [hidden],#ferry-status-banner [hidden]{display:none!important}
+.ferry-admin-handle{width:38px;height:4px;border-radius:99px;background:#d5dfd5;margin:0 auto 18px}
+.ferry-admin-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:19px}
+.ferry-admin-top h2{font-size:23px;line-height:1.3;letter-spacing:-.7px;color:#244c3e;margin:5px 0 0;outline:none}
+.ferry-admin-close{width:44px;height:44px;flex-shrink:0;border:1px solid #dce4d9;border-radius:50%;background:#fff;color:#597565;font:inherit;font-size:27px;line-height:1;cursor:pointer}
+.ferry-admin-summary{display:grid;gap:7px;background:#edf4ed;border:1px solid #dce8dc;border-radius:16px;padding:15px 16px;margin-bottom:22px;color:#3b614d}
+.ferry-admin-summary strong{font-size:15px;letter-spacing:-.2px}.ferry-admin-summary span{font-size:13px;font-weight:750}.ferry-admin-summary small{font-size:11px;line-height:1.5;color:#6b7d6e}
+#ferryAdminConnection[data-connected="false"]{color:#916417}
+.coco-ferry-admin fieldset{padding:0;border:0;margin:0;min-width:0}.coco-ferry-admin legend{font-size:14px;font-weight:850;color:#2c4f3f;margin-bottom:11px;padding:0}
+.ferry-admin-options{display:grid;gap:9px;margin-bottom:22px}
+.ferry-admin-option{display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid #dce4db;border-radius:14px;background:#fff;cursor:pointer;min-height:42px;transition:border-color .15s,background .15s}
+.ferry-admin-option:has(input:checked){border-color:#458663;background:#edf7ee;box-shadow:0 0 0 1px #45866320}
+.ferry-admin-option input{accent-color:#347554;width:19px;height:19px;flex-shrink:0;margin:0}.ferry-admin-option span{display:grid;gap:4px}.ferry-admin-option strong{color:#284a3b;font-size:14px;font-weight:850}.ferry-admin-option small{color:#6c7d70;font-size:12px;line-height:1.5}
+.ferry-admin-field{margin:0 0 19px}.ferry-admin-field>label{display:block;font-size:13px;font-weight:850;color:#2e503f;margin:0 0 9px}.ferry-admin-field>label span{font-size:11px;color:#778776;font-weight:600;margin-left:5px}
+.ferry-admin-field input,.ferry-admin-field textarea{box-sizing:border-box;width:100%;border:1px solid #d5dfd4;border-radius:12px;background:#fff;color:#294738;font:inherit;font-size:16px;padding:12px 13px;outline:none;min-height:47px}
+.ferry-admin-field textarea{font-size:14px;line-height:1.8;resize:vertical;min-height:112px;max-height:240px}
+.ferry-admin-field input:focus,.ferry-admin-field textarea:focus{border-color:#438568;box-shadow:0 0 0 3px #43856820}
+.ferry-admin-field p{font-size:11px;color:#6b7b6d;line-height:1.7;margin:7px 0 0}.ferry-admin-field-footer{display:flex;justify-content:space-between;gap:10px;color:#7a887a;font-size:10px;line-height:1.7;margin-top:6px}.ferry-admin-field-footer span:last-child{white-space:nowrap}
+.ferry-admin-day-note{padding:12px 13px;border-radius:10px;background:#f6f0e3;color:#7c6845;font-size:11px;line-height:1.8;margin:0 0 12px}
+#ferryAdminMessage{font-size:12px;line-height:1.7;color:#536f5d;margin:0 0 10px;white-space:pre-wrap;overflow-wrap:anywhere}#ferryAdminMessage:empty{display:none}#ferryAdminMessage[data-kind="error"]{color:#a33447}#ferryAdminMessage[data-kind="success"]{color:#236f4c;font-weight:750}
+.ferry-admin-save{display:block;width:100%;border:0;border-radius:13px;min-height:50px;padding:13px 15px;background:#285d48;color:#fff;font:inherit;font-size:15px;font-weight:850;cursor:pointer;box-shadow:0 4px 13px #285d481b}
+.coco-ferry-admin .admin-logout{background:transparent;color:#6b7e6d;font-size:12px;padding:11px;min-height:44px;border:1px solid #dce4d9;border-radius:12px;margin-top:10px}
+.coco-ferry-admin button:disabled,.coco-ferry-login button:disabled{opacity:.5;cursor:wait}.coco-ferry-admin fieldset:disabled{opacity:.65}
+.coco-ferry-admin button:focus-visible,.coco-ferry-login button:focus-visible,.ferry-admin-option:focus-within{outline:3px solid #d67e95;outline-offset:3px}
+#ferry-status-banner.shortened{background:#fff3da;border:1.5px solid #e8bd68;box-shadow:0 4px 18px #bd88271a}
+#ferry-status-banner.shortened .fsb-title{color:#795017}#ferry-status-banner.shortened .fsb-sub{color:#7a6036}
+#ferry-status-banner.pending .fsb-icon{animation:none}#ferry-status-banner .fsb-sub{font-size:11px;line-height:1.65}
+#fsb-updated{font-size:10px;line-height:1.6;margin-top:6px;opacity:.8}#fsb-memo-text{white-space:pre-wrap;overflow-wrap:anywhere}
+#ferry-status-banner.cancel #fsb-memo-wrap,#ferry-status-banner.closed #fsb-memo-wrap{background:#ffffffeb!important;border-left-color:#e1c1a3!important}
+#ferry-status-banner.shortened #fsb-memo-wrap,#ferry-status-banner.pending #fsb-memo-wrap{background:#fffaf0!important;border-left-color:#b48832!important}
+@media(max-width:420px){.coco-ferry-admin{width:100%;bottom:0;border-radius:23px 23px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));max-height:calc(100dvh - 14px - env(safe-area-inset-top))}.ferry-admin-top h2{font-size:21px}.coco-ferry-login{padding:14px}.coco-ferry-login .admin-modal{padding:24px 20px}.ferry-admin-field-footer{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.ferry-admin-option{transition:none}}
+
+/* showPage controls visibility: the admin entry belongs to the food tab only. */
+.admin-fab{
+  position:fixed;
+  left:max(12px,env(safe-area-inset-left,0px),calc((100vw - var(--shell,600px))/2 + 12px))!important;
+  right:auto!important;
+  bottom:calc(var(--bottom-nav-space,calc(86px + env(safe-area-inset-bottom,0px))) + 14px)!important;
+  width:44px;
+  height:44px;
+  min-width:44px;
+  min-height:44px;
+  padding:0;
+  border:1px solid #d8e1d8;
+  background:#fffffff0;
+  color:#52685b;
+  font-size:18px;
+  opacity:1;
+  box-shadow:0 3px 12px #294d3918;
+}

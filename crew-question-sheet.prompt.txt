@@ -1,0 +1,15 @@
+Use case: stylized-concept
+Asset type: production website animation sprite sheet, not a UI mockup.
+Primary request: Generate exactly one 1536 x 1024 PNG sprite sheet: 3 columns by 2 rows, exactly six equal 512 x 512 square frames, no visible gridlines or borders. Each frame depicts small successive motions in the same fixed-camera scene of an adult woman visitor asking an adult crewman WHICH ferry she should board.
+Style reference: match the visible reference's friendly, polished high-end 3D cartoon: smooth rounded warm faces, expressive dark eyes, chestnut hair, subtle fabric texture, soft studio daylight and pleasant gentle expressions. The recurring woman has a shoulder-length slightly wavy chestnut-brown side-parted bob, pink button-front knitted cardigan over ivory top and blue jeans. Adult proportions stylized like the reference, not a child. Do not copy reference lettering or coupon activity.
+Scene: quiet ferry gangway, a supporting small white and sea-blue Udo-style vehicle ferry behind the characters, calm turquoise water and pale light-blue backdrop consistent across all six cells. Friendly adult male crewman wearing a navy and white practical working uniform with white/navy cap. Blank pale tickets, blank boarding sign without any marks.
+Fixed composition: woman on left facing crewman on right in every cell, both presented approximately knee-up, same positions, same camera, same scale and eye lines across all six frames. Faces, hands, elbows, and arms wholly within each cell, with generous padding. Ship supports scene and does not crowd faces. Keep the same visible ship and gangway and unmoving background in each frame. Each cell center is x=256,768,1280 and y=256,768.
+Reading order, left-to-right top row then bottom:
+1. Woman holds ticket in front of her and looks attentively at crewman.
+2. Woman raises her free hand gently to ask a question while holding ticket in other hand.
+3. Crewman leans slightly forward and listens attentively, woman watches him.
+4. Crewman gently gestures toward vessel as he explains which ferry or boarding route; woman listens, holding ticket.
+5. Woman turns her gaze toward a completely blank boarding sign beside the vessel, crewman remains attentive.
+6. Woman makes a small attentive nod and still looks down to check the ticket.
+Meaning: visitor is checking WHICH ferry before boarding; do not depict certainty of real-time route, schedule, or operating status.
+Constraints: no text anywhere, no letters, no numbers, no logos, no watermarks, no speech bubbles, no checkmarks, no yes symbols, no assurance/status labels. Do not accidentally put symbols on tickets, hat, vessel, or sign. Exactly six cells in a mechanically aligned 3 by 2 matrix. No additional panels or duplicate people within a cell. Output a single 1536x1024 image.

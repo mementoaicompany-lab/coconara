@@ -1,0 +1,16 @@
+Use case: stylized-concept
+Asset type: production-ready transparent 6-frame character sprite sheet for the Coconara Udo holiday website.
+Primary request: a friendly fictional adult male Coconara shop-owner guide, shown waist-up in six small speaking/recommending gestures. Exactly one character per cell, the SAME man repeated consistently. No real-person likeness. Output exactly 1536 × 1024 pixels, with a strict 3-column × 2-row grid of SIX equal 512 × 512 square cells.
+Style/medium: premium friendly polished 3D cartoon animation style matching the observed Coconara vehicle illustrations and coupon-journey character art: softly rounded human features, expressive dark eyes, finely sculpted neat hair, soft peach skin, subtle cloth weave, clean high quality 3D rendering. Adult appearance with a warm reassuring smile, natural adult proportions slightly stylized.
+Character identity: fictional Korean adult man approximately late thirties, neat short dark charcoal-brown hair with a simple side part, clean shaven, friendly expressive eyebrows. Coral pink short-sleeve polo shirt with a collar and two small matching buttons, no logo or text. The coral/pink shirt and tidy non-curly haircut distinguish him from a separate teal-shirt ice-cream shop character. Same face, hair, clothing, scale and camera angle in all six cells.
+Grid geometry: invisible cell boundaries at x=0,512,1024,1536 and y=0,512,1024. Each character is centered at local x=256. Identical head height and torso scale in every cell. Top of hair near local y=52, torso waist crop at local y=460 in every cell. Keep ALL pixels of each character, especially full fingers, hands, head and elbows, within local x=40..472 and local y=48..464, leaving transparent margins. No parts touch a cell boundary and no pose overlaps any neighboring cell. Waist-up portrait with a consistent horizontal lower torso baseline.
+Six poses in reading order:
+1. Top left: warm open-hand introduction, friendly lightly open mouth as if greeting, one relaxed palm opened beside torso.
+2. Top middle: gentle speaking expression with one hand resting on chest.
+3. Top right: small friendly pointing gesture toward the viewer's right, elbow tucked, complete pointing hand inside the cell.
+4. Bottom left: smiling blink with BOTH eyes gently closed, one relaxed open-hand gesture.
+5. Bottom middle: inviting gesture with two open palms, kept modestly spread so both complete hands remain inside the cell.
+6. Bottom right: warm concluding smile with a friendly small thumbs-up.
+Lighting/mood: warm, soft, balanced studio light, cheerful but calm, matching all frames with no dramatic changes.
+Background: genuinely fully transparent alpha channel around the characters, including between all cells. No color fill, no white background, no checkerboard drawn into image, no gradient, no cast shadows on a background.
+Constraints: exactly six same-sized waist-up character sprites in a regular 3×2 grid. Whole hands and every finger contained within each cell with generous margin. No extra people, text, numbers, captions, labels, props, speech balloons, logos, borders, cell dividers, watermarks, visible floor or background elements.

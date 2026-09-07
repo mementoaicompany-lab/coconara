@@ -1,0 +1,40 @@
+/* The repeated normal badge is removed; the status sentence and ship remain. */
+#ferry-status-banner #fsb-badge[hidden]{display:none!important}
+
+/* A full, uncropped vehicle against a gently passing illustrated coast. */
+.vehicle-stage{height:auto!important;aspect-ratio:1.5;min-height:270px;isolation:isolate;background:#93deef!important}
+.vehicle-coast{position:absolute;inset:0 -13%;background:url('udo-coastal-road.webp') center/cover no-repeat;animation:coastal-pan 16s ease-in-out infinite alternate;animation-play-state:var(--coastal-motion,paused);z-index:0}
+.vehicle-stage .vehicle-lane{display:none}
+.vehicle-stage .vehicle-sprite{position:absolute;left:12%;bottom:10%;width:76%;height:65%;object-fit:contain!important;animation:coastal-ride 5s ease-in-out infinite;animation-play-state:var(--coastal-motion,paused);filter:drop-shadow(0 6px 4px #253e4055);transform-origin:50% 90%}
+.vehicle-stage.fami .vehicle-sprite,.vehicle-stage.open .vehicle-sprite{animation-delay:0s}
+.vehicle-speech{position:absolute;z-index:3;top:7%;left:50%;width:max-content;max-width:88%;padding:10px 17px;border:2px solid #fff;border-radius:20px;background:#fffffff5;color:#28594e;box-shadow:0 5px 0 #294a421a,0 8px 20px #396b4915;font-size:clamp(16px,4.5vw,23px);font-weight:900;line-height:1.35;text-align:center;transform:translateX(-50%);transform-origin:45% 100%;animation:vehicle-introduction 5s ease-in-out infinite;animation-play-state:var(--coastal-motion,paused);word-break:keep-all;overflow-wrap:anywhere}
+.vehicle-speech:after{content:'';position:absolute;bottom:-11px;left:43%;width:17px;height:17px;background:#fff;clip-path:polygon(0 0,100% 0,12% 100%)}
+.vehicle-stage .motion-toggle{z-index:4;bottom:10px;right:10px;background:#ffffffec;border-color:#e1e9e4;min-height:36px;font-size:12px;color:#375c50}
+@keyframes coastal-pan{from{transform:translateX(5%)}to{transform:translateX(-5%)}}
+@keyframes coastal-ride{0%,100%{transform:translate(-2%,0) rotate(-.6deg)}25%{transform:translate(0,-2px) rotate(.3deg)}50%{transform:translate(2%,0) rotate(.5deg)}75%{transform:translate(0,-3px) rotate(-.2deg)}}
+@keyframes vehicle-introduction{0%,7%{opacity:0;transform:translateX(-50%) translateY(10px) scale(.65)}15%{opacity:1;transform:translateX(-50%) translateY(-2px) scale(1.08)}21%,79%{opacity:1;transform:translateX(-50%) scale(1)}88%,100%{opacity:0;transform:translateX(-50%) translateY(5px) scale(.88)}}
+.vehicle-stage.motion-paused .vehicle-speech{animation:none;opacity:1;transform:translateX(-50%)}
+
+/* The speaker is Coconara's owner. Original identity and business text are retained. */
+.owner-reading{border:1px solid #edceda!important;background:#fff!important}
+.owner-reading-header{position:relative;display:grid!important;grid-template-columns:42% minmax(0,1fr);align-items:center!important;gap:0!important;padding:24px 16px 44px 0!important;margin:0!important;background:linear-gradient(135deg,#fff0f5,#fff8f6)!important;min-height:230px;overflow:hidden}
+.owner-reading-header #dalkom-kakao-avatar{display:none!important}
+.owner-host-art{width:100%;aspect-ratio:1;position:relative;overflow:hidden;align-self:end}
+.owner-host-sheet{position:absolute!important;left:0;top:0;width:300%!important;max-width:none!important;height:200%!important;animation:owner-talk 4.2s steps(1,end) infinite;animation-play-state:var(--owner-motion,paused)}
+.owner-host-speech{position:relative;z-index:1;background:#fff;border:1px solid #f1cbd9;border-radius:19px;padding:15px 14px!important;box-shadow:0 5px 20px #9a416a0b;min-width:0;animation:owner-bubble .5s ease-out both;animation-play-state:var(--owner-motion,paused)}
+.owner-host-speech:before{content:'';position:absolute;width:15px;height:20px;left:-14px;top:55%;background:#fff;clip-path:polygon(100% 0,100% 100%,0 45%)}
+.owner-host-speech>div:first-child{font-size:clamp(17px,4.8vw,24px)!important;font-weight:900!important;line-height:1.45!important;color:#a92e5d!important;margin:0 0 5px!important;word-break:keep-all;overflow-wrap:anywhere}
+.owner-host-speech>div:nth-child(2){font-size:15px!important;color:#624851!important;line-height:1.65!important;font-weight:750!important}
+.owner-host-quote{font-size:14px!important;line-height:1.65;color:#7f676f;border-top:1px solid #f1e2e7;padding-top:10px;margin-top:12px;word-break:keep-all;overflow-wrap:anywhere}
+.owner-host-toggle{position:absolute;bottom:10px;right:16px;min-height:34px;padding:5px 10px;border:1px solid #eed5df;border-radius:18px;background:#ffffffd9;color:#8f5067;font-size:12px;cursor:pointer}
+.owner-beat-alt .owner-host-sheet{animation-name:owner-talk-alternate}.owner-beat-alt .owner-host-speech{animation-name:owner-bubble-alternate}
+.owner-reading .reading-index{border-bottom:1px solid #eedee5;padding-top:14px;padding-bottom:14px;background:#fff}
+.owner-reading:not(.show-all) .reading-title{position:absolute!important;clip-path:inset(50%);width:1px;height:1px;overflow:hidden;white-space:nowrap;margin:0!important;padding:0!important}
+.owner-reading.show-all .owner-host-quote{display:none}
+.owner-reading .reading-card{padding-top:20px!important}
+@keyframes owner-talk{0%,100%{transform:translate(0,0)}15%{transform:translate(-33.333333%,0)}32%{transform:translate(-66.666667%,0)}49%{transform:translate(0,-50%)}65%{transform:translate(-33.333333%,-50%)}82%{transform:translate(-66.666667%,-50%)}}
+@keyframes owner-talk-alternate{0%,100%{transform:translate(0,0)}15%{transform:translate(-33.333333%,0)}32%{transform:translate(-66.666667%,0)}49%{transform:translate(0,-50%)}65%{transform:translate(-33.333333%,-50%)}82%{transform:translate(-66.666667%,-50%)}}
+@keyframes owner-bubble{from{opacity:.5;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes owner-bubble-alternate{from{opacity:.5;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+@media(max-width:350px){.owner-reading-header{grid-template-columns:38% minmax(0,1fr);padding-right:12px!important}.owner-host-speech{padding:12px 10px!important}.owner-host-speech>div:first-child{font-size:17px!important}.owner-host-speech>div:nth-child(2),.owner-host-quote{font-size:14px!important}.vehicle-speech{font-size:16px;padding:9px 12px}}
+@media(prefers-reduced-motion:reduce){.vehicle-coast,.vehicle-stage .vehicle-sprite,.vehicle-speech,.owner-host-sheet,.owner-host-speech{animation:none!important}.vehicle-speech{opacity:1;transform:translateX(-50%)}.owner-host-sheet{transform:none}.owner-host-speech{opacity:1;transform:none}}

@@ -1,0 +1,110 @@
+[
+  {
+    "landmark": "망루등대",
+    "filename": "spot_mangru.jpg",
+    "sourcePage": "https://mementoaicompany-lab.github.io/coconara/",
+    "author": null,
+    "license": "Existing user website asset; no separate public reuse license verified",
+    "attribution": "기존 코코나라 웹사이트 사진",
+    "width": 900,
+    "height": 506,
+    "sourceType": "original-site-fallback",
+    "qualityNote": "Original resolution retained; not upscaled. A larger exact landmark image with verified reuse terms was not located."
+  },
+  {
+    "landmark": "하고수동해수욕장",
+    "filename": "spot_hagosudong.jpg",
+    "sourcePage": "https://www.visitjeju.net/photojeju/category?searchKeyword=%EC%9A%B0%EB%8F%84&pageSize=150&iIsDetailSearch=0",
+    "author": "현치훈",
+    "license": "PhotoJEJU usage field: 사용제한 없음; source credit required",
+    "attribution": "제주관광공사, Visitjeju.net",
+    "width": 4000,
+    "height": 6000,
+    "sourceType": "official-tourism-photo-library",
+    "qualityNote": null
+  },
+  {
+    "landmark": "우도 비양도",
+    "filename": "spot_biyang.jpg",
+    "sourcePage": "https://www.visitjeju.net/photojeju/category?searchKeyword=%EB%B9%84%EC%96%91%EB%8F%84&pageSize=150&iIsDetailSearch=0",
+    "author": null,
+    "license": "PhotoJEJU usage field: 사용제한 없음; source credit required",
+    "attribution": "제주관광공사, Visitjeju.net",
+    "width": 5440,
+    "height": 3627,
+    "sourceType": "official-tourism-photo-library",
+    "qualityNote": null
+  },
+  {
+    "landmark": "검멀레해변",
+    "filename": "spot_geomulrae.jpg",
+    "sourcePage": "https://mementoaicompany-lab.github.io/coconara/",
+    "author": null,
+    "license": "Existing user website asset; no separate public reuse license verified",
+    "attribution": "기존 코코나라 웹사이트 사진",
+    "width": 1024,
+    "height": 1280,
+    "sourceType": "original-site-fallback",
+    "qualityNote": "Original resolution retained; not upscaled. A larger exact landmark image with verified reuse terms was not located."
+  },
+  {
+    "landmark": "돌칸이해안",
+    "filename": "spot_dolkani.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Udo,_Jeju_Province,_South_Korea_06.jpg",
+    "author": "제주영상문화산업진흥원",
+    "license": "KOGL Type 1 / 공공누리 제1유형",
+    "attribution": "제주영상문화산업진흥원 / Wikimedia Commons / 공공누리 제1유형",
+    "width": 5272,
+    "height": 2962,
+    "sourceType": "official-public-photo-via-commons",
+    "qualityNote": null
+  },
+  {
+    "landmark": "서빈백사 / 산호해변",
+    "filename": "spot_seobinbaeksa.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:%EC%9A%B0%EB%8F%84_%EC%84%9C%EB%B9%88%EB%B0%B1%EC%82%AC.jpg",
+    "author": "Sohyeon Bak (Vaksso7)",
+    "license": "CC BY-SA 3.0",
+    "attribution": "Sohyeon Bak / Wikimedia Commons / CC BY-SA 3.0",
+    "width": 3456,
+    "height": 2304,
+    "sourceType": "wikimedia-commons",
+    "qualityNote": null
+  },
+  {
+    "landmark": "하우목동항 주변 해안 전경",
+    "filename": "spot_haumokdong.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Udo,_Jeju_Province,_South_Korea_01.jpg",
+    "author": "제주영상문화산업진흥원",
+    "license": "KOGL Type 1 / 공공누리 제1유형",
+    "attribution": "제주영상문화산업진흥원 / Wikimedia Commons / 공공누리 제1유형",
+    "width": 5272,
+    "height": 2962,
+    "sourceType": "official-public-photo-via-commons",
+    "qualityNote": null
+  },
+  {
+    "landmark": "천진항",
+    "filename": "spot_chunjin.jpg",
+    "sourcePage": "https://mementoaicompany-lab.github.io/coconara/",
+    "author": null,
+    "license": "Existing user website asset; no separate public reuse license verified",
+    "attribution": "기존 코코나라 웹사이트 사진",
+    "width": 900,
+    "height": 675,
+    "sourceType": "original-site-fallback",
+    "qualityNote": "Original resolution retained; not upscaled. A larger exact landmark image with verified reuse terms was not located."
+  },
+  {
+    "landmark": "훈데르트바서파크",
+    "filename": "spot_hundert.jpg",
+    "sourcePage": "https://www.visitjeju.net/photojeju/category?searchKeyword=%EC%9A%B0%EB%8F%84&pageSize=150&iIsDetailSearch=0",
+    "author": null,
+    "license": "PhotoJEJU usage field: 사용제한 없음; source credit required",
+    "attribution": "제주관광공사, Visitjeju.net",
+    "width": 5189,
+    "height": 3459,
+    "sourceType": "official-tourism-photo-library",
+    "qualityNote": null
+  }
+]

@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>우도 코코나라</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -673,13 +673,19 @@ body.admin-mode .dalkom-edit-btn { display:block; }
 </style>
 
 
+<link rel="stylesheet" href="reset.css?v=9">
+<link rel="stylesheet" href="mobile.css?v=9">
+<link rel="stylesheet" href="experience.css?v=9">
+<link rel="stylesheet" href="motion.css?v=9">
+<link rel="stylesheet" href="coastal.css?v=9">
+<link rel="stylesheet" href="ferry-admin.css?v=11">
 </head>
 <body>
 
 <!-- 헤더 -->
 <div class="header" style="background:linear-gradient(135deg,#FF6B9D,#FF8FAD);padding:10px 16px 10px;gap:10px;">
   <div class="header-logo" style="width:38px;height:38px;flex-shrink:0;">
-    <img src="로고_코코_원본동그라미.png" alt="코코나라" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:24px>🛵</span>'">
+    <img src="fami-cabin.webp" alt="코코나라" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:24px>🛵</span>'">
   </div>
   <div class="header-text" style="flex:1;min-width:0;">
     <h1 style="font-size:13px;color:white;font-weight:900;letter-spacing:-0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">코코나라 고객 전용 안내</h1>
@@ -693,6 +699,7 @@ body.admin-mode .dalkom-edit-btn { display:block; }
 </div>
 
 <!-- 탭바 -->
+<nav class="language-bar" aria-label="Language"><button type="button" data-lang="ko" lang="ko" aria-pressed="true"><span aria-hidden="true">🇰🇷</span> 한국어</button><button type="button" data-lang="en" lang="en" aria-pressed="false"><span aria-hidden="true">🇺🇸</span> English</button><button type="button" data-lang="zh-HK" lang="zh-HK" aria-pressed="false"><span aria-hidden="true">🇭🇰</span> 香港 · 繁中</button><button type="button" data-lang="ms" lang="ms" aria-pressed="false"><span aria-hidden="true">🇲🇾</span> Melayu</button><button type="button" data-lang="zh-TW" lang="zh-TW" aria-pressed="false"><span aria-hidden="true">🇹🇼</span> 台灣 · 繁中</button><button type="button" data-lang="ja" lang="ja" aria-pressed="false"><span aria-hidden="true">🇯🇵</span> 日本語</button></nav>
 <div class="tab-bar">
   <button class="tab-item active" onclick="showPage('home',this)"><span class="ti">🏠</span>홈</button>
   <button class="tab-item" onclick="showPage('ferry',this)"><span class="ti">⛴</span>배시간</button>
@@ -714,9 +721,9 @@ body.admin-mode .dalkom-edit-btn { display:block; }
       <div class="fsb-body">
         <!-- 상태 뱃지 -->
         <div id="fsb-date" style="font-size:10px;color:#888;margin-bottom:4px;"></div>
-        <div id="fsb-badge" style="display:inline-block;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;margin-bottom:4px;background:#1B8A4E;color:white;letter-spacing:0.5px;">✅ 정상 운항</div>
+        <div id="fsb-badge" hidden style="display:inline-block;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;margin-bottom:4px;background:#1B8A4E;color:white;letter-spacing:0.5px;">✅ 정상 운항</div>
         <div class="fsb-title" id="fsb-title">오늘 배는 정상 운항합니다</div>
-        <div class="fsb-sub" id="fsb-sub">매일 오전 8시 업데이트 · 탑승 전 꼭 확인하세요</div>
+        <div class="fsb-sub" id="fsb-sub">기본 시간표 기준 · 운항 변경 시 안내해 드립니다</div>
       </div>
     </div>
     <!-- 관리자 메모 -->
@@ -1351,7 +1358,7 @@ body.admin-mode .dalkom-edit-btn { display:block; }
 const spots = {
   coconara: {
     emoji:'🔑', tag:'코코나라', tagBg:'#FFE4ED', tagColor:'#FF8FAD',
-    photo:'spot_coconara.jpg',
+    photo:'fami-cabin.webp',
     title:'우도 코코나라',
     desc:'우도 하우목동항 바로 앞 도보 1분 거리의 No.1 프리미엄 전기차·스쿠터 렌탈 업체입니다. 환승연애 시즌3, 체인지데이즈 시즌2에 실제 출연한 우도 유일의 신뢰 브랜드예요.',
     tips:[
@@ -1487,7 +1494,7 @@ function openSpot(id) {
 
 var _spotSlideIndex = 0;
 function renderSpotSlider(id, s) {
-  var photos = JSON.parse(localStorage.getItem('coco_spot_photos_' + id) || '[]');
+  var photos = JSON.parse(localStorage.getItem('coco_spot_photos_v3_' + id) || '[]');
   var slidesEl = document.getElementById('spotPhotoSlides');
   var dotsEl = document.getElementById('spotPhotoDots');
   var counterEl = document.getElementById('spotPhotoCounter');
@@ -1538,7 +1545,7 @@ function triggerSpotPhoto() { document.getElementById('spotPhotoInput').click();
 function handleSpotPhoto(e) {
   var id = window._currentSpotId; if (!id) return;
   var files = e.target.files; if (!files) return;
-  var existing = JSON.parse(localStorage.getItem('coco_spot_photos_' + id) || '[]');
+  var existing = JSON.parse(localStorage.getItem('coco_spot_photos_v3_' + id) || '[]');
   var toRead = files.length;
   Array.from(files).forEach(function(file) {
     var r = new FileReader();
@@ -1546,7 +1553,7 @@ function handleSpotPhoto(e) {
       existing.push(ev.target.result);
       toRead--;
       if (toRead === 0) {
-        localStorage.setItem('coco_spot_photos_' + id, JSON.stringify(existing));
+        localStorage.setItem('coco_spot_photos_v3_' + id, JSON.stringify(existing));
         renderSpotSlider(id, spots[id]);
       }
     };
@@ -1568,6 +1575,9 @@ function getLastFerry(month) {
 }
 
 function updateFerry() {
+  if(window.CoconaraFerrySchedule) window.CoconaraFerrySchedule.render();
+  return; // The shared ferry module owns normal schedules and daily exceptions.
+
   const now = new Date();
   const month = now.getMonth() + 1;
   const curH = now.getHours(), curM = now.getMinutes();
@@ -1668,6 +1678,9 @@ function renderFerryCard(timeEl, remainEl, barEl, subEl, dep, lf) {
 
 // 성산항→하우목동항
 function updateFerryIn() {
+  if(window.CoconaraFerrySchedule) window.CoconaraFerrySchedule.render();
+  return; // The shared ferry module owns normal schedules and daily exceptions.
+
   var now = new Date();
   var curH = now.getHours(), curM = now.getMinutes();
   var month = now.getMonth() + 1;
@@ -1689,6 +1702,9 @@ setInterval(updateFerryIn, 30000);
 
 // 배시간 탭 전용 카운트다운 갱신
 function updateFerryPage() {
+  if(window.CoconaraFerrySchedule) window.CoconaraFerrySchedule.render();
+  return; // The shared ferry module owns normal schedules and daily exceptions.
+
   var now = new Date();
   var month = now.getMonth() + 1;
   var curH = now.getHours(), curM = now.getMinutes();
@@ -1865,58 +1881,7 @@ function openInterviewPopup(type) {
 }
 function closeInterviewPopup() { document.getElementById('interviewPopupBg').classList.remove('open'); }
 
-// ── 지도 자동차 애니메이션 (rAF — 스크롤 강제이동 없음) ──
-(function() {
-  var PTS = [[187,10],[189.5,14],[192.5,18.5],[193.5,22.5],[194.5,26.5],[211,30.5],[210.5,35],[206.5,39.5],[207.5,43.5],[210.5,48],[214,52.5],[224.5,57],[229,61],[237,65.5],[233.5,69.5],[226,74],[211.5,78.5],[208.5,83],[206,87],[207,91.5],[208.5,96],[210.5,100.5],[255.5,104.5],[256,108.5],[256,113],[256.5,117.5],[259.5,121.5],[262.5,125.5],[263,130],[265,134.5],[269,139],[273,143.5],[276.5,147.5],[276.5,152],[276.5,156.5],[278,160.5],[280,164.5],[278,169],[277.5,173.5],[277.5,178],[282,186.5],[284.5,190.5],[284.5,195],[284.5,199.5],[284.5,204.5],[284.5,209.5],[284.5,214.5],[284.5,219.5],[284.5,224.5],[284.5,229.5],[284.5,234.5],[284,239.5],[265.5,244],[266,249.5],[267.5,254.5],[269,259.5],[269.5,264.5],[268,269.5],[264,274.5],[258,278.5],[248,281.5],[235,284],[215,284.5],[185,282.5],[166,278.5],[155,274],[152,269.1],[118.3,264.8],[108.7,260.5],[101.1,256.2],[95.1,251.8],[93.6,247.5],[97.1,243.2],[102.7,238.9],[102.1,234.6],[102.1,230.2],[103.2,225.9],[102.7,221.6],[102.1,217.3],[100.6,213],[100.1,208.7],[100.1,204.3],[99.6,200],[99.6,195.7],[99.1,191.4],[97.6,187.1],[82,182.7],[82,178.4],[82,174.1],[82,169.8],[82,165.5],[82,161.1],[82,156.8],[87.5,152.5],[93.1,148.2],[96.1,143.9],[96.6,139.6],[93.6,135.2],[96.6,130.9],[96.1,126.6],[99.1,118],[102.7,113.6],[108.2,109.3],[114.2,105.0],[122.8,100.7],[127.3,96.4],[140.9,92.1],[140.9,87.7],[139.4,83.4],[138.4,79.1],[137.9,74.8],[137.9,70.5],[138.4,66.1],[136.4,61.8],[131.9,57.5],[126.8,53.2],[127.3,48.9],[128.3,44.5],[128.8,40.2],[130.4,35.9],[132.9,31.6],[136.4,27.3],[144,23],[147,18.6],[152.5,14.3],[161.1,10]];
-  var DUR = 12000;
-  var t0 = null;
-
-  // 전체 경로 길이 계산
-  var segs = [];
-  var total = 0;
-  for (var i = 1; i < PTS.length; i++) {
-    var dx = PTS[i][0]-PTS[i-1][0], dy = PTS[i][1]-PTS[i-1][1];
-    var l = Math.sqrt(dx*dx+dy*dy);
-    segs.push(l); total += l;
-  }
-
-  function getPos(frac) {
-    var target = frac * total, acc = 0;
-    for (var i = 0; i < segs.length; i++) {
-      if (acc + segs[i] >= target) {
-        var t = segs[i] > 0 ? (target-acc)/segs[i] : 0;
-        return [PTS[i][0]+t*(PTS[i+1][0]-PTS[i][0]), PTS[i][1]+t*(PTS[i+1][1]-PTS[i][1])];
-      }
-      acc += segs[i];
-    }
-    return PTS[PTS.length-1];
-  }
-
-  // 섬 중심 x=185 기준:
-  // 오른쪽(x>185) → 자동차 앞이 오른쪽(정방향, 🚗)
-  // 왼쪽(x<=185)  → 자동차 앞이 왼쪽(반전, 🚗)
-  var CENTER_X = 185;
-
-  function tick(ts) {
-    if (!t0) t0 = ts;
-    var frac = ((ts - t0) % DUR) / DUR;
-    var el = document.getElementById('map-car-emoji');
-    if (el) {
-      var p = getPos(frac);
-      var x = p[0].toFixed(1);
-      var y = p[1].toFixed(1);
-      if (p[0] > CENTER_X) {
-        // 오른쪽 — 좌우 반전
-        el.setAttribute('transform', 'translate(' + x + ',' + y + ') scale(-1,1)');
-      } else {
-        // 왼쪽 — 정방향
-        el.setAttribute('transform', 'translate(' + x + ',' + y + ')');
-      }
-    }
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-})();
+// The enhanced map uses the original coastal route.
 
 
 function toggleHomeFerryCheck() {
@@ -2160,25 +2125,9 @@ var FERRY_STATUS_MAP = {
 };
 
 // 운항상태 메모 저장
-function saveFerryMemo() {
-  var memo = document.getElementById('edit-ferry-memo').value.trim();
-  var d = getData();
-  d.ferryMemo = memo;
-  saveData(d);
-  applyFerryMemo(memo);
-  // Firebase 실시간 저장
-  if (window.fbSaveFerryMemo) window.fbSaveFerryMemo();
-  alert('메모가 저장됐어요! ✅');
+function saveFerryMemo() { /* Firebase module handles authenticated operations. */
 }
-function clearFerryMemo() {
-  var d = getData();
-  d.ferryMemo = '';
-  saveData(d);
-  applyFerryMemo('');
-  document.getElementById('edit-ferry-memo').value = '';
-  // Firebase 실시간 저장
-  if (window.fbClearFerryMemo) window.fbClearFerryMemo();
-  alert('메모를 지웠어요!');
+function clearFerryMemo() { /* Firebase module handles authenticated operations. */
 }
 function applyFerryMemo(memo) {
   var wrap = document.getElementById('fsb-memo-wrap');
@@ -2186,10 +2135,11 @@ function applyFerryMemo(memo) {
   if (!wrap || !text) return;
   if (memo && memo.trim()) {
     wrap.style.display = 'block';
-    text.innerHTML = memo.replace(/\n/g, '<br>');
+    text.textContent = memo;
+    text.style.whiteSpace = 'pre-wrap';
   } else {
     wrap.style.display = 'none';
-    text.innerHTML = '';
+    text.textContent = '';
   }
 }
 
@@ -2279,20 +2229,12 @@ function applyDalkomSections(sections) {
   });
 }
 
-function setFerryStatus(status) {
-  var d = getData();
-  d.ferryStatus = status;
-  d.ferryStatusDate = new Date().toDateString();
-  saveData(d);
-  applyFerryStatus(status);
-  // Firebase 실시간 저장
-  if (window.fbSetFerryStatus) window.fbSetFerryStatus(status);
-  closeAdminPanel();
+function setFerryStatus() { /* Firebase module handles authenticated operations. */
 }
 function applyFerryStatus(status) {
   var banner = document.getElementById('ferry-status-banner');
   if (!banner) return;
-  var map = FERRY_STATUS_MAP[status] || FERRY_STATUS_MAP.normal;
+  var map = FERRY_STATUS_MAP[status] || FERRY_STATUS_MAP.pending;
   // 클래스 교체
   banner.className = 'ferry-status-banner ' + map.cls + ' fade-up';
   document.getElementById('fsb-icon').textContent  = map.icon;
@@ -2300,23 +2242,9 @@ function applyFerryStatus(status) {
   document.getElementById('fsb-sub').textContent   = map.sub;
 }
 function initFerryStatus() {
-  var d = getData();
-  var today = new Date().toDateString();
-  // 매일 아침 8시 이후에 저장된 상태 사용, 아니면 정상으로 리셋
-  var now = new Date();
-  var isAfter8 = now.getHours() >= 8;
-  if (d.ferryStatus && d.ferryStatusDate === today && isAfter8) {
-    applyFerryStatus(d.ferryStatus);
-  } else if (d.ferryStatus && d.ferryStatusDate !== today) {
-    // 날짜 바뀌면 정상운항으로 리셋
-    d.ferryStatus = 'normal';
-    d.ferryStatusDate = today;
-    saveData(d);
-    applyFerryStatus('normal');
-  } else {
-    applyFerryStatus(d.ferryStatus || 'normal');
-  }
+  if(window.CoconaraFerry) window.CoconaraFerry.refresh();
 }
+
 
 // ════════════════════════════════════════
 // 달콤아재 미디어 관리
@@ -2660,6 +2588,9 @@ function toggleOwnerEditBtns(show){ updateOwnerAvatarCursor(show); }
 // ════════════════════════════════════════
 // ── 홈탭 반납 마감시간 표시 ──
 function updateHomeReturnTime() {
+  if(window.CoconaraFerrySchedule) window.CoconaraFerrySchedule.render();
+  return; // The shared ferry module owns normal schedules and daily exceptions.
+
   var now   = new Date();
   var month = now.getMonth() + 1;
   var lf    = getLastFerry(month);
@@ -2948,34 +2879,7 @@ function closePanel(id) {
 
 <!-- ===== 관리자 패널 ===== -->
 <div class="admin-panel-bg" id="adminPanelBg" onclick="closeAdminPanel()"></div>
-<div class="admin-panel" id="adminPanel">
-  <div class="admin-panel-title">🛠 관리자 대시보드</div>
-
-  <!-- 운항 상태 설정 -->
-  <div class="admin-section">
-    <div class="admin-section-title">🚢 운항 상태 설정</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-      <button class="admin-btn" style="background:#2ECC71;color:white;padding:12px;border-radius:12px;" onclick="setFerryStatus('normal')">✅ 정상운항</button>
-      <button class="admin-btn" style="background:#E74C3C;color:white;padding:12px;border-radius:12px;" onclick="setFerryStatus('cancel')">❌ 결항</button>
-      <button class="admin-btn" style="background:#F39C12;color:white;padding:12px;border-radius:12px;" onclick="setFerryStatus('pending')">⚠️ 미정</button>
-      <button class="admin-btn" style="background:#888;color:white;padding:12px;border-radius:12px;" onclick="setFerryStatus('closed')">🌙 운항종료</button>
-    </div>
-    <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;">📢 고객에게 보여줄 안내 메모 <span style="color:#AAA;font-weight:400;">(선택)</span></div>
-    <textarea id="edit-ferry-memo" placeholder="예) 오늘은 하우목동항만 운행합니다&#10;예) 마지막 배 17:00 (1시간 일찍 종료)" style="width:100%;box-sizing:border-box;border:1.5px solid #EEE;border-radius:10px;padding:10px;font-size:12px;font-family:inherit;line-height:1.65;resize:vertical;min-height:80px;outline:none;"></textarea>
-    <button class="admin-btn save" style="width:100%;margin-top:8px;" onclick="saveFerryMemo()">메모 저장</button>
-    <button class="admin-btn del" style="width:100%;margin-top:6px;" onclick="clearFerryMemo()">메모 지우기</button>
-    <div style="font-size:11px;color:#AAA;text-align:center;margin-top:8px;">매일 오전 8시 자동 '정상운항'으로 초기화</div>
-  </div>
-
-  <!-- 비밀번호 안내 -->
-  <div class="admin-section" style="background:#FFF8F8;border:1.5px solid #FFD0D0;">
-    <div class="admin-section-title">🔑 관리자 비밀번호</div>
-    <div style="font-size:12px;color:#888;line-height:1.8;">비밀번호는 고정되어 있습니다.<br>변경이 필요하시면 제작자에게 문의해주세요.</div>
-  </div>
-
-  <button class="admin-logout" onclick="adminLogout()">🚪 로그아웃</button>
-  <button class="admin-btn close-btn" style="width:100%;margin-top:8px;" onclick="closeAdminPanel()">닫기</button>
-</div>
+<div class="admin-panel" id="adminPanel"><p>관리자 인증을 준비하고 있습니다.</p></div>
 
 
 <!-- ===== 항구 연락처 편집 패널 ===== -->
@@ -3017,8 +2921,6 @@ const DEFAULT_DATA = {
   telHaumok:   '064-782-7730',
   telCheonjin: '064-783-0448',
   notice: '', noticeColor: 'warn',
-  adminId: 'coconara',
-  adminPw: 'udo2024!',
   foods: [
     {
       photos:['food_som1.jpg','food_som2.jpg','food_som3.jpg'],
@@ -3070,10 +2972,8 @@ const DEFAULT_DATA = {
 // 저장된 데이터 + 기본값 병합
 function getData() {
   const saved = loadData();
-  return Object.assign({}, DEFAULT_DATA, saved,
-    { foods: DEFAULT_DATA.foods,
-      adminId: DEFAULT_DATA.adminId,
-      adminPw: DEFAULT_DATA.adminPw });
+  delete saved.adminId; delete saved.adminPw;
+  return Object.assign({}, DEFAULT_DATA, saved, { foods: DEFAULT_DATA.foods });
 }
 
 // ===== 앱 초기화 =====
@@ -3088,7 +2988,7 @@ function initApp() {
   if (d.ferryMemo) applyFerryMemo(d.ferryMemo);
   applyHarborTels(d);
   if (d.dalkomSections) applyDalkomSections(d.dalkomSections);
-  setTimeout(renderMapPins, 200);
+  setTimeout(function(){ window.renderMapPins(); }, 200);
   setTimeout(initFerryDrag, 300);
   initVisitorCount();
   // 오늘 날짜 sales-date 기본값
@@ -3286,38 +3186,9 @@ function closeAdminLogin() {
   document.getElementById('adminLoginBg').classList.remove('open');
   document.getElementById('adminErr').textContent = '';
 }
-function adminLogin() {
-  const id = document.getElementById('adminId').value.trim();
-  const pw = document.getElementById('adminPw').value;
-  const d  = getData();
-  if (id === DEFAULT_DATA.adminId && pw === DEFAULT_DATA.adminPw) {
-    isAdminLoggedIn = true;
-    closeAdminLogin();
-    document.getElementById('adminBadge').classList.add('show');
-    document.body.classList.add('admin-mode');
-    renderMapPins();
-    toggleGearBtns(true);
-    renderFoodPage();
-    openAdminPanel();
-    if(window.toggleArrowDrag)toggleArrowDrag(true);
-    initDalCoupon();
-    initHundert();
-    document.getElementById('adminId').value = '';
-    document.getElementById('adminPw').value = '';
-  } else {
-    document.getElementById('adminErr').textContent = '아이디 또는 비밀번호가 틀렸습니다.';
-  }
+function adminLogin() { /* Firebase module handles authenticated operations. */
 }
-function adminLogout() {
-  isAdminLoggedIn = false;
-  document.getElementById('adminBadge').classList.remove('show');
-  document.body.classList.remove('admin-mode');
-  renderMapPins();
-  toggleGearBtns(false);
-  renderFoodPage();
-  if(window.toggleArrowDrag)toggleArrowDrag(false);
-  closeAdminPanel();
-  initHundert();
+function adminLogout() { /* Firebase module handles authenticated operations. */
 }
 
 // ── 항구 연락처 패널 ──
@@ -3368,19 +3239,11 @@ document.addEventListener('keydown', e => {
 
 // 코코나라 운항 상태 기본 세팅
 // 요청사항: 관리자 설정값을 '정상운항'으로 적용하고, 관리자 메모는 비운 상태로 시작합니다.
-function presetFerryStatusNormalAndClearMemo() {
-  try {
-    var d = loadData();
-    d.ferryStatus = 'normal';
-    d.ferryStatusDate = new Date().toDateString();
-    d.ferryMemo = '';
-    saveData(d);
-  } catch(e) {}
+function presetFerryStatusNormalAndClearMemo() { /* Firebase module handles authenticated operations. */
 }
 
 // 앱 시작 - 모든 스크립트 로드 완료 후 실행
 window.addEventListener('load', function() {
-  presetFerryStatusNormalAndClearMemo();
   initApp();
   initDalCoupon();
 });
@@ -3598,7 +3461,7 @@ window.addEventListener('load', function() {
     <!-- 코코 스쿠터 -->
     <div style="background:white;border-radius:18px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,0.08);">
       <div style="width:100%;position:relative;">
-        <img src="gif_coco.gif" alt="코코 스쿠터" style="width:100%;height:220px;object-fit:cover;display:block;">
+        <div class="vehicle-stage scooter" data-vehicle="scooter"><div class="vehicle-lane" aria-hidden="true"></div><img class="vehicle-sprite" src="coco-scooter.webp" alt="코코 스쿠터" width="1536" height="1024" loading="lazy"><button type="button" class="motion-toggle" aria-pressed="false">⏸ <span>움직임 멈추기</span></button></div><div class="vehicle-original-copy"><p>여성분들도 운전하기 쉬운 안전한 전기스쿠터</p><p class="vehicle-restriction">85kg 이상 고객분들께서는 안전상의 문제로 이용이 제한됩니다.</p><div class="vehicle-cert"><span>환경부 인증</span><span>국토부 인증</span></div></div>
         <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.45);color:white;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;" id="scooter-count-badge"></div>
       </div>
       <div style="padding:14px 16px;">
@@ -3612,7 +3475,7 @@ window.addEventListener('load', function() {
     <!-- 파미 -->
     <div style="background:white;border-radius:18px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,0.08);">
       <div style="width:100%;position:relative;">
-        <img src="gif_fami.gif" alt="파미" style="width:100%;height:220px;object-fit:cover;display:block;">
+        <div class="vehicle-stage fami" data-vehicle="fami"><div class="vehicle-lane" aria-hidden="true"></div><img class="vehicle-sprite" src="fami-cabin.webp" alt="파미" width="1536" height="1024" loading="lazy"><button type="button" class="motion-toggle" aria-pressed="false">⏸ <span>움직임 멈추기</span></button></div><div class="vehicle-original-copy"><p>편안하고 안정적인 프리미엄 2인승 전기차</p><p class="vehicle-restriction">85kg 이상 180cm 이상 고객분들께서는 안전상의 문제로 이용이 제한됩니다.</p><div class="vehicle-cert"><span>환경부 인증</span><span>국토부 인증</span></div></div>
         <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.45);color:white;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;" id="fami-count-badge"></div>
       </div>
       <div style="padding:14px 16px;">
@@ -3626,7 +3489,7 @@ window.addEventListener('load', function() {
     <!-- 오픈카 -->
     <div style="background:white;border-radius:18px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,0.08);">
       <div style="width:100%;position:relative;">
-        <img src="gif_open.gif" alt="오픈카" style="width:100%;height:220px;object-fit:cover;display:block;">
+        <div class="vehicle-stage open" data-vehicle="open"><div class="vehicle-lane" aria-hidden="true"></div><img class="vehicle-sprite" src="open-canopy.webp" alt="오픈카" width="1536" height="1024" loading="lazy"><button type="button" class="motion-toggle" aria-pressed="false">⏸ <span>움직임 멈추기</span></button></div><div class="vehicle-original-copy"><p>액티비티하고 나란히 탈 수 있는 2인승 전기차</p><p class="vehicle-restriction">100kg 이상 고객분들께서는 안전상의 문제로 이용이 제한됩니다.</p><p>새롭게 출시된 신형 오픈카는 핑크 단일 색상이며, 본 사진은 참고용입니다.</p><div class="vehicle-cert"><span>환경부 인증</span><span>국토부 인증</span></div></div>
         <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.45);color:white;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;" id="open-count-badge"></div>
       </div>
       <div style="padding:14px 16px;">
@@ -3637,6 +3500,10 @@ window.addEventListener('load', function() {
       </div>
     </div>
   </div>
+<div id="coconara-battery" class="battery-category" style="background:#F8F8FF;border-radius:10px;padding:10px 12px;margin-bottom:10px;">
+        <div style="font-size:12px;font-weight:900;color:#5C6BC0;margin-bottom:4px;">🔋 배터리 · 운행 안내</div>
+        <div style="font-size:11.5px;color:#555;line-height:1.75;">코코나라 신형 차량은 우도 한 바퀴를 기준으로 설계되어 있으며, 최대 2바퀴까지 주행이 가능합니다. 다만 운전 습관에 따라 배터리 소모량이 다를 수 있어, <strong>여유롭고 안전한 관광을 위해 1.5바퀴 기준으로 이용하시길 권장</strong>드립니다.<br><span style="color:#888;font-size:10.5px;">※ 배터리 방전 시 견인 비용 발생 · 코코나라는 시간 제한 없이 여유롭게 이용 가능!</span></div>
+      </div>
   <!-- 숨겨진 파일 input (관리자 사진 업로드용) -->
   <input type="file" id="img-file-input" accept="image/*" style="display:none;" onchange="handleImgUpload(event)">
 
@@ -4136,7 +4003,7 @@ window.addEventListener('load', function() {
 
   <!-- 관리자 모드일 때만 보이는 편집 버튼 -->
 
-  <div id="food-list-container">
+  <div class="food-list-section">
   <!-- 섬소나이 -->
   <div id="food-list-container"></div>
 
@@ -4698,7 +4565,7 @@ function openBarcodePopup(type) {
   +   '<button style="margin-top:20px;width:100%;padding:13px;background:#F0F8F4;border:none;border-radius:12px;font-size:14px;font-weight:700;color:#2E8B57;cursor:pointer;font-family:inherit;" onclick="closeBarcodePopup()">닫기</button>'
   + '</div>';
 
-  document.documentElement.appendChild(wrap);
+  document.body.appendChild(wrap);
   document.getElementById('_barcodeOvl').addEventListener('click', closeBarcodePopup);
   if (window.pushPopupState) window.pushPopupState();
 }
@@ -4856,18 +4723,10 @@ function showSimplePinPopup(pin) {
 // 관리자 로그인/로그아웃 시 지도 핀 편집 모드 토글
 document.addEventListener('DOMContentLoaded', function(){
   // initApp 이후 핀 렌더링
-  setTimeout(renderMapPins, 200);
+  setTimeout(function(){ window.renderMapPins(); }, 200);
 });
 
-// ── 날짜/요일 표시 ──
-(function(){
-  var DAYS=['일','월','화','수','목','금','토'];
-  var now=new Date();
-  window.addEventListener('load',function(){
-    var el=document.getElementById('fsb-date');
-    if(el)el.textContent=(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+DAYS[now.getDay()]+')';
-  });
-})();
+// Daily status dates are rendered in Asia/Seoul by ferry-admin.js.
 
 // ── 우도 날씨 ──
 var WEATHER_CODES={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
@@ -5119,6 +4978,7 @@ window.addEventListener('load', initHundert);
 
   // ── 현재 열린 최상위 팝업 닫기 ──
   function closeTopPopup() {
+    if (window.cocoCloseDalkom && document.querySelector('.dalkom-fullscreen')) { window.cocoCloseDalkom(); return; }
     // 1. 바코드 팝업 (동적 생성)
     if (document.getElementById('_barcodeModal')) { closeBarcodePopup(); return; }
     // 2. QNA 팝업
@@ -5216,6 +5076,7 @@ window.addEventListener('load', initHundert);
 </script>
 <!-- ══ Firebase SDK (compat) ══ -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
 (function() {
@@ -5229,10 +5090,11 @@ window.addEventListener('load', initHundert);
     appId: "1:461448808298:web:a03dd3d84eda0ac9dc4713"
   };
 
+  if (typeof firebase === 'undefined') return;
   firebase.initializeApp(firebaseConfig);
   var db = firebase.database();
 
-  function todayKey() { return new Date().toISOString().slice(0,10); }
+  function todayKey() { return new Date(Date.now() + 9*60*60*1000).toISOString().slice(0,10); }
 
   // ── 방문자 카운터 ──
   function fbInitVisitor() {
@@ -5270,60 +5132,23 @@ window.addEventListener('load', initHundert);
     });
   }
 
-  // ── 운항 상태 실시간 리스닝 ──
-  function fbInitFerryStatus() {
-    db.ref('ferryStatus').on('value', function(snap) {
-      var data = snap.val();
-      if (!data) return;
-      var today = todayKey();
-      var status = (data.date === today) ? (data.status || 'normal') : 'normal';
-      var memo   = (data.date === today) ? (data.memo   || '')        : '';
-      if (typeof applyFerryStatus === 'function') applyFerryStatus(status);
-      if (typeof applyFerryMemo   === 'function') applyFerryMemo(memo);
-      var memoInput = document.getElementById('edit-ferry-memo');
-      if (memoInput && window.isAdminLoggedIn) memoInput.value = memo;
-    });
-  }
-
-  // ── 관리자: 운항 상태 저장 ──
-  window.fbSetFerryStatus = function(status) {
-    var today = todayKey();
-    var memoInput = document.getElementById('edit-ferry-memo');
-    var memo = memoInput ? memoInput.value.trim() : '';
-    db.ref('ferryStatus').set({ status: status, memo: memo, date: today });
-  };
-
-  // ── 관리자: 메모 저장 ──
-  window.fbSaveFerryMemo = function() {
-    var today = todayKey();
-    var memoInput = document.getElementById('edit-ferry-memo');
-    var memo = memoInput ? memoInput.value.trim() : '';
-    db.ref('ferryStatus').once('value').then(function(snap) {
-      var cur = snap.val() || {};
-      var status = (cur.date === today) ? (cur.status || 'normal') : 'normal';
-      db.ref('ferryStatus').set({ status: status, memo: memo, date: today });
-    });
-  };
-
-  // ── 관리자: 메모 지우기 ──
-  window.fbClearFerryMemo = function() {
-    var today = todayKey();
-    db.ref('ferryStatus').once('value').then(function(snap) {
-      var cur = snap.val() || {};
-      var status = (cur.date === today) ? (cur.status || 'normal') : 'normal';
-      db.ref('ferryStatus').set({ status: status, memo: '', date: today });
-      var memoInput = document.getElementById('edit-ferry-memo');
-      if (memoInput) memoInput.value = '';
-    });
-  };
+  // Daily ferry status and writes are managed by ferry-admin.js.
 
   // ── 초기화 (DOM 완전 로드 후) ──
   window.addEventListener('load', function() {
     fbInitVisitor();
-    fbInitFerryStatus();
   });
 
 })();
 </script>
+<script src="translations.js?v=9"></script>
+<script src="reset.js?v=9"></script>
+<script src="mobile.js?v=9"></script>
+<script src="experience.js?v=9"></script>
+<script src="motion.js?v=9"></script>
+<script src="coastal.js?v=9"></script>
+<script src="ferry-config.js?v=9"></script>
+<script src="ferry-admin.js?v=11"></script>
+<script src="ferry-schedule.js?v=11"></script>
 </body>
 </html>

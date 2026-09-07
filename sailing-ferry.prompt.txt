@@ -1,0 +1,8 @@
+Use case: stylized-concept
+Asset type: isolated vessel cutout for smooth code animation across a website card.
+Primary request: Generate exactly one 1536 x 1024 PNG of a small Korean island vehicle ferry, full vessel shown from a side/three-quarter profile and facing RIGHT, on a genuinely transparent background with clean soft alpha edges. This is one static vessel, not a sprite sheet.
+Style: friendly polished high-end 3D cartoon rendering consistent with a warm rounded 3D character website, smooth clean materials with subtle details and soft studio lighting.
+Subject: recognizable compact local vehicle ferry like those around Udo, white upper works and sea-blue hull accents, squat practical two-deck proportions, flat open vehicle deck leading to a bow ramp at the RIGHT end. Bow ramp is raised. Small orange life rings, dark blue window glazing, practical railings, small bridge/cabin. Vessel should be locally scaled and compact, not a giant cruise liner, not a luxury yacht, and not a tugboat.
+Composition: one full ferry centered, horizontal hull with clearly legible RIGHT-facing bow, roughly 75 percent image width so padding exists on all sides. Make the open vehicle-deck structure and raised bow ramp visible. No people needed.
+Background: actual alpha transparency, no backdrop, no ground plane, no water, no ocean, no wake, no scenery, no baked cast shadow onto a floor. Preserve subtle object self-shading.
+Constraints: no words, letters, numbers, logos, watermarks, flags with marks or labels anywhere; no grid or panels. Do not draw a checkerboard; the background pixels must be transparent. Output one single 1536x1024 image.
