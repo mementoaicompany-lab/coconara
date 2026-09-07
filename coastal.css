@@ -37,4 +37,3 @@
 @keyframes owner-bubble{from{opacity:.5;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes owner-bubble-alternate{from{opacity:.5;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
 @media(max-width:350px){.owner-reading-header{grid-template-columns:38% minmax(0,1fr);padding-right:12px!important}.owner-host-speech{padding:12px 10px!important}.owner-host-speech>div:first-child{font-size:17px!important}.owner-host-speech>div:nth-child(2),.owner-host-quote{font-size:14px!important}.vehicle-speech{font-size:16px;padding:9px 12px}}
-@media(prefers-reduced-motion:reduce){.vehicle-coast,.vehicle-stage .vehicle-sprite,.vehicle-speech,.owner-host-sheet,.owner-host-speech{animation:none!important}.vehicle-speech{opacity:1;transform:translateX(-50%)}.owner-host-sheet{transform:none}.owner-host-speech{opacity:1;transform:none}}

@@ -75,6 +75,21 @@
     el.dataset.localized = 'true';
     if (el.textContent !== String(value)) el.textContent = String(value);
   }
+  function setDepartureText(el, value) {
+    el.dataset.localized = 'true';
+    el.classList.add('ferry-departure-line');
+    el.parentElement.classList.add('ferry-time-and-route');
+    el.parentElement.parentElement.classList.add('ferry-time-main');
+    el.parentElement.parentElement.parentElement.classList.add('ferry-time-layout');
+    const parts = value.match(/^(\d{2}:\d{2}) (.+)$/);
+    el.dataset.hasDeparture = String(Boolean(parts));
+    if (!parts) { setText(el, value); return; }
+    if (el.textContent === value && el.querySelector('.ferry-departure-clock')) return;
+    const clock = document.createElement('span'), label = document.createElement('span');
+    clock.className = 'ferry-departure-clock'; clock.textContent = parts[1];
+    label.className = 'ferry-departure-label'; label.textContent = parts[2];
+    el.replaceChildren(clock, document.createTextNode(' '), label);
+  }
   function show(el, visible) {
     if (!el) return;
     if (!originalDisplay.has(el)) originalDisplay.set(el, el.style.display);
@@ -168,7 +183,7 @@
       headline = state === 'cancel' ? w.cancel : state === 'closed' ? w.ended : w.pending;
       detail = state === 'cancel' ? w.cancelDetail : state === 'closed' ? w.endedDetail : w.pendingDetail;
     }
-    setText(card.time, headline);
+    setDepartureText(card.time, headline);
     card.time.style.fontSize = (departure || (state === 'shortened' && !card.incoming)) ? card.fontSize : 'clamp(16px,4.5vw,24px)';
     card.time.style.lineHeight = '1.4';
     setText(card.sub, detail);

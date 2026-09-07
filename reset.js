@@ -2,6 +2,41 @@
    except the explicitly requested owner narration for tourist locations. */
 (()=>{'use strict';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+// Scene autoplay follows the site's explicit setting. Visibility only suspends
+// playback temporarily; it never changes a user's separate pause selection.
+const motionTargets=new Set(),motionPages=new Set();let motionRefreshQueued=false;
+function motionVisible(element){
+ if(!element?.isConnected||document.hidden||element.closest('[hidden]'))return false;
+ const page=element.closest('.page');if(page&&!page.classList.contains('active'))return false;
+ const style=getComputedStyle(element);if(style.display==='none'||style.visibility==='hidden')return false;
+ const rect=element.getBoundingClientRect(),viewport=window.visualViewport;
+ const left=viewport?.offsetLeft||0,top=viewport?.offsetTop||0;
+ const right=left+(viewport?.width||window.innerWidth||document.documentElement.clientWidth),bottom=top+(viewport?.height||window.innerHeight||document.documentElement.clientHeight);
+ return rect.width>0&&rect.height>0&&rect.right>left&&rect.left<right&&rect.bottom>top&&rect.top<bottom;
+}
+function refreshMotionVisibility(){
+ motionTargets.forEach(record=>{const visible=motionVisible(record.element);if(visible!==record.visible){record.visible=visible;record.callback(visible);}});
+}
+function queueMotionVisibility(){if(motionRefreshQueued)return;motionRefreshQueued=true;requestAnimationFrame(()=>{motionRefreshQueued=false;refreshMotionVisibility();});}
+const motionIntersection='IntersectionObserver'in window?new IntersectionObserver(queueMotionVisibility,{threshold:0}):null;
+const motionPageObserver=new MutationObserver(queueMotionVisibility);
+window.cocoRefreshMotionVisibility=refreshMotionVisibility;
+window.cocoObserveMotion=(element,callback)=>{
+ if(!element){callback(false);return()=>{};}
+ const record={element,callback,visible:undefined};motionTargets.add(record);
+ const page=element.closest('.page');if(page&&!motionPages.has(page)){motionPages.add(page);motionPageObserver.observe(page,{attributes:true,attributeFilter:['class','hidden','style']});}
+ motionIntersection?.observe(element);
+ record.visible=motionVisible(element);callback(record.visible);queueMotionVisibility();
+ return()=>{motionTargets.delete(record);if(![...motionTargets].some(other=>other.element===element))motionIntersection?.unobserve(element);};
+};
+document.addEventListener('scroll',queueMotionVisibility,{capture:true,passive:true});
+document.addEventListener('visibilitychange',refreshMotionVisibility);
+document.addEventListener('coco:page',refreshMotionVisibility);
+window.addEventListener('resize',queueMotionVisibility,{passive:true});
+window.addEventListener('orientationchange',queueMotionVisibility,{passive:true});
+window.addEventListener('pageshow',refreshMotionVisibility);
+window.visualViewport?.addEventListener('resize',queueMotionVisibility,{passive:true});
+window.visualViewport?.addEventListener('scroll',queueMotionVisibility,{passive:true});
 const locales=['ko','en','zh-HK','ms','zh-TW','ja'];
 const clean=s=>s.replace(/\s+/g,' ').trim(), escape=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ui={ko:['움직임 멈추기','움직임 재생','코코나라 사장님의 관광 안내','사진 전체 보기','사진 출처','시계방향 추천','이동 약 1시간','관광 약 2시간'],en:['Pause motion','Play motion','Your Coconara owner’s guide','View full photo','Photo credits','Clockwise recommended','About 1 hour riding','About 2 hours sightseeing'],ms:['Hentikan gerakan','Mainkan gerakan','Panduan daripada pemilik Coconara','Lihat foto penuh','Kredit foto','Arah jam disyorkan','Perjalanan kira-kira 1 jam','Bersiar-siar kira-kira 2 jam'],'zh-HK':['暫停動畫','播放動畫','Coconara 老闆帶你遊牛島','查看完整相片','相片來源','建議順時針遊覽','車程約1小時','觀光約2小時'],'zh-TW':['暫停動畫','播放動畫','Coconara 老闆帶你遊牛島','查看完整照片','照片來源','建議順時針遊覽','車程約1小時','觀光約2小時'],ja:['動きを止める','動きを再生','Coconara店主の観光案内','写真全体を見る','写真出典','時計回りがおすすめ','移動 約1時間','観光 約2時間']};
@@ -37,8 +72,8 @@ function dynamicTranslation(source){if(lang==='ko')return null;let m=source.matc
 }
 function setLanguage(next){if(!locales.includes(next))return;lang=next;localStorage.setItem('coco_language',lang);const url=new URL(location.href);url.searchParams.set('lang',lang);history.replaceState(history.state,'',url);localize();drawPins();refreshSpotText();updateTimeLabels();$$('.map-note span').forEach((e,i)=>e.textContent=ui[lang][i+5]);$('.spot-close-button')?.setAttribute('aria-label',tr('닫기'));document.dispatchEvent(new Event('coco:language'));}
 $$('.language-bar button').forEach(b=>b.addEventListener('click',()=>setLanguage(b.dataset.lang)));
-const reduced=matchMedia('(prefers-reduced-motion: reduce)');let mapPaused=reduced.matches;
-$$('.motion-toggle').forEach(button=>{button.dataset.localized='true';const stage=button.closest('.vehicle-stage');if(reduced.matches)stage.classList.add('motion-paused');button.addEventListener('click',()=>{stage.classList.toggle('motion-paused');updateMotionLabels();});});
+let mapPaused=false;
+$$('.motion-toggle').forEach(button=>{button.dataset.localized='true';const stage=button.closest('.vehicle-stage');stage.classList.remove('motion-paused');button.addEventListener('click',()=>{stage.classList.toggle('motion-paused');updateMotionLabels();});});
 function updateMotionLabels(){$$('.motion-toggle').forEach(b=>{const paused=b.closest('.vehicle-stage').classList.contains('motion-paused');b.innerHTML=(paused?'▶':'⏸')+' <span>'+ui[lang][paused?1:0]+'</span>';b.setAttribute('aria-pressed',String(paused));});const b=$('.map-motion');if(b){b.textContent=mapPaused?'▶':'⏸';b.setAttribute('aria-label',ui[lang][mapPaused?1:0]);b.setAttribute('title',ui[lang][mapPaused?1:0]);b.setAttribute('aria-pressed',String(mapPaused));}$$('.owner-narration-label').forEach(x=>x.textContent=ui[lang][2]);}
 const ns='http://www.w3.org/2000/svg';function svgEl(type,attrs){const e=document.createElementNS(ns,type);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));return e;}
 let oldPins,route,car,lastFrame=0,distance=0,mapInView=true,facing=1;
@@ -47,7 +82,7 @@ function drawPins(){if(!$('#udo-map')||!window.DEFAULT_PINS)return;if(typeof isA
  document.dispatchEvent(new Event('coco:map'));
 }
 function setupMap(){const svg=$('#udo-map');if(!svg)return;svg.setAttribute('role','img');svg.setAttribute('aria-label','Udo coastal route');const sea=svg.querySelector(':scope > rect');if(sea)sea.setAttribute('fill','#e8f3ef');const paths=[...svg.querySelectorAll(':scope > path')];const land=paths.find(p=>p.getAttribute('fill')==='#C8E8A0');if(land){land.setAttribute('fill','#f8f3df');land.setAttribute('stroke','#adc6a1');land.setAttribute('stroke-width','1.5');}paths.filter(p=>p.getAttribute('fill')==='none'&&p.id!=='routeDot').forEach(p=>{p.style.opacity='0.5';p.setAttribute('stroke','#aac49d');p.setAttribute('stroke-width','1');});route=$('#routeDot');const old=$('#map-car-emoji');car=svgEl('g',{id:'map-car-emoji'});car.append(svgEl('image',{href:'fami-cabin.webp',x:-18,y:-21,width:36,height:30}));old?.replaceWith(car);const legend=[...svg.querySelectorAll('g')].find(g=>g.textContent.includes('시계방향 추천'));if(legend){legend.remove();const note=document.createElement('div');note.className='map-note';note.dataset.localized='true';note.innerHTML=[5,6,7].map(i=>'<span>'+ui[lang][i]+'</span>').join('');$('.map-svg-wrap').after(note);}const button=document.createElement('button');button.className='map-motion';button.dataset.localized='true';button.type='button';button.addEventListener('click',()=>{mapPaused=!mapPaused;updateMotionLabels();});$('.map-svg-wrap').append(button);oldPins=window.renderMapPins;window.renderMapPins=drawPins;drawPins();updateMotionLabels();
- if('IntersectionObserver'in window)new IntersectionObserver(entries=>{mapInView=entries[0].isIntersecting;},{threshold:0}).observe(svg);
+ window.cocoObserveMotion(svg,visible=>{mapInView=visible;lastFrame=0;});
  if(route&&typeof route.getTotalLength==='function'){const length=route.getTotalLength();function frame(now){const dt=lastFrame?Math.min(now-lastFrame,100):0;lastFrame=now;if(!mapPaused&&mapInView&&!document.hidden){distance=(distance+dt/42000*length)%length;}const p=route.getPointAtLength(distance),q=route.getPointAtLength((distance+2)%length);if(Math.abs(q.x-p.x)>.6)facing=q.x<p.x?-1:1;car.setAttribute('transform','translate('+p.x.toFixed(2)+','+p.y.toFixed(2)+') scale('+facing+',1)');requestAnimationFrame(frame);}requestAnimationFrame(frame);}
 }
 const originalSpots=typeof spots==='undefined'?{}:spots;

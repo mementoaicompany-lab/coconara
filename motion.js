@@ -1,7 +1,6 @@
 /* Visible-only media motion, restaurant galleries and ferry guidance. */
 (()=>{'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],tr=s=>window.cocoTranslate?.(s)||s;
-const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const strings={
  ko:{prev:'이전 사진',next:'다음 사진',pause:'멈추기',play:'재생하기',close:'닫기',full:'사진 크게 보기',photos:'사진',crew:'탑승 전 선원분께 확인',question:'“하우목동항행 맞나요?”',crewAlt:'배 앞에서 승객이 선원에게 목적지를 물어보고 확인하는 모습',shipAlt:'정상 운항 중인 배를 표현한 애니메이션',soundOn:'소리 켜기',soundOff:'소리 끄기',videoPlay:'영상 재생',videoPause:'영상 멈추기',muted:'음소거 자동재생',youtube:'YouTube에서 보기'},
  en:{prev:'Previous photo',next:'Next photo',pause:'Pause',play:'Play',close:'Close',full:'View full photo',photos:'Photos',crew:'Ask the crew before boarding',question:'“Is this ferry going to Haumokdong Port?”',crewAlt:'A passenger asks the crew about the destination before boarding',shipAlt:'An animation representing normal ferry service',soundOn:'Sound on',soundOff:'Mute',videoPlay:'Play video',videoPause:'Pause video',muted:'Muted autoplay',youtube:'Watch on YouTube'},
@@ -29,22 +28,22 @@ window.cocoShowPhotos=function(sources,start,title){
 };
 
 function setupFoodGalleries(){
- const records=new Set();const observer='IntersectionObserver'in window?new IntersectionObserver(entries=>{entries.forEach(e=>{const r=[...records].find(r=>r.root===e.target);if(r)r.visible=e.isIntersecting;});},{threshold:.25}):null;
+ const records=new Set();
  function enhance(){
-  for(const r of records)if(!r.root.isConnected){observer?.unobserve(r.root);records.delete(r);}
+  for(const r of records)if(!r.root.isConnected){r.stopObserving?.();records.delete(r);}
   $$('#page-food .food-card').forEach((card,index)=>{
    if(card.querySelector('.food-gallery'))return;const old=[...card.children].find(el=>el.tagName==='DIV'&&[...el.children].some(c=>c.tagName==='IMG'));if(!old)return;
    const images=[...old.children].filter(el=>el.tagName==='IMG');if(!images.length)return;
    const name=window.getFoods?.()[index]?.name||words().photos,sources=images.map(i=>i.getAttribute('src')),root=document.createElement('div');root.className='food-gallery';root.dataset.localized='true';
    root.innerHTML='<div class="food-gallery-stage" tabindex="0"></div><div class="food-gallery-controls"><button type="button" class="food-auto"></button><div><button type="button" class="food-prev">‹</button><span class="food-counter"></span><button type="button" class="food-next">›</button></div></div><div class="food-thumbnails"></div>';
-   const stage=root.querySelector('.food-gallery-stage'),thumbs=root.querySelector('.food-thumbnails'),r={root,visible:!observer,paused:reduced.matches,current:0,swiped:0};
+   const stage=root.querySelector('.food-gallery-stage'),thumbs=root.querySelector('.food-thumbnails'),r={root,visible:false,paused:false,current:0,swiped:0};
    images.forEach((img,i)=>{img.removeAttribute('style');img.className='food-gallery-photo';img.loading='lazy';img.decoding='async';img.onclick=()=>{if(performance.now()<r.swiped)return;r.paused=true;refresh();window.cocoShowPhotos(sources,r.current,tr(name));};stage.append(img);const b=document.createElement('button');b.type='button';const thumb=document.createElement('img');thumb.src=sources[i];thumb.alt='';thumb.loading='lazy';b.append(thumb);b.onclick=()=>show(i,true);thumbs.append(b);});old.replaceWith(root);
    function refresh(){stage.setAttribute('aria-label',tr(name)+' · '+words().full);root.querySelector('.food-auto').textContent=(r.paused?'▶ ':'⏸ ')+words()[r.paused?'play':'pause'];root.querySelector('.food-auto').setAttribute('aria-pressed',String(r.paused));root.querySelector('.food-prev').setAttribute('aria-label',words().prev);root.querySelector('.food-next').setAttribute('aria-label',words().next);images.forEach((img,i)=>{img.alt=tr(name)+' · '+words().photos+' '+(i+1);thumbs.children[i].setAttribute('aria-label',words().full+' '+(i+1));});}
    function show(index,manual=false){r.current=(index+images.length)%images.length;if(manual)r.paused=true;images.forEach((img,i)=>{img.classList.toggle('current',i===r.current);img.setAttribute('aria-hidden',String(i!==r.current));thumbs.children[i].setAttribute('aria-pressed',String(i===r.current));});root.querySelector('.food-counter').textContent=(r.current+1)+' / '+images.length;refresh();}
    root.querySelector('.food-prev').onclick=()=>show(r.current-1,true);root.querySelector('.food-next').onclick=()=>show(r.current+1,true);root.querySelector('.food-auto').onclick=()=>{r.paused=!r.paused;refresh();};
    stage.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();show(r.current+(e.key==='ArrowRight'?1:-1),true);}else if(e.key==='Enter')images[r.current].click();});swipe(stage,delta=>{r.swiped=performance.now()+450;show(r.current+delta,true);});
    if(images.length===1){root.querySelector('.food-gallery-controls').hidden=true;thumbs.hidden=true;}
-   r.refresh=refresh;r.next=()=>show(r.current+1);r.count=images.length;records.add(r);observer?.observe(root);show(0);
+   r.refresh=refresh;r.next=()=>show(r.current+1);r.count=images.length;records.add(r);r.stopObserving=window.cocoObserveMotion(root,visible=>{r.visible=visible;});show(0);
   });
  }
  const original=window.renderFoodPage;window.renderFoodPage=function(){const result=original.apply(this,arguments);enhance();return result;};enhance();window.addEventListener('load',enhance);
@@ -56,39 +55,270 @@ function setupCrewScenes(){
  const ferryWarning=$('#ferryLastInfo3')?.closest('.fade-up')?.nextElementSibling;const targets=[$('#home-ferry-check-body'),ferryWarning].filter(Boolean);
  targets.forEach((target,index)=>{const scene=document.createElement('div');scene.className='crew-check-scene';scene.dataset.localized='true';scene.innerHTML='<div class="crew-art" role="img"><img src="crew-question-sheet.webp" class="crew-sheet" alt="" loading="lazy"></div><div class="crew-quote"><span></span><strong></strong><button type="button"></button></div>';
   if(index===0)target.prepend(scene);else target.firstElementChild.after(scene);
-  let paused=reduced.matches,visible=false;function refresh(){scene.querySelector('.crew-art').setAttribute('aria-label',words().crewAlt);scene.querySelector('.crew-quote>span').textContent=words().crew;scene.querySelector('.crew-quote>strong').textContent=words().question;const b=scene.querySelector('button');b.textContent=(paused?'▶ ':'⏸ ')+words()[paused?'play':'pause'];b.setAttribute('aria-pressed',String(paused));scene.style.setProperty('--scene-motion',paused||!visible||document.hidden?'paused':'running');}
-  scene.querySelector('button').onclick=()=>{paused=!paused;refresh();};if('IntersectionObserver'in window)new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;refresh();},{threshold:.2}).observe(scene);else visible=true;document.addEventListener('visibilitychange',refresh);refreshers.push(refresh);refresh();
+  let paused=false,visible=false;function refresh(){scene.querySelector('.crew-art').setAttribute('aria-label',words().crewAlt);scene.querySelector('.crew-quote>span').textContent=words().crew;scene.querySelector('.crew-quote>strong').textContent=words().question;const b=scene.querySelector('button');b.textContent=(paused?'▶ ':'⏸ ')+words()[paused?'play':'pause'];b.setAttribute('aria-pressed',String(paused));scene.style.setProperty('--scene-motion',paused||!visible||document.hidden?'paused':'running');}
+  scene.querySelector('button').onclick=()=>{paused=!paused;refresh();};window.cocoObserveMotion(scene,inView=>{visible=inView;refresh();});document.addEventListener('visibilitychange',refresh);refreshers.push(refresh);refresh();
  });
 }
 
 function setupFerryStatus(){
  const banner=$('#ferry-status-banner');if(!banner)return;
  const scene=document.createElement('div');scene.className='ferry-sailing-scene';scene.dataset.localized='true';scene.innerHTML='<img src="sailing-ferry.webp" class="sailing-vessel" alt=""><button type="button"></button>';banner.firstElementChild.after(scene);
- const badge=$('#fsb-badge');badge.dataset.localized='true';badge.setAttribute('aria-live','polite');let paused=reduced.matches,visible=true;
+ const badge=$('#fsb-badge');badge.dataset.localized='true';badge.setAttribute('aria-live','polite');let paused=false,visible=true;
  function sync(){if(window.CoconaraFerry) {const state=window.CoconaraFerry.getState().status;scene.hidden=state!=='normal';scene.querySelector('img').alt=words().shipAlt;scene.style.setProperty('--scene-motion',paused||!visible||document.hidden||state!=='normal'?'paused':'running');const button=scene.querySelector('button');button.textContent=paused?'▶':'⏸';button.setAttribute('aria-label',words()[paused?'play':'pause']);button.setAttribute('aria-pressed',String(paused));return;}const state=['normal','cancel','pending','closed','shortened'].find(s=>banner.classList.contains(s))||'pending',data=window.FERRY_STATUS_MAP[state];badge.hidden=state==='normal';badge.textContent=tr(data.badge||data.title);badge.style.background=data.badgeBg||({pending:'#aa750f',closed:'#526078'}[state]);badge.style.color='#fff';scene.hidden=state!=='normal';scene.querySelector('img').alt=words().shipAlt;scene.style.setProperty('--scene-motion',paused||!visible||document.hidden||state!=='normal'?'paused':'running');const button=scene.querySelector('button');button.textContent=paused?'▶':'⏸';button.setAttribute('aria-label',words()[paused?'play':'pause']);button.setAttribute('aria-pressed',String(paused));}
- scene.querySelector('button').onclick=()=>{paused=!paused;sync();};const original=window.applyFerryStatus;window.applyFerryStatus=function(){const result=original.apply(this,arguments);sync();return result;};new MutationObserver(sync).observe(banner,{attributes:true,attributeFilter:['class']});if('IntersectionObserver'in window)new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync();}).observe(banner);document.addEventListener('visibilitychange',sync);refreshers.push(sync);sync();
+ scene.querySelector('button').onclick=()=>{paused=!paused;sync();};const original=window.applyFerryStatus;window.applyFerryStatus=function(){const result=original.apply(this,arguments);sync();return result;};new MutationObserver(sync).observe(banner,{attributes:true,attributeFilter:['class']});window.cocoObserveMotion(banner,inView=>{visible=inView;sync();});document.addEventListener('visibilitychange',sync);document.addEventListener('coconara:ferry-status',sync);refreshers.push(sync);sync();
 }
 
-function setupBroadcastAutoplay(){
- const frames=$$('#page-coconara iframe[src*="youtube.com/embed/"],#page-dalkom iframe[src*="youtube.com/embed/"],#page-hundert iframe[src*="youtube.com/embed/"]');if(!frames.length)return;const records=[];let chosen=null,scheduled=false;
- function captionsOff(r){if(!r.captionDefaultPending||r.intent!=='auto')return;try{const modules=r.player.getOptions?.()||[];if(!modules.includes('captions'))return;if(typeof r.player.unloadModule==='function'){r.captionDefaultPending=false;r.player.unloadModule('captions');}else if((r.player.getOptions('captions')||[]).includes('track')&&typeof r.player.setOption==='function'){r.captionDefaultPending=false;r.player.setOption('captions','track',{});}}catch(_){/* The native captions control remains available when a player omits this optional API. */}}
- const active=r=>!document.hidden&&r.ratio>=.55&&r.frame.closest('.page')?.classList.contains('active');
- function pause(r){if(!r.ready||!r.requested)return;r.requested=false;r.intent='stop';r.programmaticPause=true;r.player.pauseVideo();}
- function play(r,user=false){if(!r.ready)return;r.userPaused=false;r.blocked=false;r.intent=user?'manual':'auto';r.requested=true;if(user){r.ended=false;r.manualActive=true;}captionsOff(r);r.player.playVideo();refresh(r);}
- function evaluate(){scheduled=false;const manual=records.find(r=>active(r)&&r.ready&&r.requested&&r.manualActive);const candidate=manual||records.filter(r=>active(r)&&r.ready&&!r.blocked&&!r.userPaused&&!r.ended&&!reduced.matches).sort((a,b)=>b.ratio-a.ratio)[0]||null;if(chosen!==candidate){records.forEach(r=>{if(r!==candidate)pause(r);});chosen=candidate;}if(candidate&&!candidate.requested)play(candidate);}
- function schedule(){if(!scheduled){scheduled=true;queueMicrotask(evaluate);}}
- function refresh(r){r.sound.textContent=(r.muted?'🔇 ':'🔊 ')+words()[r.muted?'soundOn':'soundOff'];r.sound.disabled=!r.ready;r.sound.setAttribute('aria-pressed',String(!r.muted));r.start.textContent=(r.requested?'⏸ ':'▶ ')+words()[r.requested?'videoPause':'videoPlay'];r.start.disabled=!r.ready;r.note.textContent=words().muted;r.external.textContent=words().youtube;r.external.hidden=!r.error;}
- for(const [i,frame]of frames.entries()){
-  const url=new URL(frame.src);url.searchParams.set('enablejsapi','1');url.searchParams.set('origin',location.origin);url.searchParams.set('playsinline','1');url.searchParams.set('autoplay','0');url.searchParams.set('mute','1');url.searchParams.set('cc_load_policy','0');url.searchParams.delete('cc_lang_pref');frame.src=url.href;frame.id=frame.id||'broadcast-player-'+i;frame.referrerPolicy='strict-origin-when-cross-origin';frame.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');frame.parentElement.classList.add('broadcast-player-wrap');
-  const bar=document.createElement('div');bar.className='broadcast-controls';bar.dataset.localized='true';bar.innerHTML='<span></span><div><button type="button" class="broadcast-sound"></button><button type="button" class="broadcast-start"></button></div><a target="_blank" rel="noopener noreferrer" hidden></a>';frame.parentElement.after(bar);
-  const r={frame,bar,sound:bar.querySelector('.broadcast-sound'),start:bar.querySelector('.broadcast-start'),note:bar.querySelector('span'),external:bar.querySelector('a'),ratio:0,ready:false,requested:false,intent:'idle',captionDefaultPending:true,muted:true,userPaused:false,programmaticPause:false,blocked:false,ended:false,error:false};r.external.href='https://www.youtube.com/watch?v='+url.pathname.split('/').pop();
-  r.sound.onclick=()=>{if(!r.ready)return;r.muted=!r.muted;if(r.muted)r.player.mute();else r.player.unMute();refresh(r);};r.start.onclick=()=>{if(r.requested){pause(r);r.userPaused=true;refresh(r);}else{records.forEach(other=>{if(other!==r)pause(other);});chosen=r;play(r,true);}};records.push(r);refresh(r);
- }
- if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{const r=records.find(r=>r.frame===e.target);if(r)r.ratio=e.isIntersecting?e.intersectionRatio:0;});schedule();},{threshold:[0,.25,.55,.75,1]});records.forEach(r=>observer.observe(r.frame));}
- const pageObserver=new MutationObserver(schedule);$$('.page').forEach(p=>pageObserver.observe(p,{attributes:true,attributeFilter:['class']}));document.addEventListener('visibilitychange',schedule);
- function mount(){if(!window.YT?.Player)return;records.forEach(r=>{if(r.player)return;r.player=new YT.Player(r.frame.id,{events:{onReady:e=>{r.player=e.target;r.ready=true;r.player.mute();r.muted=true;refresh(r);schedule();},onApiChange:()=>captionsOff(r),onStateChange:e=>{if(e.data===1){captionsOff(r);const nativeIntent=!r.requested&&document.activeElement===r.frame&&!r.programmaticPause;if(!active(r)||((r.intent==='stop'||r.userPaused)&&!nativeIntent)){r.requested=false;r.intent='stop';r.programmaticPause=true;r.player.pauseVideo();refresh(r);return;}if(nativeIntent){r.manualActive=true;r.intent='manual';}r.programmaticPause=false;r.requested=true;r.userPaused=false;r.blocked=false;r.ended=false;records.forEach(other=>{if(other!==r)pause(other);});chosen=r;}else if(e.data===2){r.requested=false;if(r.programmaticPause)r.programmaticPause=false;else{r.userPaused=true;r.intent='stop';}}else if(e.data===0){r.requested=false;r.ended=true;}refresh(r);},onAutoplayBlocked:()=>{r.blocked=true;r.requested=false;refresh(r);},onError:()=>{r.error=true;r.requested=false;r.blocked=true;refresh(r);}}});});}
- if(window.YT?.Player)mount();else{const previous=window.onYouTubeIframeAPIReady;window.onYouTubeIframeAPIReady=()=>{if(typeof previous==='function')previous();mount();};if(!$('#coco-youtube-api')){const script=document.createElement('script');script.id='coco-youtube-api';script.src='https://www.youtube.com/iframe_api';script.async=true;document.head.append(script);}}
- refreshers.push(()=>records.forEach(refresh));
+function setupBroadcastAutoplay() {
+  const frames = $$('#page-coconara iframe[src*="youtube.com/embed/"],#page-dalkom iframe[src*="youtube.com/embed/"],#page-hundert iframe[src*="youtube.com/embed/"]');
+  if (!frames.length) return;
+  const records = [];
+  let chosen = null, scheduled = false, rearmScheduled = false, visibilityObserver = null;
+
+  function refresh(r) {
+    r.sound.textContent = (r.muted ? '🔇 ' : '🔊 ') + words()[r.muted ? 'soundOn' : 'soundOff'];
+    r.sound.disabled = !r.ready;
+    r.sound.setAttribute('aria-pressed', String(!r.muted));
+    r.start.textContent = (r.requested ? '⏸ ' : '▶ ') + words()[r.requested ? 'videoPause' : 'videoPlay'];
+    r.start.disabled = !r.ready;
+    r.note.textContent = words().muted;
+    r.external.textContent = words().youtube;
+    r.external.hidden = !r.error;
+  }
+
+  // Caption suppression is best effort and one-shot. The public IFrame API
+  // does not document a captions on/off method; never repeatedly override CC.
+  function captionsOff(r) {
+    if (!r.captionDefaultPending || r.intent !== 'auto') return;
+    // A focused cross-origin player can mean the viewer is operating native CC.
+    // Preserve that choice even if its captions module first appears late.
+    if (document.activeElement === r.frame) { r.captionDefaultPending = false; return; }
+    try {
+      if (!(r.player.getOptions?.() || []).includes('captions')) return;
+      if (typeof r.player.unloadModule === 'function') {
+        r.captionDefaultPending = false;
+        r.player.unloadModule('captions');
+      } else if ((r.player.getOptions('captions') || []).includes('track') && typeof r.player.setOption === 'function') {
+        r.captionDefaultPending = false;
+        r.player.setOption('captions', 'track', {});
+      }
+    } catch (_) { /* Native CC remains available when optional methods differ. */ }
+  }
+
+  function measure(r) {
+    if (document.hidden || !r.frame.closest('.page')?.classList.contains('active')) return 0;
+    const box = r.frame.getBoundingClientRect();
+    const viewport = window.visualViewport;
+    const left = viewport?.offsetLeft || 0, top = viewport?.offsetTop || 0;
+    const width = viewport?.width || window.innerWidth || document.documentElement.clientWidth;
+    const height = viewport?.height || window.innerHeight || document.documentElement.clientHeight;
+    // IO also supplies a fallback for environments without geometry APIs.
+    if (!(box.width > 0 && box.height > 0 && width > 0 && height > 0)) return r.intersecting ? r.ratio : 0;
+    let x1 = Math.max(box.left, left), x2 = Math.min(box.right, left + width);
+    let y1 = Math.max(box.top, top), y2 = Math.min(box.bottom, top + height);
+    for (let parent = r.frame.parentElement; parent && parent !== document.body; parent = parent.parentElement) {
+      const style = getComputedStyle(parent), clip = parent.getBoundingClientRect();
+      if (clip.width > 0 && /hidden|clip|auto|scroll/.test(style.overflowX)) { x1 = Math.max(x1, clip.left); x2 = Math.min(x2, clip.right); }
+      if (clip.height > 0 && /hidden|clip|auto|scroll/.test(style.overflowY)) { y1 = Math.max(y1, clip.top); y2 = Math.min(y2, clip.bottom); }
+    }
+    // A tall player can never reach a fixed 55% intersection on a short phone.
+    // Positive visible area is eligible; only the most visible player is chosen.
+    return Math.max(0, x2 - x1) * Math.max(0, y2 - y1);
+  }
+  const active = r => measure(r) > 0;
+
+  function pause(r, user = false) {
+    if (user) { r.userPaused = true; r.manualActive = false; r.captionDefaultPending = false; }
+    const shouldPause = r.requested || r.playing;
+    clearTimeout(r.watchdog);
+    r.requested = false;
+    r.playing = false;
+    r.intent = user ? 'user-pause' : 'suspend';
+    if (r.ready && shouldPause) {
+      r.programmaticPause = true;
+      try { r.player.pauseVideo(); } catch (_) { /* A loading iframe can vanish. */ }
+    }
+    refresh(r);
+  }
+
+  function play(r, user = false) {
+    if (!r.ready || !active(r) || r.error || (!user && (r.userPaused || r.ended))) return;
+    clearTimeout(r.watchdog);
+    r.userPaused = false;
+    r.blocked = false;
+    r.programmaticPause = false;
+    r.intent = user ? 'manual' : 'auto';
+    r.requested = true;
+    r.playing = false;
+    if (user) { r.ended = false; r.manualActive = true; r.captionDefaultPending = false; }
+    try {
+      // Calls are intentionally adjacent and synchronous, including the trusted
+      // gesture fallback below. Every automatic attempt starts muted.
+      if (!user) { r.player.mute(); r.muted = true; }
+      captionsOff(r);
+      r.player.playVideo();
+    } catch (_) { r.requested = false; r.blocked = true; }
+    refresh(r);
+    // Some embedded/mobile players fail without onAutoplayBlocked. Distinguish
+    // a never-started attempt from a visitor pausing an already-playing video.
+    if (r.requested && !r.playing) r.watchdog = setTimeout(() => {
+      if (!r.requested || r.playing || !active(r)) return;
+      let state;
+      try { state = r.player.getPlayerState?.(); } catch (_) { return; }
+      if (state === -1 || state === 2 || state === 5) {
+        r.requested = false; r.blocked = true; refresh(r);
+      }
+    }, 2500);
+  }
+
+  function evaluate(rearm = false) {
+    scheduled = false;
+    rearm = rearm || rearmScheduled; rearmScheduled = false;
+    records.forEach(r => {
+      r.visibleArea = measure(r);
+      const visible = r.visibleArea > 0;
+      if (visible && (!r.wasActive || rearm) && !r.userPaused && !r.ended) r.blocked = false;
+      r.wasActive = visible;
+      if (!visible) pause(r);
+    });
+    const candidates = records.filter(r => r.visibleArea > 0 && r.ready && !r.error && !r.userPaused && !r.ended && !r.blocked)
+      .sort((a, b) => b.visibleArea - a.visibleArea);
+    const manual = candidates.find(r => r.manualActive && r.requested);
+    let candidate = manual || candidates[0] || null;
+    // Avoid swapping two nearly equal visible videos on every scroll pixel.
+    if (!manual && chosen && candidates.includes(chosen) && chosen.requested && chosen.visibleArea >= (candidate?.visibleArea || 0) * .8) candidate = chosen;
+    records.forEach(r => { if (r !== candidate && (r.requested || r.playing)) pause(r); });
+    chosen = candidate;
+    if (candidate && !candidate.requested) play(candidate);
+  }
+  function schedule(rearm = false) {
+    rearmScheduled = rearmScheduled || rearm === true;
+    if (!scheduled) { scheduled = true; queueMicrotask(() => evaluate()); }
+  }
+
+  for (const [i, frame] of frames.entries()) {
+    const url = new URL(frame.src);
+    url.searchParams.set('enablejsapi', '1'); url.searchParams.set('origin', location.origin);
+    url.searchParams.set('playsinline', '1'); url.searchParams.set('autoplay', '0');
+    url.searchParams.set('mute', '1'); url.searchParams.set('cc_load_policy', '0'); url.searchParams.delete('cc_lang_pref');
+    frame.src = url.href; frame.id = frame.id || 'broadcast-player-' + i;
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    frame.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+    frame.parentElement.classList.add('broadcast-player-wrap');
+    const bar = document.createElement('div'); bar.className = 'broadcast-controls'; bar.dataset.localized = 'true';
+    bar.innerHTML = '<span></span><div><button type="button" class="broadcast-sound"></button><button type="button" class="broadcast-start"></button></div><a target="_blank" rel="noopener noreferrer" hidden></a>';
+    frame.parentElement.after(bar);
+    const r = { frame, bar, sound: bar.querySelector('.broadcast-sound'), start: bar.querySelector('.broadcast-start'),
+      note: bar.querySelector('span'), external: bar.querySelector('a'), ratio: 0, intersecting: false, visibleArea: 0,
+      wasActive: false, ready: false, requested: false, playing: false, intent: 'idle', captionDefaultPending: true,
+      muted: true, userPaused: false, manualActive: false, programmaticPause: false, blocked: false, ended: false, error: false, watchdog: null };
+    r.external.href = 'https://www.youtube.com/watch?v=' + url.pathname.split('/').pop();
+    r.sound.onclick = () => {
+      if (!r.ready) return;
+      r.muted = !r.muted;
+      if (r.muted) r.player.mute(); else r.player.unMute();
+      refresh(r);
+    };
+    r.start.onclick = () => {
+      if (!r.ready) return;
+      if (r.requested || r.playing) pause(r, true);
+      else { records.forEach(other => { if (other !== r) pause(other); }); chosen = r; play(r, true); }
+    };
+    records.push(r); refresh(r);
+  }
+
+  if ('IntersectionObserver' in window) {
+    visibilityObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => { const r = records.find(item => item.frame === entry.target); if (r) { r.intersecting = entry.isIntersecting; r.ratio = entry.intersectionRatio; } });
+      schedule();
+    }, { threshold: [0, .01, .1, .25, .5, .75, 1] });
+    records.forEach(r => visibilityObserver.observe(r.frame));
+  }
+  const pageObserver = new MutationObserver(() => schedule(true));
+  $$('.page').forEach(page => pageObserver.observe(page, { attributes: true, attributeFilter: ['class'] }));
+  document.addEventListener('visibilitychange', () => schedule(true));
+  window.addEventListener('pageshow', () => schedule(true));
+  window.addEventListener('focus', () => schedule(true));
+  window.addEventListener('online', () => schedule(true));
+  window.addEventListener('orientationchange', () => schedule(true));
+  window.addEventListener('resize', () => schedule());
+  document.addEventListener('scroll', () => schedule(), { capture: true, passive: true });
+  window.visualViewport?.addEventListener('resize', () => schedule());
+  window.visualViewport?.addEventListener('scroll', () => schedule());
+
+  function retryFromGesture(event) {
+    if (!event.isTrusted || document.hidden || event.target?.closest?.('.broadcast-controls')) return;
+    // Do not queue this call: it must remain in the real input event's stack.
+    // Never use a general page touch to undo the visitor's actual pause.
+    const candidate = records.filter(r => active(r) && r.ready && !r.requested && !r.userPaused && !r.ended && !r.error)
+      .sort((a, b) => measure(b) - measure(a))[0];
+    if (!candidate) return;
+    if (records.some(r => r !== candidate && active(r) && (r.requested || r.playing))) return;
+    records.forEach(r => { if (r !== candidate) pause(r); }); chosen = candidate;
+    play(candidate);
+  }
+  document.addEventListener('touchend', retryFromGesture, { passive: true });
+  document.addEventListener('pointerup', retryFromGesture, { passive: true });
+  document.addEventListener('click', retryFromGesture);
+  function preserveNativeCaptionChoice() {
+    const r = records.find(item => item.frame === document.activeElement);
+    if (r) r.captionDefaultPending = false;
+  }
+  document.addEventListener('focusin', preserveNativeCaptionChoice);
+  window.addEventListener('blur', () => queueMicrotask(preserveNativeCaptionChoice));
+
+  function mount() {
+    if (!window.YT?.Player) return;
+    records.forEach(r => {
+      if (r.player) return;
+      r.player = new YT.Player(r.frame.id, { events: {
+        onReady: event => {
+          r.player = event.target; r.ready = true;
+          const currentFrame = r.player.getIframe?.();
+          if (currentFrame && currentFrame !== r.frame) { visibilityObserver?.unobserve(r.frame); r.frame = currentFrame; visibilityObserver?.observe(r.frame); }
+          r.player.mute(); r.muted = true; refresh(r); evaluate();
+        },
+        onApiChange: () => captionsOff(r),
+        onStateChange: event => {
+          if (event.data === 1) {
+            clearTimeout(r.watchdog);
+            const nativeIntent = !r.requested && document.activeElement === r.frame && !r.programmaticPause;
+            if (!active(r) || ((r.userPaused || r.intent === 'suspend') && !nativeIntent)) { r.playing = true; pause(r); return; }
+            if (nativeIntent) { r.manualActive = true; r.intent = 'manual'; r.captionDefaultPending = false; }
+            captionsOff(r);
+            // Captions may load after PLAYING. Keep the one-shot pending until
+            // the module exists or a native/manual interaction yields control.
+            r.programmaticPause = false; r.playing = true; r.requested = true;
+            r.userPaused = false; r.blocked = false; r.ended = false;
+            records.forEach(other => { if (other !== r) pause(other); }); chosen = r;
+          } else if (event.data === 2) {
+            const wasPlaying = r.playing;
+            clearTimeout(r.watchdog); r.requested = false; r.playing = false;
+            if (r.programmaticPause) r.programmaticPause = false;
+            else if (wasPlaying && active(r)) { r.userPaused = true; r.manualActive = false; r.intent = 'user-pause'; r.captionDefaultPending = false; }
+            else if (active(r)) r.blocked = true;
+          } else if (event.data === 0) {
+            clearTimeout(r.watchdog); r.requested = false; r.playing = false; r.ended = true;
+          }
+          refresh(r);
+        },
+        onAutoplayBlocked: () => {
+          clearTimeout(r.watchdog); r.blocked = true; r.requested = false; r.playing = false;
+          // This event is a browser policy result, never a visitor pause.
+          refresh(r);
+        },
+        onError: () => { clearTimeout(r.watchdog); r.error = true; r.requested = false; r.playing = false; r.blocked = true; refresh(r); }
+      } });
+    });
+  }
+  if (window.YT?.Player) mount();
+  else {
+    const previous = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { if (typeof previous === 'function') previous(); mount(); };
+    if (!$('#coco-youtube-api')) {
+      const script = document.createElement('script'); script.id = 'coco-youtube-api'; script.src = 'https://www.youtube.com/iframe_api'; script.async = true; document.head.append(script);
+    }
+  }
+  refreshers.push(() => records.forEach(refresh));
 }
 function init(){setupFoodGalleries();setupCrewScenes();setupFerryStatus();setupBroadcastAutoplay();document.addEventListener('coco:language',()=>refreshers.forEach(f=>f()));}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
