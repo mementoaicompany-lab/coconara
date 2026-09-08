@@ -673,12 +673,14 @@ body.admin-mode .dalkom-edit-btn { display:block; }
 </style>
 
 
-<link rel="stylesheet" href="reset.css?v=12">
-<link rel="stylesheet" href="mobile.css?v=12">
-<link rel="stylesheet" href="experience.css?v=12">
-<link rel="stylesheet" href="motion.css?v=12">
-<link rel="stylesheet" href="coastal.css?v=12">
-<link rel="stylesheet" href="ferry-admin.css?v=12">
+<link rel="stylesheet" href="reset.css?v=13">
+<link rel="stylesheet" href="mobile.css?v=13">
+<link rel="stylesheet" href="experience.css?v=13">
+<link rel="stylesheet" href="motion.css?v=13">
+<link rel="stylesheet" href="coastal.css?v=13">
+<link rel="stylesheet" href="ferry-admin.css?v=13">
+<link rel="stylesheet" href="road-map.css?v=13">
+<link rel="stylesheet" href="navigation.css?v=13">
 </head>
 <body>
 
@@ -832,268 +834,26 @@ body.admin-mode .dalkom-edit-btn { display:block; }
 
   <!-- ── 섹터: 오시는길 + 지도 ── -->
 
-  <!-- 지도 카드 -->
-  <div class="map-card fade-up">
-    <div class="map-card-hdr">
-      <h2>🗺 우도 한 바퀴 코스</h2>
-      <span>관광지 터치해보세요!</span>
+<div id="coco-road-map" data-localized="true" aria-label="우도 관광 지도">
+  <div class="um-header"><div><div class="um-eyebrow">COCONARA · UDO</div><h2>우도 한 바퀴 코스</h2></div></div>
+  <div class="um-tools"><button type="button" class="um-food-switch" aria-pressed="false">맛집 보기 <span>OFF</span></button><button type="button" class="um-gps" aria-pressed="false">◎ 내 위치 켜기</button></div>
+  <p class="um-gps-status" role="status" aria-live="polite">내 위치를 켜면 위치 접근 권한을 요청해요.</p>
+  <div class="um-map"><svg class="um-geography" role="img" aria-label="파미가 실제 도로 좌표를 따라 움직이는 우도 관광 지도"></svg><div class="um-labels"></div><div class="um-north" aria-label="위쪽이 북쪽">↑<span>N</span></div><div class="um-scale"><span></span>500 m</div><button type="button" class="um-motion-control" aria-pressed="false">⏸ 움직임 멈추기</button></div>
+  <div class="um-tap-hint"><span class="um-tap-hand" aria-hidden="true">👆</span><div><strong>장소 이름을 눌러보세요!</strong><span>사진과 사장님의 설명이 나와요</span></div></div>
+  <button type="button" class="um-harbor-guide"><span class="um-harbor-icon">🚢</span><span><span class="um-harbor-kicker">코코나라는 천진항이 아닌</span><strong>하우목동항!</strong></span><span class="um-guide-arrow">안내 보기 ›</span></button>
+  <div class="um-foot"><span>도로·해안선 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> 기여자</span><span class="um-gps-privacy">위치는 내 기기의 지도에만 표시돼요</span></div>
+  <dialog class="um-dialog" aria-labelledby="coco-road-dialog-title">
+    <div class="um-dialog-header"><div><div class="um-dialog-tag"></div><h3 id="coco-road-dialog-title"></h3></div><button type="button" class="um-dialog-close" aria-label="설명 팝업 닫기">×</button></div>
+    <div class="um-popup-body">
+      <div class="um-popup-photo"><img alt=""/><div class="um-photo-nav"><button type="button" class="um-photo-prev" aria-label="이전 사진">‹</button><span class="um-photo-count"></span><button type="button" class="um-photo-next" aria-label="다음 사진">›</button></div></div>
+      <div class="um-photo-credit"></div>
+      <div class="um-popup-copy"><div class="um-owner-label"></div><div class="um-owner-words"></div><div class="um-tip-list"></div><div class="um-menu-tags"></div><p class="um-food-info"></p><div class="um-popup-links"></div></div>
     </div>
-    <div class="map-svg-wrap" style="position:relative;">
-<svg id="udo-map" viewBox="0 0 360 340" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="font-family:'Noto Sans KR',sans-serif;">
-  <defs>
-    <marker id="arrowEnd" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
-      <path d="M0,1 L6,3.5 L0,6 Z" fill="#FF8FAD"/>
-    </marker>
-    <marker id="arrowCoco" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-      <path d="M0,0.5 L5.5,3 L0,5.5 Z" fill="#FF6B9D"/>
-    </marker>
-    <marker id="arrowDalkom" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-      <path d="M0,0.5 L5.5,3 L0,5.5 Z" fill="#D4650A"/>
-    </marker>
-    <marker id="arrowHundert" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-      <path d="M0,0.5 L5.5,3 L0,5.5 Z" fill="#2E8B57"/>
-    </marker>
-    <filter id="ps"><feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="rgba(0,0,0,0.2)"/></filter>
-    <filter id="ps2"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.28)"/></filter>
-    <filter id="psl"><feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.13)"/></filter>
-    <clipPath id="seaLeft">
-      <rect x="0" y="0" width="68" height="340"/>
-    </clipPath>
-  </defs>
+  </dialog>
+  
+</div>
 
-  <!-- 바다 배경 -->
-  <rect width="360" height="340" fill="#A8D8F0" rx="10"/>
-
-  <!-- 파도 -->
-  <ellipse class="wave"    cx="22"  cy="30"  rx="13" ry="3" fill="none" stroke="white" stroke-width="1.3" opacity="0.3"/>
-  <ellipse class="wave w2" cx="338" cy="58"  rx="11" ry="3" fill="none" stroke="white" stroke-width="1.3" opacity="0.3"/>
-  <ellipse class="wave w3" cx="28"  cy="300" rx="15" ry="3" fill="none" stroke="white" stroke-width="1.3" opacity="0.3"/>
-  <ellipse class="wave"    cx="334" cy="282" rx="11" ry="3" fill="none" stroke="white" stroke-width="1.3" opacity="0.3"/>
-
-  <!-- 항로 점선 -->
-  <line x1="6" y1="165" x2="66" y2="165" stroke="#78AADC" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.4"/>
-
-  <!-- 배 한 척 - clipPath로 섬에 안 가려짐, 하우목동항 아래 배치 -->
-  <g id="ferry-boat" class="ferry-one" clip-path="url(#seaLeft)" style="cursor:grab;">
-    <rect x="8" y="155" width="36" height="14" rx="3" fill="white" stroke="#AACCEE" stroke-width="1.2"/>
-    <rect x="8" y="164" width="36" height="5" rx="0" fill="#8866BB" opacity="0.65"/>
-    <rect x="8" y="161" width="36" height="2" fill="#4488CC" opacity="0.5"/>
-    <rect x="12" y="146" width="24" height="10" rx="2" fill="#EEEEFF" stroke="#AACCEE" stroke-width="0.8"/>
-    <rect x="14" y="148" width="4" height="5" rx="0.5" fill="#78AADC" opacity="0.8"/>
-    <rect x="21" y="148" width="4" height="5" rx="0.5" fill="#78AADC" opacity="0.8"/>
-    <rect x="28" y="148" width="4" height="5" rx="0.5" fill="#78AADC" opacity="0.8"/>
-    <rect x="16" y="141" width="5" height="6" rx="1.2" fill="#445566"/>
-    <ellipse cx="19" cy="140" rx="3" ry="1.8" fill="white" opacity="0.4"/>
-    <path d="M 44 155 L 50 162 L 44 169" fill="white" stroke="#AACCEE" stroke-width="1"/>
-    <path d="M 6 169 Q 27 173 52 169" fill="#B8D8EE" opacity="0.38" stroke="none"/>
-  </g>
-
-  <!-- 우도 섬 — 실제 지형 트레이싱 (이미지 픽셀 기반) -->
-  <!-- 메인 섬 -->
-  <path d="
-    M 161.1 10.0
-    L 152.5 14.3 L 147.0 18.6 L 144.0 23.0 L 136.4 27.3
-    L 132.9 31.6 L 130.4 35.9 L 128.8 40.2 L 128.3 44.5
-    L 127.3 48.9 L 126.8 53.2 L 131.9 57.5 L 136.4 61.8
-    L 138.4 66.1 L 137.9 70.5 L 137.9 74.8 L 138.4 79.1
-    L 139.4 83.4 L 140.9 87.7 L 140.9 92.1 L 127.3 96.4
-    L 122.8 100.7 L 114.2 105.0 L 108.2 109.3 L 102.7 113.6
-    L 99.1 118.0 L 96.6 122.3 L 96.1 126.6 L 96.6 130.9
-    L 93.6 135.2 L 96.6 139.6 L 96.1 143.9 L 93.1 148.2
-    L 87.5 152.5 L 82.0 156.8 L 82.0 161.1 L 82.0 165.5
-    L 82.0 169.8 L 82.0 174.1 L 82.0 178.4 L 82.0 182.7
-    L 97.6 187.1 L 99.1 191.4 L 99.6 195.7 L 99.6 200.0
-    L 100.1 204.3 L 100.1 208.7 L 100.6 213.0 L 102.1 217.3
-    L 102.7 221.6 L 103.2 225.9 L 102.1 230.2 L 102.1 234.6
-    L 102.7 238.9 L 97.1 243.2 L 93.6 247.5 L 95.1 251.8
-    L 101.1 256.2 L 108.7 260.5 L 118.3 264.8 L 152.0 269.1
-    L 155.0 274.0 L 166.0 278.5 L 185.0 282.5 L 215.0 284.5
-    L 235.0 284.0 L 248.0 281.5 L 258.0 278.5
-    L 264.0 274.5 L 268.0 269.5 L 269.5 264.5
-    L 269.0 259.5 L 267.5 254.5 L 266.0 249.5
-    L 265.5 244.0 L 284.0 239.5 L 284.5 234.5 L 284.5 229.5
-    L 284.5 224.5 L 284.5 219.5 L 284.5 214.5 L 284.5 209.5
-    L 284.5 204.5 L 284.5 199.5 L 284.5 195.0 L 284.5 190.5
-    L 282.0 186.5 L 277.0 182.5 L 277.5 178.0 L 277.5 173.5
-    L 278.0 169.0 L 280.0 164.5 L 278.0 160.5
-    L 276.5 156.5 L 276.5 152.0 L 276.5 147.5 L 273.0 143.5
-    L 269.0 139.0 L 265.0 134.5 L 263.0 130.0 L 262.5 125.5
-    L 259.5 121.5 L 256.5 117.5 L 256.0 113.0 L 256.0 108.5
-    L 255.5 104.5 L 210.5 100.5 L 208.5 96.0 L 207.0 91.5
-    L 206.0 87.0 L 208.5 83.0 L 211.5 78.5 L 226.0 74.0
-    L 233.5 69.5 L 237.0 65.5 L 229.0 61.0 L 224.5 57.0
-    L 214.0 52.5 L 210.5 48.0 L 207.5 43.5 L 206.5 39.5
-    L 210.5 35.0 L 211.0 30.5 L 194.5 26.5 L 193.5 22.5
-    L 192.5 18.5 L 189.5 14.0 L 187.0 10.0
-    Z"
-    fill="#C8E8A0" stroke="#8BBB60" stroke-width="2.2"/>
-
-  <!-- 내부 밝은 하이라이트 -->
-  <ellipse cx="184" cy="168" rx="66" ry="86" fill="#D8F0B8" opacity="0.32"/>
-
-  <!-- 해안도로 점선 (섬 안쪽으로 7px 축소) -->
-  <path d="
-    M 163.0 18.0
-    L 154.5 22.0 L 149.5 26.0 L 146.5 30.5 L 139.0 34.5
-    L 135.5 38.5 L 133.5 42.5 L 132.0 46.5 L 131.5 51.0
-    L 131.5 55.5 L 135.5 59.5 L 139.5 63.5 L 141.0 68.0
-    L 140.5 72.5 L 140.5 77.0 L 141.0 81.5 L 142.0 85.5
-    L 143.5 89.5 L 144.0 94.0 L 131.0 98.5 L 126.5 102.5
-    L 118.0 107.0 L 112.0 111.0 L 107.0 115.5 L 103.5 120.0
-    L 101.5 124.5 L 101.0 128.5 L 101.5 132.5 L 98.5 137.0
-    L 101.0 141.5 L 100.5 146.0 L 98.0 150.5 L 92.5 155.0
-    L 88.5 159.5 L 88.5 164.0 L 88.5 168.5 L 88.5 173.0
-    L 88.5 177.5 L 88.5 182.0 L 103.0 186.0 L 104.0 190.5
-    L 104.5 195.0 L 104.5 199.5 L 105.0 204.0 L 105.0 208.5
-    L 105.5 213.0 L 107.0 217.5 L 107.5 222.0 L 108.0 226.5
-    L 106.5 231.0 L 106.5 235.5 L 107.0 240.0 L 101.5 244.5
-    L 98.5 248.5 L 100.0 252.5 L 106.0 257.0 L 113.5 261.0
-    L 122.5 265.5 L 154.0 269.5 L 154.5 274.0 L 165.5 278.0
-    L 186.0 278.0 L 214.0 280.0 L 233.0 279.5
-    L 246.0 277.0 L 255.0 274.5 L 260.5 271.0 L 264.5 266.5
-    L 265.5 262.0 L 264.0 257.5 L 262.5 253.0 L 261.0 248.5
-    L 260.5 244.0 L 279.0 239.5 L 280.5 235.5 L 280.5 231.0 L 280.5 226.5
-    L 280.5 222.0 L 280.5 217.5 L 280.5 213.0 L 280.5 208.5
-    L 280.5 204.0 L 280.5 199.5 L 280.5 195.0 L 280.5 190.5
-    L 278.5 186.0 L 273.0 182.0 L 273.5 177.5 L 273.5 173.0
-    L 274.0 168.5 L 276.0 164.0 L 274.0 159.5 L 272.5 155.0
-    L 272.5 150.5 L 272.5 146.0 L 269.0 141.5 L 265.0 137.0
-    L 261.5 132.5 L 259.5 128.5 L 259.5 124.5 L 257.0 120.0
-    L 254.0 115.5 L 254.0 111.0 L 253.5 107.0 L 210.0 103.0
-    L 208.5 98.5 L 207.0 94.0 L 205.5 89.5 L 208.5 85.5
-    L 211.5 81.5 L 225.5 77.0 L 232.5 72.5 L 235.5 68.0
-    L 228.0 63.5 L 223.5 59.5 L 213.5 55.5 L 210.0 51.0
-    L 207.0 46.5 L 206.0 42.5 L 209.5 38.5 L 210.5 34.5
-    L 194.5 30.5 L 193.5 26.0 L 192.5 22.0 L 190.0 18.0
-    L 188.0 14.5 Z"
-    fill="none" stroke="#F5A623" stroke-width="1.7" stroke-dasharray="7,5" opacity="0.5"/>
-
-
-  <!-- ★ 시계방향 화살표 -->
-  <g id="map-arrow-group" transform="translate(193,165)" opacity="0.5" style="cursor:default;">
-    <path d="M -38,0 A 38,38 0 1 1 -27,27" fill="none" stroke="white" stroke-width="6" stroke-linecap="round"/>
-    <path d="M -38,0 A 38,38 0 1 1 -27,27" fill="none" stroke="#FF6B9D" stroke-width="4" stroke-linecap="round"/>
-    <g transform="translate(-27,27) rotate(220)">
-      <polygon points="0,-9 13,0 0,9" fill="white"/>
-      <polygon points="0,-6 9,0 0,6" fill="#FF6B9D"/>
-    </g>
-    <circle id="map-arrow-handle" r="40" fill="transparent" style="display:none;cursor:grab;"/>
-  </g>
-  <!-- 핑크 루트 베이스 (흐릿) — 시계방향 -->
-  <path d="M 187.0 10.0
-    L 189.5 14.0 L 192.5 18.5 L 193.5 22.5 L 194.5 26.5
-    L 211.0 30.5 L 210.5 35.0 L 206.5 39.5 L 207.5 43.5
-    L 210.5 48.0 L 214.0 52.5 L 224.5 57.0 L 229.0 61.0
-    L 237.0 65.5 L 233.5 69.5 L 226.0 74.0 L 211.5 78.5
-    L 208.5 83.0 L 206.0 87.0 L 207.0 91.5 L 208.5 96.0
-    L 210.5 100.5 L 255.5 104.5 L 256.0 108.5 L 256.0 113.0
-    L 256.5 117.5 L 259.5 121.5 L 262.5 125.5 L 263.0 130.0
-    L 265.0 134.5 L 269.0 139.0 L 273.0 143.5 L 276.5 147.5
-    L 276.5 152.0 L 276.5 156.5 L 278.0 160.5 L 280.0 164.5
-    L 278.0 169.0 L 277.5 173.5 L 277.5 178.0 L 282.0 186.5
-    L 284.5 190.5 L 284.5 195.0 L 284.5 199.5 L 284.5 204.5
-    L 284.5 209.5 L 284.5 214.5 L 284.5 219.5 L 284.5 224.5
-    L 284.5 229.5 L 284.5 234.5 L 284.0 239.5 L 265.5 244.0
-    L 266.0 249.5 L 267.5 254.5 L 269.0 259.5 L 269.5 264.5
-    L 268.0 269.5 L 264.0 274.5 L 258.0 278.5 L 248.0 281.5
-    L 235.0 284.0 L 215.0 284.5 L 185.0 282.5 L 166.0 278.5
-    L 155.0 274.0 L 152.0 269.1 L 118.3 264.8 L 108.7 260.5
-    L 101.1 256.2 L 95.1 251.8 L 93.6 247.5 L 97.1 243.2
-    L 102.7 238.9 L 102.1 234.6 L 102.1 230.2 L 103.2 225.9
-    L 102.7 221.6 L 102.1 217.3 L 100.6 213.0 L 100.1 208.7
-    L 100.1 204.3 L 99.6 200.0 L 99.6 195.7 L 99.1 191.4
-    L 97.6 187.1 L 82.0 182.7 L 82.0 178.4 L 82.0 174.1
-    L 82.0 169.8 L 82.0 165.5 L 82.0 161.1 L 82.0 156.8
-    L 87.5 152.5 L 93.1 148.2 L 96.1 143.9 L 96.6 139.6
-    L 93.6 135.2 L 96.6 130.9 L 96.1 126.6 L 99.1 118.0
-    L 102.7 113.6 L 108.2 109.3 L 114.2 105.0 L 122.8 100.7
-    L 127.3 96.4 L 140.9 92.1 L 139.4 87.7 L 138.4 79.1
-    L 137.9 74.8 L 137.9 70.5 L 138.4 66.1 L 136.4 61.8
-    L 131.9 57.5 L 126.8 53.2 L 127.3 48.9 L 128.3 44.5
-    L 128.8 40.2 L 130.4 35.9 L 132.9 31.6 L 136.4 27.3
-    L 144.0 23.0 L 147.0 18.6 L 152.5 14.3 L 161.1 10.0 Z"
-    fill="none" stroke="#FFB5C8" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
-
-  <!-- ★ 핑크 루트 — 시계방향, 깔끔한 원형 dot -->
-  <!-- dot: 지름8 원이 경로 위를 시계방향으로 이동 -->
-  <!-- 코코나라(offset≈1080) + 달콤아재(offset≈720) 멈춤 -->
-  <path id="routeDot" d="M 187.0 10.0
-    L 189.5 14.0 L 192.5 18.5 L 193.5 22.5 L 194.5 26.5
-    L 211.0 30.5 L 210.5 35.0 L 206.5 39.5 L 207.5 43.5
-    L 210.5 48.0 L 214.0 52.5 L 224.5 57.0 L 229.0 61.0
-    L 237.0 65.5 L 233.5 69.5 L 226.0 74.0 L 211.5 78.5
-    L 208.5 83.0 L 206.0 87.0 L 207.0 91.5 L 208.5 96.0
-    L 210.5 100.5 L 255.5 104.5 L 256.0 108.5 L 256.0 113.0
-    L 256.5 117.5 L 259.5 121.5 L 262.5 125.5 L 263.0 130.0
-    L 265.0 134.5 L 269.0 139.0 L 273.0 143.5 L 276.5 147.5
-    L 276.5 152.0 L 276.5 156.5 L 278.0 160.5 L 280.0 164.5
-    L 278.0 169.0 L 277.5 173.5 L 277.5 178.0 L 282.0 186.5
-    L 284.5 190.5 L 284.5 195.0 L 284.5 199.5 L 284.5 204.5
-    L 284.5 209.5 L 284.5 214.5 L 284.5 219.5 L 284.5 224.5
-    L 284.5 229.5 L 284.5 234.5 L 284.0 239.5 L 265.5 244.0
-    L 266.0 249.5 L 267.5 254.5 L 269.0 259.5 L 269.5 264.5
-    L 268.0 269.5 L 264.0 274.5 L 258.0 278.5 L 248.0 281.5
-    L 235.0 284.0 L 215.0 284.5 L 185.0 282.5 L 166.0 278.5
-    L 155.0 274.0 L 152.0 269.1 L 118.3 264.8 L 108.7 260.5
-    L 101.1 256.2 L 95.1 251.8 L 93.6 247.5 L 97.1 243.2
-    L 102.7 238.9 L 102.1 234.6 L 102.1 230.2 L 103.2 225.9
-    L 102.7 221.6 L 102.1 217.3 L 100.6 213.0 L 100.1 208.7
-    L 100.1 204.3 L 99.6 200.0 L 99.6 195.7 L 99.1 191.4
-    L 97.6 187.1 L 82.0 182.7 L 82.0 178.4 L 82.0 174.1
-    L 82.0 169.8 L 82.0 165.5 L 82.0 161.1 L 82.0 156.8
-    L 87.5 152.5 L 93.1 148.2 L 96.1 143.9 L 96.6 139.6
-    L 93.6 135.2 L 96.6 130.9 L 96.1 126.6 L 99.1 118.0
-    L 102.7 113.6 L 108.2 109.3 L 114.2 105.0 L 122.8 100.7
-    L 127.3 96.4 L 140.9 92.1 L 139.4 87.7 L 138.4 79.1
-    L 137.9 74.8 L 137.9 70.5 L 138.4 66.1 L 136.4 61.8
-    L 131.9 57.5 L 126.8 53.2 L 127.3 48.9 L 128.3 44.5
-    L 128.8 40.2 L 130.4 35.9 L 132.9 31.6 L 136.4 27.3
-    L 144.0 23.0 L 147.0 18.6 L 152.5 14.3 L 161.1 10.0 Z"
-    fill="none" stroke="#FF8FAD" stroke-width="8" stroke-linecap="round"
-    stroke-dasharray="1 1149" stroke-dashoffset="1150" opacity="0">
-    <!-- 더미 path (실제 dot는 아래 circle animateMotion 사용) -->
-  </path>
-
-  <!-- 🚗 움직이는 자동차 — JS requestAnimationFrame (스크롤 방지) -->
-  <text id="map-car-emoji" font-size="22" text-anchor="middle" dominant-baseline="middle"
-        filter="url(#ps)" opacity="0.95"
-        style="will-change:transform;"
-        transform="translate(187,10)">&#x1F697;</text>
-
-
-  <!-- 하우목동항 방향 고정 화살표 (9시, 서쪽)
-       경로상 하우목동항 진입 방향: 위→아래 (남쪽), 삼각형 ▼ -->
-
-
-  <!-- 코코나라 멈춤 펄스 -->
-  <circle cx="86" cy="168" r="0" fill="none" stroke="#FF6B9D" stroke-width="2.5" opacity="0">
-    <animate attributeName="r"       values="0;0;10;16;0; 0;10;16;0"     keyTimes="0;0.03;0.07;0.14;0.16; 0.89;0.93;0.97;1" dur="12s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" values="0;0;0.75;0;0; 0;0.75;0;0"  keyTimes="0;0.03;0.07;0.14;0.16; 0.89;0.93;0.97;1" dur="12s" repeatCount="indefinite"/>
-  </circle>
-
-  <!-- 달콤아재 멈춤 펄스 -->
-  <circle cx="258" cy="122" r="0" fill="none" stroke="#FFB347" stroke-width="2.5" opacity="0">
-    <animate attributeName="r"       values="0;0;10;16;0"    keyTimes="0;0.40;0.46;0.52;0.54" dur="12s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" values="0;0;0.75;0;0"   keyTimes="0;0.40;0.46;0.52;0.54" dur="12s" repeatCount="indefinite"/>
-  </circle>
-
-
-
-  <!-- ★ 동적 핀 그룹 — JS renderMapPins()가 여기에 렌더링 -->
-  <g id="map-dynamic-pins"></g>
-
-  <!-- 소요시간 박스 (고정) -->
-  <g>
-    <rect x="4" y="2" width="90" height="42" rx="8" fill="white" opacity="0.88"/>
-    <text x="49" y="14" text-anchor="middle" font-size="10" fill="#FF8FAD" font-weight="800" font-family="'Noto Sans KR',sans-serif">&#x27F3; 시계방향 추천</text>
-    <text x="49" y="26" text-anchor="middle" font-size="9.5" fill="#555" font-family="'Noto Sans KR',sans-serif">🛵 이동 약 1시간</text>
-    <text x="49" y="38" text-anchor="middle" font-size="9.5" fill="#555" font-family="'Noto Sans KR',sans-serif">📷 관광 약 2시간</text>
-  </g>
-
-
-</svg>
-    <button class="map-add-pin-btn" id="map-add-btn" onclick="openPinAdd()" title="핀 추가">＋</button>
-    </div>
+  <div class="map-return-summary">
     <!-- 반납 마감시간 — 지도 하단에 자연스럽게 -->
     <div style="margin:0 0 0;padding:8px 14px 12px;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:6px;">
@@ -1174,7 +934,7 @@ body.admin-mode .dalkom-edit-btn { display:block; }
     </div>
 
     <!-- 탑승 전 필독사항 -->
-    <div onclick="showPage('coconara',document.querySelectorAll('.tab-item')[2])" style="cursor:pointer;background:white;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,0.07);border:1.5px solid #E8E8FF;">
+    <div id="required-guide-link" role="button" tabindex="0" onclick="window.cocoOpenRequired()" style="cursor:pointer;background:white;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,0.07);border:1.5px solid #E8E8FF;">
       <div style="width:40px;height:40px;background:linear-gradient(135deg,#667EEA,#9B8FFF);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;">📋</div>
       <div style="flex:1;">
         <div style="font-size:13px;font-weight:900;color:#1A1A1A;">필독사항</div>
@@ -4978,6 +4738,7 @@ window.addEventListener('load', initHundert);
 
   // ── 현재 열린 최상위 팝업 닫기 ──
   function closeTopPopup() {
+    if (window.CocoRoadMap?.isOpen()) { window.CocoRoadMap.close(true); return; }
     if (window.cocoCloseDalkom && document.querySelector('.dalkom-fullscreen')) { window.cocoCloseDalkom(); return; }
     // 1. 바코드 팝업 (동적 생성)
     if (document.getElementById('_barcodeModal')) { closeBarcodePopup(); return; }
@@ -5141,14 +4902,20 @@ window.addEventListener('load', initHundert);
 
 })();
 </script>
-<script src="translations.js?v=12"></script>
-<script src="reset.js?v=12"></script>
-<script src="mobile.js?v=12"></script>
-<script src="experience.js?v=12"></script>
-<script src="motion.js?v=12"></script>
-<script src="coastal.js?v=12"></script>
-<script src="ferry-config.js?v=12"></script>
-<script src="ferry-admin.js?v=12"></script>
-<script src="ferry-schedule.js?v=12"></script>
+<script src="translations.js?v=13"></script>
+<script src="reset.js?v=13"></script>
+<script src="mobile.js?v=13"></script>
+<script src="experience.js?v=13"></script>
+<script src="motion.js?v=13"></script>
+<script src="coastal.js?v=13"></script>
+<script src="ferry-config.js?v=13"></script>
+<script src="ferry-admin.js?v=13"></script>
+<script src="ferry-schedule.js?v=13"></script>
+<script src="d3.v7.min.js"></script>
+<script src="road-data.js?v=13"></script>
+<script src="road-map-i18n.js?v=13"></script>
+<script src="road-gps.js?v=13"></script>
+<script src="road-map.js?v=13"></script>
+<script src="navigation.js?v=13"></script>
 </body>
 </html>

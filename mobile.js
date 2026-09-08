@@ -22,12 +22,12 @@ function svg(type,attrs){const el=document.createElementNS(ns,type);Object.entri
 
 function setupNavigation(){
  const nav=$('.tab-bar'),buttons=$$('.tab-item');
- nav.setAttribute('role','navigation');nav.setAttribute('aria-label','Main navigation');document.body.append(nav);
+ nav.setAttribute('role','navigation');nav.setAttribute('aria-label','Main navigation');document.querySelector('.language-bar').after(nav);
  buttons.forEach((button,i)=>{button.dataset.page=order[i];button.setAttribute('aria-controls','page-'+order[i]);button.onclick=()=>window.showPage(order[i],button);});
  const original=window.showPage;
- window.showPage=function(id){original.call(this,id,buttons[order.indexOf(id)]);sync();document.dispatchEvent(new Event('coco:page'));};
+ window.showPage=function(id){original.call(this,id,buttons[order.indexOf(id)]);sync();document.dispatchEvent(new Event('coco:page'));nav.scrollIntoView({block:'start',behavior:'instant'});};
  function sync(){buttons.forEach((b,i)=>{if($('#page-'+order[i]).classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});}
- function measure(){const height=nav.getBoundingClientRect().height;if(height>0)document.documentElement.style.setProperty('--bottom-nav-space',Math.ceil(height)+'px');}
+ function measure(){const height=nav.getBoundingClientRect().height;if(height>0)document.documentElement.style.setProperty('--top-nav-space',Math.ceil(height)+'px');}
  if('ResizeObserver'in window)new ResizeObserver(measure).observe(nav);
  window.addEventListener('resize',measure,{passive:true});window.addEventListener('popstate',()=>queueMicrotask(sync));sync();measure();
 }
