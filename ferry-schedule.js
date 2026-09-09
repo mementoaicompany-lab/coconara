@@ -9,7 +9,7 @@
       depart: '출항', flexible: '유동 출발', ended: '운항 종료', cancel: '결항', pending: '운항 확인 중', port: '항구에 확인',
       regular: '매 정시 출발 · 30분마다 추가출항은 항구에서 결정', last: '오늘 마지막 배: {time}',
       shortened: '단축 운항 · 관리자 확인', final: '마지막 배',
-      shortenedDetail: '관리자가 확인한 마지막 출항 시각입니다. 중간 출항편은 항구에 확인해주세요.',
+      shortenedDetail: '30분 간격 안내는 그대로 · 오늘 마지막 배 {time}',
       pendingDetail: '오늘 운항 정보가 확인되면 배시간을 안내합니다.', cancelDetail: '오늘은 결항입니다. 출항 카운트다운을 표시하지 않습니다.',
       endedDetail: '오늘 운항이 종료되었습니다.', incomingDetail: '입도 배시간은 성산항에 확인해주세요.',
       kst: '한국시간(KST) 기준', returnBasis: '마지막 배 {time} 기준 · 1시간 전 반납',
@@ -19,7 +19,7 @@
       depart: 'departure', flexible: 'flexible departure', ended: 'Service ended', cancel: 'Cancelled', pending: 'Awaiting confirmation', port: 'Check with the port',
       regular: 'Hourly departures · Extra half-hour sailings are decided at the port', last: 'Last ferry today: {time}',
       shortened: 'Shortened service · Confirmed by the administrator', final: 'last ferry',
-      shortenedDetail: 'This is the last departure confirmed by the administrator. Ask the port about other sailings.',
+      shortenedDetail: 'Half-hour guidance continues · Last ferry today {time}',
       pendingDetail: 'Departure times will appear after today’s service is confirmed.', cancelDetail: 'Today’s service is cancelled. No departure countdown is shown.',
       endedDetail: 'Today’s ferry service has ended.', incomingDetail: 'Check with Seongsan Port for ferries to Udo.',
       kst: 'Korea time (KST)', returnBasis: 'Last ferry {time} · Return the vehicle 1 hour earlier',
@@ -29,7 +29,7 @@
       depart: 'berlepas', flexible: 'pelepasan fleksibel', ended: 'Perkhidmatan tamat', cancel: 'Dibatalkan', pending: 'Menunggu pengesahan', port: 'Semak dengan pelabuhan',
       regular: 'Berlepas setiap jam · Perjalanan tambahan pada setengah jam ditentukan oleh pelabuhan', last: 'Feri terakhir hari ini: {time}',
       shortened: 'Waktu operasi dipendekkan · Disahkan pentadbir', final: 'feri terakhir',
-      shortenedDetail: 'Ini waktu pelepasan terakhir yang disahkan oleh pentadbir. Semak perjalanan lain dengan pelabuhan.',
+      shortenedDetail: 'Panduan selang 30 minit diteruskan · Feri terakhir hari ini {time}',
       pendingDetail: 'Waktu feri dipaparkan selepas operasi hari ini disahkan.', cancelDetail: 'Operasi hari ini dibatalkan. Kiraan detik pelepasan tidak dipaparkan.',
       endedDetail: 'Operasi feri hari ini telah tamat.', incomingDetail: 'Semak feri ke Udo dengan Pelabuhan Seongsan.',
       kst: 'Waktu Korea (KST)', returnBasis: 'Feri terakhir {time} · Pulangkan kenderaan 1 jam lebih awal',
@@ -39,7 +39,7 @@
       depart: '開船', flexible: '彈性開船', ended: '今日航班已結束', cancel: '停航', pending: '等待確認航班', port: '請向碼頭查詢',
       regular: '每小時正點開船 · 半點加班船由碼頭決定', last: '今日尾班船：{time}',
       shortened: '縮短航班時間 · 管理員已確認', final: '尾班船',
-      shortenedDetail: '此為管理員確認的最後開船時間。其他航班請向碼頭查詢。',
+      shortenedDetail: '仍按每30分鐘顯示航班 · 今日尾班船 {time}',
       pendingDetail: '確認今日航班後，將顯示開船時間。', cancelDetail: '今日停航，不顯示開船倒數。',
       endedDetail: '今日渡輪服務已結束。', incomingDetail: '前往牛島的航班請向城山港查詢。',
       kst: '以韓國時間（KST）為準', returnBasis: '尾班船 {time} · 請提前1小時還車',
@@ -49,7 +49,7 @@
       depart: '開船', flexible: '彈性開船', ended: '今日航班已結束', cancel: '停航', pending: '等待確認航班', port: '請向港口查詢',
       regular: '每小時整點開船 · 半點加班船由港口決定', last: '今日末班船：{time}',
       shortened: '縮短航班時間 · 管理員已確認', final: '末班船',
-      shortenedDetail: '此為管理員確認的最後開船時間。其他航班請向港口查詢。',
+      shortenedDetail: '仍按每30分鐘顯示航班 · 今日末班船 {time}',
       pendingDetail: '確認今日航班後，將顯示開船時間。', cancelDetail: '今日停航，不顯示開船倒數。',
       endedDetail: '今日渡輪服務已結束。', incomingDetail: '前往牛島的航班請向城山港查詢。',
       kst: '以韓國時間（KST）為準', returnBasis: '末班船 {time} · 請提前1小時還車',
@@ -59,7 +59,7 @@
       depart: '出航', flexible: '臨時出航', ended: '本日の運航終了', cancel: '欠航', pending: '運航確認中', port: '港にご確認ください',
       regular: '毎時00分出航 · 30分の追加便は港が決定します', last: '本日の最終便：{time}',
       shortened: '運航時間短縮 · 管理者確認済み', final: '最終便',
-      shortenedDetail: '管理者が確認した最終出航時刻です。途中の便は港にご確認ください。',
+      shortenedDetail: '30分間隔の案内は継続 · 本日の最終便 {time}',
       pendingDetail: '本日の運航が確認でき次第、出航時刻を表示します。', cancelDetail: '本日は欠航です。出航カウントダウンは表示しません。',
       endedDetail: '本日のフェリー運航は終了しました。', incomingDetail: '牛島行きの便は城山港にご確認ください。',
       kst: '韓国時間（KST）基準', returnBasis: '最終便 {time} · 1時間前までに車両を返却',
@@ -122,7 +122,7 @@
   function nextDeparture(now, last) {
     // Only calculate today's daytime schedule; the source contains no overnight service.
     if (now.minute < 8 * 60 || now.exactMinute >= last) return null;
-    const next = (Math.floor(now.exactMinute / 30) + 1) * 30;
+    const next = Math.min((Math.floor(now.exactMinute / 30) + 1) * 30, last);
     return next <= last ? { minute: next, remaining: Math.ceil(next - now.exactMinute), onTime: next % 60 === 0 } : null;
   }
 
@@ -167,16 +167,13 @@
   }
 
   function renderCard(card, state, now, last, w) {
-    const active = state === 'normal';
+    const active = state === 'normal' || state === 'shortened';
     const departure = active ? nextDeparture(now, last) : null;
     let headline, detail;
     if (active && departure) {
       headline = timeString(departure.minute) + ' ' + (departure.onTime ? w.depart : w.flexible);
-      detail = w.regular;
-    } else if (state === 'shortened') {
-      headline = card.incoming ? w.port : timeString(last) + ' ' + w.final;
-      detail = card.incoming ? w.incomingDetail : w.shortenedDetail;
-    } else if (state === 'normal') {
+      detail = state === 'shortened' ? format(w.shortenedDetail, timeString(last)) : w.regular;
+    } else if (active) {
       headline = w.port;
       detail = w.regular;
     } else {
@@ -190,10 +187,10 @@
     setText(card.remain, departure ? departure.remaining : '--');
     show(card.countdown, Boolean(departure));
     show(card.track, Boolean(departure));
-    if (card.bar) card.bar.style.width = departure ? Math.max(5, Math.min(95, departure.remaining / 60 * 100)) + '%' : '0%';
+    if (card.bar) card.bar.style.width = departure ? Math.max(5, Math.min(95, departure.remaining / 30 * 100)) + '%' : '0%';
     if (card.last) {
-      setText(card.last, active ? format(w.last, timeString(last)) + ' · ' + w.kst
-        : state === 'shortened' ? format(w.last, timeString(last)) + ' · ' + w.shortened + ' · ' + w.kst
+      setText(card.last, state === 'shortened' ? format(w.last, timeString(last)) + ' · ' + w.shortened + ' · ' + w.kst
+        : active ? format(w.last, timeString(last)) + ' · ' + w.kst
           : detail);
     }
     if (card.card) {

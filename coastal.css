@@ -1,17 +1,35 @@
 /* The repeated normal badge is removed; the status sentence and ship remain. */
 #ferry-status-banner #fsb-badge[hidden]{display:none!important}
 
-/* A full, uncropped vehicle against a gently passing illustrated coast. */
-.vehicle-stage{height:auto!important;aspect-ratio:1.5;min-height:270px;isolation:isolate;background:#93deef!important}
-.vehicle-coast{position:absolute;inset:0 -13%;background:url('udo-coastal-road.webp') center/cover no-repeat;animation:coastal-pan 16s ease-in-out infinite alternate;animation-play-state:var(--coastal-motion,paused);z-index:0}
+/* Grounded riding: a steady vehicle, contact shadows and a road moving behind it. */
+.vehicle-stage{height:auto!important;aspect-ratio:1.5;min-height:270px;isolation:isolate;background:#93deef!important;--rider-ratio:1.094444;--rear-x:22%;--rear-y:77.2%;--rear-w:13%;--rear-h:14%;--front-x:75.5%;--front-y:83.2%;--front-w:14%;--front-h:16.5%}
+.vehicle-stage.fami{--rider-ratio:1.5;--rear-x:16.8%;--rear-y:75%;--rear-w:8.5%;--rear-h:18%;--front-x:71.7%;--front-y:83.5%;--front-w:10%;--front-h:19%}
+.vehicle-stage.open{--rider-ratio:1.178889;--rear-x:19%;--rear-y:83.5%;--rear-w:10%;--rear-h:13.5%;--front-x:80.1%;--front-y:86.5%;--front-w:12.5%;--front-h:13.5%}
+.vehicle-coast{position:absolute;inset:0;background:url('udo-coastal-road.webp') center/cover no-repeat;z-index:0}
 .vehicle-stage .vehicle-lane{display:none}
-.vehicle-stage .vehicle-sprite{position:absolute;left:12%;bottom:10%;width:76%;height:65%;object-fit:contain!important;animation:coastal-ride 5s ease-in-out infinite;animation-play-state:var(--coastal-motion,paused);filter:drop-shadow(0 6px 4px #253e4055);transform-origin:50% 90%}
+.vehicle-road-surface{position:absolute;inset:71% 0 0;overflow:hidden;z-index:0;background:linear-gradient(180deg,#929c9f,#818b91);border-top:2px solid #e1dbc7}
+.road-grain{position:absolute;inset:0 -160px 0 0;background:repeating-linear-gradient(172deg,transparent 0 13px,#e4e9e916 14px,transparent 15px 31px),repeating-linear-gradient(0deg,transparent 0 16px,#45535819 17px,transparent 18px 29px);background-size:160px 100%;animation:road-flow 2.1s linear infinite;animation-play-state:var(--coastal-motion,paused)}
+.road-dashes{position:absolute;left:0;bottom:20%;width:calc(100% + 96px);height:3px;background:repeating-linear-gradient(90deg,#fff4d9bc 0 38px,transparent 38px 96px);animation:road-dashes 1.2s linear infinite;animation-play-state:var(--coastal-motion,paused)}
+.vehicle-rider{position:absolute;z-index:1;left:50%;bottom:18%;height:62%;aspect-ratio:var(--rider-ratio);max-width:94%;transform:translateX(-50%);isolation:isolate}
+.vehicle-rider:before{content:'';position:absolute;z-index:-1;left:11%;right:6%;bottom:0;height:11%;border-radius:50%;background:radial-gradient(ellipse,#283c46aa 0,#283c4655 38%,transparent 72%);transform:rotate(5deg);filter:blur(1px)}
+.vehicle-stage .vehicle-sprite{position:absolute;inset:0;width:100%;height:100%;object-fit:contain!important;filter:drop-shadow(0 1px 1px #253e4033);animation:road-suspension .32s linear infinite;animation-play-state:var(--coastal-motion,paused);transform-origin:50% 100%}
 .vehicle-stage.fami .vehicle-sprite,.vehicle-stage.open .vehicle-sprite{animation-delay:0s}
-.vehicle-speech{position:absolute;z-index:3;top:7%;left:50%;width:max-content;max-width:88%;padding:10px 17px;border:2px solid #fff;border-radius:20px;background:#fffffff5;color:#28594e;box-shadow:0 5px 0 #294a421a,0 8px 20px #396b4915;font-size:clamp(16px,4.5vw,23px);font-weight:900;line-height:1.35;text-align:center;transform:translateX(-50%);transform-origin:45% 100%;animation:vehicle-introduction 5s ease-in-out infinite;animation-play-state:var(--coastal-motion,paused);word-break:keep-all;overflow-wrap:anywhere}
+.vehicle-wheel-details{position:absolute;inset:0;pointer-events:none}
+.wheel-detail{position:absolute;left:var(--front-x);top:var(--front-y);width:var(--front-w);height:var(--front-h);transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;opacity:.42}
+.wheel-rear{left:var(--rear-x);top:var(--rear-y);width:var(--rear-w);height:var(--rear-h)}
+.wheel-detail b{display:block;position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from 0deg,transparent 0deg 45deg,#eaf5f4a0 46deg 57deg,transparent 58deg 90deg);mask-image:radial-gradient(ellipse,transparent 0 29%,#000 32% 62%,transparent 66%);animation:wheel-roll .72s linear infinite;animation-play-state:var(--coastal-motion,paused)}
+.vehicle-wind{position:absolute;inset:24% 0 30%;overflow:hidden;z-index:2;pointer-events:none}
+.vehicle-wind i{position:absolute;left:100%;top:20%;width:50px;height:2px;border-radius:100%;background:linear-gradient(90deg,transparent,#fff9,transparent);animation:coastal-wind 2.8s linear infinite;animation-play-state:var(--coastal-motion,paused)}
+.vehicle-wind i:nth-child(2){top:55%;width:32px;animation-delay:-1.1s;animation-duration:3.6s}.vehicle-wind i:nth-child(3){top:85%;width:64px;animation-delay:-2s;animation-duration:3.1s}
+@keyframes road-flow{to{transform:translateX(-160px)}}
+@keyframes road-dashes{to{transform:translateX(-96px)}}
+@keyframes road-suspension{0%,100%{transform:translateY(0)}30%{transform:translateY(.35px)}65%{transform:translateY(-.25px)}}
+@keyframes wheel-roll{to{transform:rotate(360deg)}}
+@keyframes coastal-wind{0%{transform:translateX(0);opacity:0}15%,75%{opacity:.7}100%{transform:translateX(-650px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.vehicle-stage .vehicle-sprite,.vehicle-wind i{animation:none}.road-grain,.road-dashes{animation-duration:6s}.wheel-detail b{animation-duration:3s}}
+.vehicle-speech{position:absolute;z-index:3;top:4%;left:50%;width:max-content;max-width:88%;padding:10px 17px;border:2px solid #fff;border-radius:20px;background:#fffffff5;color:#28594e;box-shadow:0 5px 0 #294a421a,0 8px 20px #396b4915;font-size:clamp(16px,4.5vw,23px);font-weight:900;line-height:1.35;text-align:center;transform:translateX(-50%);transform-origin:45% 100%;animation:vehicle-introduction 5s ease-in-out infinite;animation-play-state:var(--coastal-motion,paused);word-break:keep-all;overflow-wrap:anywhere}
 .vehicle-speech:after{content:'';position:absolute;bottom:-11px;left:43%;width:17px;height:17px;background:#fff;clip-path:polygon(0 0,100% 0,12% 100%)}
 .vehicle-stage .motion-toggle{z-index:4;bottom:10px;right:10px;background:#ffffffec;border-color:#e1e9e4;min-height:36px;font-size:12px;color:#375c50}
-@keyframes coastal-pan{from{transform:translateX(5%)}to{transform:translateX(-5%)}}
-@keyframes coastal-ride{0%,100%{transform:translate(-2%,0) rotate(-.6deg)}25%{transform:translate(0,-2px) rotate(.3deg)}50%{transform:translate(2%,0) rotate(.5deg)}75%{transform:translate(0,-3px) rotate(-.2deg)}}
 @keyframes vehicle-introduction{0%,7%{opacity:0;transform:translateX(-50%) translateY(10px) scale(.65)}15%{opacity:1;transform:translateX(-50%) translateY(-2px) scale(1.08)}21%,79%{opacity:1;transform:translateX(-50%) scale(1)}88%,100%{opacity:0;transform:translateX(-50%) translateY(5px) scale(.88)}}
 .vehicle-stage.motion-paused .vehicle-speech{animation:none;opacity:1;transform:translateX(-50%)}
 
@@ -37,3 +55,28 @@
 @keyframes owner-bubble{from{opacity:.5;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes owner-bubble-alternate{from{opacity:.5;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
 @media(max-width:350px){.owner-reading-header{grid-template-columns:38% minmax(0,1fr);padding-right:12px!important}.owner-host-speech{padding:12px 10px!important}.owner-host-speech>div:first-child{font-size:17px!important}.owner-host-speech>div:nth-child(2),.owner-host-quote{font-size:14px!important}.vehicle-speech{font-size:16px;padding:9px 12px}}
+
+/* Compact owner identity: keep the recommendation readable next to a small host. */
+.owner-reading-header{grid-template-columns:90px minmax(0,1fr)!important;min-height:0;padding:14px 14px 42px 5px!important;gap:8px!important}
+.owner-host-art{width:90px;align-self:center;max-width:100%}
+.owner-host-speech{padding:11px 12px!important;border-radius:15px}
+.owner-host-speech>div:first-child{font-size:17px!important;line-height:1.4!important;margin-bottom:4px!important}
+.owner-host-speech>div:nth-child(2){font-size:13px!important;line-height:1.6!important}
+.owner-host-quote{font-size:13px!important;line-height:1.6;padding-top:7px;margin-top:8px}
+.owner-host-toggle{bottom:7px;right:14px;min-height:30px;font-size:11px}
+@media(max-width:350px){.owner-reading-header{grid-template-columns:72px minmax(0,1fr)!important;padding-right:10px!important;gap:4px!important}.owner-host-art{width:72px}.owner-host-speech{padding:10px!important}.owner-host-speech>div:first-child{font-size:16px!important}.owner-host-quote{font-size:12px!important}}
+
+/* Two separate Coco scooters share a complete coast scene, with moving road and wheels. */
+.vehicle-stage.couple-stage{display:block;aspect-ratio:auto;min-height:0;background:#eaf1ec!important;perspective:none}
+.couple-scene{position:relative;aspect-ratio:1.5;overflow:hidden;isolation:isolate}
+.couple-scene .vehicle-coast{display:none}
+.vehicle-stage .couple-scene-image{inset:0;position:absolute;width:100%;height:100%;animation:none!important;transform:none;object-fit:contain!important;filter:none;z-index:0}
+.couple-wheel-details{position:absolute;inset:0;z-index:1;pointer-events:none}.couple-wheel-details .wheel-detail{opacity:.28}
+.couple-scene .vehicle-road-surface{inset:90% 0 0;z-index:1;border:0;background:linear-gradient(180deg,transparent,#8e9a9e26)}
+.couple-scene .road-grain{opacity:.55}.couple-scene .road-dashes{bottom:30%;height:2px;opacity:.65}
+.couple-scene .vehicle-wind{inset:25% 0 23%}
+.couple-stage .vehicle-speech{top:3.5%;left:27%;font-size:clamp(13px,3.7vw,18px);padding:7px 10px;max-width:43%;border-width:1.5px}
+.couple-stage .vehicle-speech-second{left:67%;animation-delay:.55s}
+.couple-stage .motion-toggle{position:relative;display:block;inset:auto;margin:4px 8px 4px auto;min-height:30px;font-size:11px;padding:5px 10px;z-index:4}
+.owner-reading-header[data-paused=true] .owner-host-speech{animation:none;opacity:1;transform:none}
+.reading-index span{word-break:keep-all;overflow-wrap:anywhere}

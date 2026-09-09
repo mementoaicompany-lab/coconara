@@ -3,11 +3,12 @@
 const root=document.getElementById('coco-road-map'),data=window.COCO_ROAD_DATA;
 if(!root||!data||!window.d3)return;
 const map=root.querySelector('.um-map'),svg=d3.select(root.querySelector('.um-geography')),labels=root.querySelector('.um-labels'),dialog=root.querySelector('.um-dialog');
-const state={roadOpacity:.65,smallRoads:true,gps:false,foods:true,paused:false,selected:null,duration:46000};
+const state={roadOpacity:.65,smallRoads:true,gps:false,foods:false,paused:false,selected:null,duration:46000};
 const offsets={mangru:[8,-39],hagosudong:[25,-51],dalkom:[8,28],biyang:[15,-28],haumok:[-26,-35],coconara:[57,30],seobin:[20,-27],geommeolle:[-30,-35],chunjin:[-32,32],hundert:[-2,-42],tolkani:[34,37],'food-som':[55,-38],'food-pado':[-52,16],'food-haha':[-55,-32],'food-udo':[50,-20]};
 let routeNode=null,car=null,routeLength=0,ferry=null,ferryPath=null,ferryLength=0,lastTime=null,elapsed=0,visible=true,lastWidth=0,photoTimer=null,currentPhotos=[],photoIndex=0,focusId=null;
 const locale=()=>window.cocoLanguage?.()||'ko';
 const words=()=>window.COCO_MAP_UI[locale()]||window.COCO_MAP_UI.ko;
+const choiceWords=()=>window.COCO_CHOICE_COPY[locale()]||window.COCO_CHOICE_COPY.ko;
 const tourIds={seobin:'seobinbaeksa',geommeolle:'geomulrae',chunjin:'cheonjin',tolkani:'dolkani'};
 const compactNames={en:['Mangru','Hagosudong','Dalkom Ajae','Biyangdo','Haumokdong','Coconara','Seobinbaeksa','Geommeolle','Cheonjin','Hundert','Dolkkani','Seomsonai','Padosori','Hahahoho','Udo Sikdang'],ja:['望楼灯台','下古水洞ビーチ','ダルコムアジェ','飛揚島','下牛目洞港','ココナラ','西浜白沙','コムモルレビーチ','天津港','フンデルト','トルカニ','ソムソナイ','パドソリ海女村','ハハホホ','牛島食堂'],'zh-HK':['望樓燈塔','下古水洞海灘','Dalkom Ajae','飛揚島','下牛目洞港','Coconara','西濱白沙','黑沙海灘','天津港','Hundert','Dolkkani','Seomsonai','波濤聲海女村','Hahahoho','牛島食堂']};
 compactNames.ms=compactNames.en;compactNames['zh-TW']=compactNames['zh-HK'];
@@ -21,7 +22,7 @@ const gps=window.CoconaraGPS.create({provider:navigator.geolocation,secure:windo
 const retry=document.createElement('button');retry.type='button';retry.className='um-gps-retry';retry.hidden=true;root.querySelector('.um-gps-status').after(retry);retry.addEventListener('click',()=>gps.start());
 function renderGPS(){
  gpsGroup?.selectAll('*').remove();
- let code=geoState.status;const f=geoState.fix;
+ let code=geoState.status;const f=geoState.fix;let direction=null;
  if(f&&projectionNow&&gpsGroup){
   const [x,y]=projectionNow([f.longitude,f.latitude]),w=map.clientWidth,h=map.clientHeight;
   if(x<8||x>w-8||y<8||y>h-8)code='outside';
@@ -30,13 +31,15 @@ function renderGPS(){
    const circle=d3.geoCircle().center([f.longitude,f.latitude]).radius(f.accuracy/6371008.8*180/Math.PI)();
    gpsGroup.attr('aria-label',words()[code]?.replace('{m}',Math.max(1,Math.round(f.accuracy)))||words().located);
    gpsGroup.append('path').datum(circle).attr('d',d3.geoPath(projectionNow)).attr('fill',color).attr('fill-opacity',.16).attr('stroke',color).attr('stroke-width',1).attr('stroke-opacity',.6).attr('class','um-gps-accuracy');
+   direction=window.CoconaraGPS.getDirection(f);
+   if(direction!==null)gpsGroup.append('path').attr('d','M0 -23 L-6 -12 Q0 -15 6 -12 Z').attr('transform','translate('+x+','+y+') rotate('+direction+')').attr('fill',color).attr('stroke','#fff').attr('stroke-width',2).attr('stroke-linejoin','round').attr('class','um-gps-heading').attr('aria-label',choiceWords().headingLabel);
    gpsGroup.append('circle').attr('cx',x).attr('cy',y).attr('r',7).attr('fill',color).attr('stroke','#fff').attr('stroke-width',3).attr('class','um-gps-point');
   }
  }
- const text=(words()[code]||words().off).replace('{m}',Math.max(1,Math.round(f?.accuracy||0)));
+ const text=(words()[code]||words().off).replace('{m}',Math.max(1,Math.round(f?.accuracy||0)))+(direction!==null?' · '+choiceWords().headingLabel:'');
  const status=root.querySelector('.um-gps-status');if(status.textContent!==text)status.textContent=text;
  status.dataset.state=code;
- const button=root.querySelector('.um-gps');button.textContent=geoState.enabled?words().stop:words().locate;button.setAttribute('aria-pressed',String(geoState.enabled));
+ const button=root.querySelector('.um-gps');button.replaceChildren(Object.assign(document.createElement('span'),{className:'um-control-label',textContent:'◎ '+choiceWords().gpsLabel}),Object.assign(document.createElement('span'),{className:'um-control-state',textContent:geoState.enabled?'ON':'OFF'}));button.setAttribute('aria-pressed',String(geoState.enabled));button.setAttribute('aria-label',geoState.enabled?choiceWords().gpsDisable:choiceWords().gpsEnable);
  retry.textContent=words().retry;retry.hidden=!['timeout','unavailable','invalid','stale','inaccurate'].includes(code);
 }
 function gpsActive(){return !document.hidden&&!!root.closest('.page')?.classList.contains('active');}

@@ -36,3 +36,14 @@
 #coco-road-map .um-dialog .um-popup-body{max-height:none}
 #coco-road-map .um-owner-words{font-size:16px;line-height:1.85;white-space:normal}
 #coco-road-map:not([data-language="ko"]) .um-pin-label{max-width:140px;white-space:normal;word-break:normal;overflow-wrap:anywhere;text-align:center}
+
+/* Prominent, equally sized map controls on phones. */
+#coco-road-map .um-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}
+#coco-road-map .um-tools button{display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;border-radius:16px;padding:10px 12px;font-size:15px;line-height:1.35;font-weight:800;white-space:normal;word-break:keep-all}
+#coco-road-map .um-gps,#coco-road-map .um-gps[aria-pressed=false]{background:#eaf3ff;color:#1d5c9f;border:2px solid #6b9fdb;box-shadow:0 2px 8px #2766a50a}
+#coco-road-map .um-gps[aria-pressed=true]{background:#246bb0;border-color:#246bb0;color:#fff;box-shadow:0 3px 10px #246bb020}
+#coco-road-map .um-tools button>span:last-child{font-size:13px;background:#ffffff55;border-radius:9px;padding:5px 7px;flex-shrink:0}
+#coco-road-map .um-gps[aria-pressed=false] .um-control-state{background:#d7e7fc;color:#225b98}
+#coco-road-map .um-gps-status{font-size:14px;min-height:36px;line-height:1.6}
+#coco-road-map .um-gps:focus-visible{outline:3px solid #b53f72;outline-offset:3px}
+@media(max-width:380px){#coco-road-map .um-tools{gap:8px}#coco-road-map .um-tools button{font-size:14px;padding:9px 8px;gap:6px}}

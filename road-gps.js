@@ -1,12 +1,20 @@
 /* Location stays in memory. The map and its illustration never supply GPS fixes. */
 (function(global){'use strict';
 const LIMITS=Object.freeze({fresh:30000,expire:60000,future:5000,accuracy:500,approximate:100});
+function getDirection(fix,now=Date.now()){
+ if(!fix||!Number.isFinite(now)||![fix.heading,fix.speed,fix.accuracy,fix.timestamp].every(Number.isFinite))return null;
+ const age=now-fix.timestamp;
+ return fix.heading>=0&&fix.heading<360&&fix.speed>=1&&fix.accuracy>=0&&fix.accuracy<=50&&age>=0&&age<=10000?fix.heading:null;
+}
 function validate(position,now,last){
  const c=position?.coords,t=position?.timestamp;
  if(!c||![c.latitude,c.longitude,c.accuracy,t].every(Number.isFinite)||Math.abs(c.latitude)>90||Math.abs(c.longitude)>180||c.accuracy<0)return {error:'invalid'};
  if(t>now+LIMITS.future||now-t>LIMITS.fresh||(last&&t<last.timestamp))return {error:'stale'};
  if(c.accuracy>LIMITS.accuracy)return {error:'inaccurate'};
- return {fix:{latitude:c.latitude,longitude:c.longitude,accuracy:c.accuracy,timestamp:t}};
+ const fix={latitude:c.latitude,longitude:c.longitude,accuracy:c.accuracy,timestamp:t};
+ if(Number.isFinite(c.heading)&&c.heading>=0&&c.heading<360)fix.heading=c.heading;
+ if(Number.isFinite(c.speed)&&c.speed>=0)fix.speed=c.speed;
+ return {fix};
 }
 function create(options){
  const now=options.now||Date.now,clock=options.clock||global,provider=options.provider;
@@ -15,7 +23,7 @@ function create(options){
  function clear(){generation++;if(watch!==null){try{provider?.clearWatch(watch);}catch{}watch=null;}if(timer!==null){clock.clearInterval(timer);timer=null;}}
  function stop(){clear();enabled=false;fix=null;status='off';emit();}
  function refresh(){
-  if(fix){const age=now()-fix.timestamp;if(age>LIMITS.expire){fix=null;status='stale';emit();}else if(age>LIMITS.fresh&&status!=='last'){status='last';emit();}}
+  if(fix){const age=now()-fix.timestamp;if(age>LIMITS.expire){fix=null;status='stale';emit();}else if(age>LIMITS.fresh&&status!=='last'){delete fix.heading;status='last';emit();}else if(age>10000&&Object.hasOwn(fix,'heading')){delete fix.heading;emit();}}
   else if(status==='locating'&&now()-started>25000){status='slow';emit();}
  }
  function begin(){
@@ -45,5 +53,5 @@ function create(options){
  function setActive(value){value=!!value;if(active===value)return;active=value;if(!enabled)return;if(active)begin();else{clear();fix=null;status='paused';emit();}}
  return Object.freeze({start,stop,setActive,refresh,snapshot:()=>({enabled,active,status,fix:fix?{...fix}:null}),destroy:stop});
 }
-global.CoconaraGPS=Object.freeze({create,validate,LIMITS});
+global.CoconaraGPS=Object.freeze({create,validate,LIMITS,getDirection});
 })(typeof window==='undefined'?globalThis:window);

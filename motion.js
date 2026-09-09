@@ -51,14 +51,7 @@ function setupFoodGalleries(){
  refreshers.push(()=>records.forEach(r=>r.refresh()));
 }
 
-function setupCrewScenes(){
- const ferryWarning=$('#ferryLastInfo3')?.closest('.fade-up')?.nextElementSibling;const targets=[$('#home-ferry-check-body'),ferryWarning].filter(Boolean);
- targets.forEach((target,index)=>{const scene=document.createElement('div');scene.className='crew-check-scene';scene.dataset.localized='true';scene.innerHTML='<div class="crew-art" role="img"><img src="crew-question-sheet.webp" class="crew-sheet" alt="" loading="lazy"></div><div class="crew-quote"><span></span><strong></strong><button type="button"></button></div>';
-  if(index===0)target.prepend(scene);else target.firstElementChild.after(scene);
-  let paused=false,visible=false;function refresh(){scene.querySelector('.crew-art').setAttribute('aria-label',words().crewAlt);scene.querySelector('.crew-quote>span').textContent=words().crew;scene.querySelector('.crew-quote>strong').textContent=words().question;const b=scene.querySelector('button');b.textContent=(paused?'▶ ':'⏸ ')+words()[paused?'play':'pause'];b.setAttribute('aria-pressed',String(paused));scene.style.setProperty('--scene-motion',paused||!visible||document.hidden?'paused':'running');}
-  scene.querySelector('button').onclick=()=>{paused=!paused;refresh();};window.cocoObserveMotion(scene,inView=>{visible=inView;refresh();});document.addEventListener('visibilitychange',refresh);refreshers.push(refresh);refresh();
- });
-}
+function setupCrewScenes(){window.CocoJourney.setupCrewScenes(words);}
 
 function setupFerryStatus(){
  const banner=$('#ferry-status-banner');if(!banner)return;
