@@ -3,3 +3,21 @@
 .vehicle-choice .vehicle-stage{width:100%;max-width:100%;min-width:0}.tab-bar .tab-item{flex:1 0 auto}
 
 .dalkom-directions-web{display:block;min-height:36px;padding:8px 10px;margin-top:2px;text-align:center;font-size:12px;color:#658070;line-height:1.5;text-decoration:underline;text-underline-offset:3px}.dalkom-directions .map-link-btn{gap:8px;line-height:1.5;word-break:keep-all}
+
+/* A small double ring invites a tap without moving the hit target or nearby tabs. */
+.tab-bar .ice-cream-tab{min-width:82px;position:relative;background:#ffffff0b;overflow:visible}
+.tab-bar .ice-cream-tab .ti{position:relative;display:block;flex-shrink:0}
+.ice-nav-icon{display:inline-block;transform-origin:50% 85%;animation:ice-nav-ring 6s ease-in-out infinite}
+.ice-nav-sparkle{position:absolute;right:-12px;top:0;font-size:12px;line-height:1;color:#ffdd86;animation:ice-nav-sparkle 6s ease-in-out infinite;pointer-events:none}
+.tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{display:block;max-width:108px;text-align:center;white-space:normal;word-break:keep-all;overflow-wrap:normal;line-height:1.2;font-size:11px;font-weight:850;color:#fff0cf;animation:ice-nav-label 6s ease-in-out infinite}
+html[lang="ko"] .tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{max-width:72px}
+.tab-bar .ice-cream-tab.active [data-choice-copy="iceTab"]{color:#fff}
+.ice-cream-tab.active .ice-nav-icon,.ice-cream-tab.active .ice-nav-sparkle,.ice-cream-tab.active [data-choice-copy="iceTab"]{animation:none}
+.ice-cream-tab.active .ice-nav-sparkle{opacity:0}
+.ice-nav-hidden .ice-nav-icon,.ice-nav-hidden .ice-nav-sparkle,.ice-nav-hidden [data-choice-copy="iceTab"]{animation-play-state:paused!important}
+@keyframes ice-nav-ring{0%,5%,35%,100%{transform:rotate(0) scale(1)}10%{transform:rotate(-8deg) scale(1.16)}15%{transform:rotate(8deg) scale(1.2)}20%{transform:rotate(-6deg) scale(1.13)}26%{transform:rotate(5deg) scale(1.17)}}
+@keyframes ice-nav-sparkle{0%,5%,34%,100%{opacity:0;transform:scale(.55) rotate(-20deg)}14%,24%{opacity:1;transform:scale(1.1) rotate(10deg)}}
+@keyframes ice-nav-label{0%,7%,35%,100%{transform:translateY(0)}14%,25%{transform:translateY(-1px)}}
+@media(min-width:650px){.tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.ice-nav-icon,.ice-nav-sparkle,.tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{animation:none}.ice-nav-sparkle{opacity:0}}
+@media(max-width:380px){.tab-bar{gap:2px!important;padding-left:4px!important;padding-right:4px!important}.tab-bar .tab-item{min-width:39px;padding-left:2px;padding-right:2px;font-size:11px;flex-basis:auto}.tab-bar .ice-cream-tab{min-width:72px}.tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{font-size:11px}html[lang="ko"] .tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{max-width:61px}}

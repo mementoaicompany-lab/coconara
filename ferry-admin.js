@@ -29,31 +29,55 @@
   };
   // Default timetable guidance never claims a daily administrator confirmation.
   Object.assign(words.ko, {
+    shortened: '오늘 마지막 배 {time}',
+    shortenedSub: '마지막 배만 앞당겨 운항합니다.',
+    shortenedEarlier: '평소 {usual}보다 {minutes}분 일찍 마감',
+    shortenedUntil: '오늘은 안내된 마지막 배 시각까지 운항합니다.',
     closed: '오늘 운항이 종료되었습니다',
     defaultNormalSub: '평상시 정상 운항 기준 안내입니다. 탑승 전 항구와 목적지를 꼭 확인해 주세요.',
     defaultClosedSub: '월별 기본 시간표의 우도 출항 마지막 배 시각 {time}이 지났습니다.'
   });
   Object.assign(words.en, {
+    shortened: 'Today’s last ferry: {time}',
+    shortenedSub: 'Only the final ferry time moves earlier.',
+    shortenedEarlier: '{minutes} minutes earlier than the usual {usual}',
+    shortenedUntil: 'Today’s service runs until the stated final ferry time.',
     closed: 'Today’s ferry service has ended',
     defaultNormalSub: 'Standard ferry service guidance. Please check the port and destination before boarding.',
     defaultClosedSub: 'The last departure from Udo on the standard monthly timetable, {time}, has passed.'
   });
   Object.assign(words.ms, {
+    shortened: 'Feri terakhir hari ini: {time}',
+    shortenedSub: 'Hanya waktu feri terakhir diawalkan.',
+    shortenedEarlier: '{minutes} minit lebih awal daripada waktu biasa {usual}',
+    shortenedUntil: 'Feri hari ini beroperasi hingga waktu feri terakhir yang dinyatakan.',
     closed: 'Perkhidmatan feri hari ini telah tamat',
     defaultNormalSub: 'Panduan operasi feri biasa. Sila semak pelabuhan dan destinasi sebelum menaiki feri.',
     defaultClosedSub: 'Waktu feri terakhir dari Udo mengikut jadual bulanan biasa, {time}, telah berlalu.'
   });
   Object.assign(words['zh-HK'], {
+    shortened: '今日尾班船 {time}',
+    shortenedSub: '只將尾班船時間提早。',
+    shortenedEarlier: '比平日 {usual} 提早 {minutes} 分鐘結束',
+    shortenedUntil: '今日服務至已列出的尾班船時間。',
     closed: '今日渡輪服務已結束',
     defaultNormalSub: '按平日正常航班提供資訊。上船前請確認港口及目的地。',
     defaultClosedSub: '每月基本時間表所列的牛島出發尾班船時間 {time} 已過。'
   });
   Object.assign(words['zh-TW'], {
+    shortened: '今日末班船 {time}',
+    shortenedSub: '僅將末班船時間提前。',
+    shortenedEarlier: '比平日 {usual} 提早 {minutes} 分鐘結束',
+    shortenedUntil: '今日服務至已列出的末班船時間。',
     closed: '今日渡輪服務已結束',
     defaultNormalSub: '依平日正常航班提供資訊。搭船前請確認港口及目的地。',
     defaultClosedSub: '每月基本時刻表所列的牛島出發末班船時間 {time} 已過。'
   });
   Object.assign(words.ja, {
+    shortened: '本日の最終便 {time}',
+    shortenedSub: '最終便の時刻だけを繰り上げて運航します。',
+    shortenedEarlier: '通常の {usual} より {minutes} 分早く終了',
+    shortenedUntil: '本日は案内された最終便の時刻まで運航します。',
     closed: '本日のフェリー運航は終了しました',
     defaultNormalSub: '通常の運航予定に基づくご案内です。乗船前に港と行き先をご確認ください。',
     defaultClosedSub: '月別の通常時刻表にある牛島発最終便の時刻 {time} を過ぎました。'
@@ -69,6 +93,23 @@
   const dateKey = (epoch = now()) => new Date(epoch + KST).toISOString().slice(0, 10);
   const dayStart = (epoch = now()) => Math.floor((epoch + KST) / DAY) * DAY - KST;
   const isAdmin = () => Boolean(authReady && authenticatedAdmin && uid() && auth?.currentUser?.uid === uid());
+
+  // Use the same monthly source as normal service, with the month in Korea time.
+  function standardLastDeparture(epoch = now()) {
+    if (typeof window.getLastFerry !== 'function') return null;
+    const scheduled = window.getLastFerry(new Date(epoch + KST).getUTCMonth() + 1);
+    if (!scheduled || !Number.isInteger(scheduled.h) || !Number.isInteger(scheduled.m) || scheduled.h < 0 || scheduled.h > 23 || scheduled.m < 0 || scheduled.m > 59) return null;
+    return String(scheduled.h).padStart(2, '0') + ':' + String(scheduled.m).padStart(2, '0');
+  }
+  function shortenedGuidance() {
+    const usual = standardLastDeparture(), cutoff = state.cutoffTime;
+    const minutes = value => { const [h, m] = value.split(':').map(Number); return h * 60 + m; };
+    const earlier = usual && cutoff ? minutes(usual) - minutes(cutoff) : 0;
+    return {
+      comparison: earlier > 0 ? words[language()].shortenedEarlier.replace('{usual}', usual).replace('{minutes}', String(earlier)) : '',
+      detail: text(earlier > 0 ? 'shortenedSub' : 'shortenedUntil')
+    };
+  }
 
   // This validator is also exposed for deterministic service-day boundary tests.
   function validateRecord(record, epoch = now()) {
@@ -94,12 +135,7 @@
     if (!reason && !record) reason = 'invalid';
     const operatingStatus = record?.status || 'normal';
     let effective = operatingStatus, cutoffTime = record?.lastDeparture || null;
-    if (operatingStatus === 'normal' && typeof window.getLastFerry === 'function') {
-      const scheduled = window.getLastFerry(new Date(epoch + KST).getUTCMonth() + 1);
-      if (scheduled && Number.isInteger(scheduled.h) && Number.isInteger(scheduled.m) && scheduled.h >= 0 && scheduled.h <= 23 && scheduled.m >= 0 && scheduled.m <= 59) {
-        cutoffTime = String(scheduled.h).padStart(2, '0') + ':' + String(scheduled.m).padStart(2, '0');
-      }
-    }
+    if (operatingStatus === 'normal') cutoffTime = standardLastDeparture(epoch);
     if (cutoffTime && (operatingStatus === 'normal' || operatingStatus === 'shortened')) {
       const [hour, minute] = cutoffTime.split(':').map(Number);
       if (epoch >= dayStart(epoch) + (hour * 60 + minute) * 60000) effective = 'closed';
@@ -138,9 +174,18 @@
       banner.setAttribute('aria-atomic', 'true');
     }
     setText($('fsb-icon'), { normal: '🚢', cancel: '⛔', shortened: '🕒', pending: '⏳', closed: '🌙' }[status]);
-    setText($('fsb-title'), text(status));
+    setText($('fsb-title'), text(status, state.cutoffTime));
     const subKey = state.source === 'default' ? (status === 'closed' ? 'defaultClosedSub' : 'defaultNormalSub') : status + 'Sub';
-    setText($('fsb-sub'), text(subKey, state.cutoffTime));
+    const shortened = status === 'shortened' ? shortenedGuidance() : null;
+    setText($('fsb-sub'), shortened ? shortened.detail : text(subKey, state.cutoffTime));
+    let comparison = $('fsb-shortened-comparison');
+    if (!comparison && shortened && $('fsb-title')) {
+      comparison = document.createElement('div'); comparison.id = 'fsb-shortened-comparison'; comparison.dataset.localized = 'true'; $('fsb-title').after(comparison);
+    }
+    if (comparison) {
+      setText(comparison, shortened?.comparison || '');
+      comparison.hidden = !shortened?.comparison;
+    }
     const badge = $('fsb-badge');
     if (badge) {
       badge.hidden = status === 'normal';

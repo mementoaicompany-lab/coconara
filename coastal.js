@@ -19,7 +19,7 @@ function setupVehicles(){
   const sprite=stage.querySelector('.vehicle-sprite'),couple=stage.dataset.vehicle==='scooter';let scene=stage;
   if(couple){
    stage.classList.add('couple-stage');scene=document.createElement('div');scene.className='couple-scene';stage.prepend(scene);scene.append(coast,sprite);
-   sprite.src='coco-couple-coast.png';sprite.width=1536;sprite.height=1024;sprite.classList.add('couple-scene-image');
+   sprite.src='coco-couple-coast.png?v=19.1';sprite.width=1536;sprite.height=1024;sprite.classList.add('couple-scene-image');
    const wheels=document.createElement('div');wheels.className='couple-wheel-details';wheels.setAttribute('aria-hidden','true');
    [[16.2,75.6,5.2,9.6],[41.8,78.6,8,13.5],[55.6,75.8,5.2,9.6],[81.5,78.8,8,13.5]].forEach(([x,y,w,h])=>{const wheel=document.createElement('i');wheel.className='wheel-detail';wheel.style.cssText='left:'+x+'%;top:'+y+'%;width:'+w+'%;height:'+h+'%';wheel.innerHTML='<b></b>';wheels.append(wheel);});scene.append(wheels);
   }else{

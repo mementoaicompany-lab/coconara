@@ -39,6 +39,10 @@ body:has(.coco-ferry-login.open),body:has(.coco-ferry-admin.open){overflow:hidde
 .coco-ferry-admin button:focus-visible,.coco-ferry-login button:focus-visible,.ferry-admin-option:focus-within{outline:3px solid #d67e95;outline-offset:3px}
 #ferry-status-banner.shortened{background:#fff3da;border:1.5px solid #e8bd68;box-shadow:0 4px 18px #bd88271a}
 #ferry-status-banner.shortened .fsb-title{color:#795017}#ferry-status-banner.shortened .fsb-sub{color:#7a6036}
+#ferry-status-banner.shortened #fsb-badge{font-size:12px!important;line-height:1.4!important;padding:4px 9px!important;border-radius:8px!important;letter-spacing:0!important}
+#ferry-status-banner.shortened #fsb-title{font-size:clamp(21px,5.7vw,29px)!important;line-height:1.4!important;margin-top:8px;word-break:keep-all;overflow-wrap:anywhere}
+#fsb-shortened-comparison{font-size:14px;line-height:1.6;font-weight:800;color:#795017;margin-top:5px;word-break:keep-all;overflow-wrap:anywhere}
+#ferry-status-banner.shortened #fsb-sub{margin-top:5px;font-size:13px!important}
 #ferry-status-banner.pending .fsb-icon{animation:none}#ferry-status-banner .fsb-sub{font-size:11px;line-height:1.65}
 #fsb-updated{font-size:10px;line-height:1.6;margin-top:6px;opacity:.8}#fsb-memo-text{white-space:pre-wrap;overflow-wrap:anywhere}
 #ferry-status-banner.cancel #fsb-memo-wrap,#ferry-status-banner.closed #fsb-memo-wrap{background:#ffffffeb!important;border-left-color:#e1c1a3!important}
