@@ -21,3 +21,14 @@ html[lang="ko"] .tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{max-width:72
 @media(min-width:650px){.tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.ice-nav-icon,.ice-nav-sparkle,.tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{animation:none}.ice-nav-sparkle{opacity:0}}
 @media(max-width:380px){.tab-bar{gap:2px!important;padding-left:4px!important;padding-right:4px!important}.tab-bar .tab-item{min-width:39px;padding-left:2px;padding-right:2px;font-size:11px;flex-basis:auto}.tab-bar .ice-cream-tab{min-width:72px}.tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{font-size:11px}html[lang="ko"] .tab-bar .ice-cream-tab [data-choice-copy="iceTab"]{max-width:61px}}
+
+/* The offer sits beside the cone, inside the same generous touch target. */
+.tab-bar .ice-cream-tab{min-width:96px}
+.tab-bar .ice-cream-tab .ti{display:flex;align-items:center;justify-content:center;gap:4px}
+.ice-nav-discount{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;background:#fff3e7;color:#c91e3e;border:1px solid #ffd0c9;border-radius:6px;padding:3px 5px;font-family:Arial,sans-serif;font-size:10px;font-weight:900;line-height:1.1;letter-spacing:-.25px;box-shadow:0 2px 4px #173a301c;animation:ice-offer-pop 6s ease-in-out infinite}
+.ice-cream-tab .ice-nav-sparkle{right:auto;left:-8px;top:-4px}
+.ice-cream-tab.active .ice-nav-discount{animation:none;background:#fff8ee;border-color:#fff8ee}
+.ice-nav-hidden .ice-nav-discount{animation-play-state:paused!important}
+@keyframes ice-offer-pop{0%,9%,36%,100%{transform:scale(1)}17%{transform:scale(1.07) rotate(-2deg)}25%{transform:scale(1.03) rotate(1deg)}}
+@media(max-width:380px){.tab-bar .ice-cream-tab{min-width:88px}.ice-nav-discount{font-size:9px;padding:3px 4px}}
+@media(prefers-reduced-motion:reduce){.ice-nav-discount{animation:none}}

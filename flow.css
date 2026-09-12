@@ -1,0 +1,159 @@
+/* Five clear destinations; all labels fit without horizontal scrolling. */
+.tab-bar{grid-template-columns:.58fr .88fr .85fr 1.32fr 1.26fr!important;gap:3px!important}
+.tab-bar .tab-item{font-size:13px!important;line-height:1.25!important;min-height:82px;padding:10px 3px!important;word-break:keep-all}
+.tab-bar .ti{height:30px;font-size:24px!important;margin-bottom:5px!important;display:flex;align-items:center;justify-content:center}
+.tab-bar [data-choice-copy="exhibitionTab"]{max-width:98px;font-size:inherit!important}
+.tab-bar .ice-nav-discount{font-size:9px!important;padding:3px 4px!important;white-space:nowrap}
+.home-port-contacts a{display:flex!important;align-items:center;justify-content:space-between;gap:10px;color:#526d60!important;text-decoration:none;background:white;font-size:14px;min-height:48px}
+.home-port-contacts a>span:last-child{color:#78897f}
+.home-harbor-notice{padding:12px 14px;background:#ffffff26;border:1px solid #ffffff45;border-radius:12px;color:white}
+.home-harbor-notice strong{display:block;font-size:17px!important;line-height:1.6!important;color:#fff6b9;word-break:keep-all;animation:harbor-attention 2.8s ease-in-out 3}
+.home-harbor-notice p{font-size:12px!important;line-height:1.65!important;color:white;margin:5px 0 0}
+@keyframes harbor-attention{0%,38%,100%{transform:translateY(0);text-shadow:none}12%,25%{transform:translateY(-2px);text-shadow:0 0 12px #fff9b880}}
+#coco-road-map .um-guide-button{position:absolute;left:16px;bottom:15px;z-index:4;min-height:40px;border:1px solid #c4d8cc;border-radius:20px;padding:8px 12px;background:#fffffff2;color:#315b47;font-size:12px;font-weight:700;box-shadow:0 2px 8px #264d3610}
+#coco-road-map .um-scale{bottom:67px;left:22px}
+#map-guide-dialog{position:fixed;inset:0;margin:auto;width:calc(100% - 24px);max-width:620px;max-height:calc(100dvh - 30px);padding:0;border:1px solid #d4e3d8;border-radius:22px;background:white;color:#355244;box-shadow:0 20px 65px #1e3b3933;overflow:hidden}
+#map-guide-dialog[open]{display:flex;flex-direction:column}
+#map-guide-dialog::backdrop{background:#16392d88;backdrop-filter:blur(4px)}
+#map-guide-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 17px;border-bottom:1px solid #e4ebe4;background:white;flex-shrink:0}
+#map-guide-dialog h2{font-size:19px;margin:0;color:#284e3e}
+.map-guide-close{display:flex;align-items:center;gap:5px;min-height:44px;padding:4px 10px;border:1px solid #dce5dd;background:#f4f7f3;color:#3b6550;border-radius:12px;font:inherit;font-size:12px;cursor:pointer}
+.map-guide-close>span:first-child{font-size:25px;line-height:1}
+#map-guide-dialog .map-guide-content{padding:0 16px 16px;overflow-y:auto;overscroll-behavior:contain;font-size:14px;line-height:1.7}
+#map-guide-dialog .map-guide-content [style*="font-size:11.5px"]{font-size:14px!important}
+#map-guide-dialog .map-guide-content [style*="font-size:12px"],#map-guide-dialog .map-guide-content [style*="font-size:13px"]{font-size:15px!important}
+#map-guide-dialog .map-guide-content [style*="font-size:10.5px"]{font-size:12px!important}
+#map-guide-dialog .map-guide-content [style*="padding-left:46px"]{padding-left:0!important}
+body:has(#map-guide-dialog[open]) #giftFab{visibility:hidden}
+/* Photo leads the attraction card; the full frame remains available on demand. */
+#coco-road-map .um-dialog{overflow:hidden;padding:0}
+#coco-road-map .um-dialog[open]{display:flex;flex-direction:column}
+#coco-road-map .um-popup-body{overflow-y:auto;overscroll-behavior:contain;max-height:calc(100dvh - 36px)!important}
+#coco-road-map .um-dialog-close{position:absolute;right:10px;top:10px;z-index:5;min-width:44px;min-height:44px;background:#fffffff0;border:1px solid #d6e0d7;box-shadow:0 2px 10px #214c2f20;color:#315c43;border-radius:50%;font-size:28px;line-height:1}
+#coco-road-map .um-popup-photo{width:100%;background:#ecf1e8;position:relative;min-height:0}
+#coco-road-map .um-popup-photo img{display:block;width:100%;height:245px;max-height:none;object-fit:cover!important;object-position:50% 55%}
+#coco-road-map .um-popup-photo.show-full-photo img{object-fit:contain!important;height:auto;max-height:65dvh}
+#coco-road-map .um-photo-expand{position:absolute;left:10px;bottom:10px;border:1px solid #ffffff80;background:#173d32bf;color:white;font-size:10px;min-height:32px;padding:5px 9px;border-radius:16px;backdrop-filter:blur(5px)}
+#coco-road-map .um-photo-nav{left:auto;right:10px;bottom:10px;transform:none;width:auto}
+#coco-road-map .um-dialog-header{padding:12px 16px 8px;border:0;background:#fffdf9}
+#coco-road-map .um-dialog h3{font-size:20px;line-height:1.4}
+#coco-road-map .um-tip-list{padding:11px 15px;margin:0 16px;border:1px solid #e3eadd;border-radius:12px;font-size:13px;line-height:1.5;gap:6px}
+#coco-road-map .um-photo-credit{padding:4px 16px;font-size:9px}
+#coco-road-map .um-popup-copy{padding:12px 16px 16px}
+#coco-road-map .um-owner-words{font-size:13px;line-height:1.65}
+.broadcast-intro{padding:8px 2px 18px}
+.broadcast-intro h1{margin:0 0 6px;font-size:25px;color:#234e40}
+.broadcast-intro p{margin:0;color:#6e7d72;font-size:14px;line-height:1.6}
+.broadcast-group{margin-bottom:26px}
+.broadcast-group h2{font-size:18px;color:#295643;margin:0 0 12px}
+.brand-mission .brand-journey{display:none}
+.brand-mission p{font-size:14px!important;line-height:1.9!important}
+.dalkom-recommendation{margin-bottom:18px;border-radius:20px;overflow:hidden}
+.dalkom-recommendation .owner-host-speech>div:nth-child(2){font-size:15px!important;line-height:1.55!important}
+.dalkom-recommendation .recommendation-copy{padding:2px 20px 20px}
+.recommendation-copy p{font-size:15px;line-height:1.85;color:#405a4b;word-break:keep-all;margin:18px 0}
+.recommendation-copy .recommendation-moment{font-size:17px;color:#a44e24;font-weight:800;padding:14px 16px;background:#fff3df;border-radius:12px;margin:0}
+.dalkom-souvenir{margin:0 0 16px;padding:13px 16px;border:1px solid #e5e6da;border-radius:14px;color:#6c775f;font-size:13px;line-height:1.7;background:#f6f8f1}
+.park-story{background:#fffdf7;border:1px solid #dce6d5;border-radius:22px;overflow:hidden;margin:0 0 20px}
+.park-story-intro{padding:22px;background:linear-gradient(135deg,#f0f5e7,#fff7e2)}
+.park-story h2{font-size:22px;line-height:1.5;color:#345b3a;margin:0 0 10px;word-break:keep-all}
+.park-story-intro p{font-size:14px;line-height:1.8;color:#607358;margin:0;word-break:keep-all}
+.park-highlights{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:8px 16px}
+.park-highlights article{display:flex;align-items:flex-start;gap:10px;padding:18px 10px;border-bottom:1px solid #e9eee0}
+.park-highlight-icon{font-size:26px;line-height:1.4;flex-shrink:0}
+.park-highlights h3{font-size:15px;color:#365b3f;margin:0 0 5px;line-height:1.5;word-break:keep-all}
+.park-highlights p{font-size:13px;color:#73806a;line-height:1.7;margin:0;word-break:keep-all}
+#page-hundert.active .park-highlights article{animation:park-arrival .6s ease both;animation-delay:calc(var(--highlight-index)*.09s)}
+@keyframes park-arrival{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.park-story footer{display:flex;flex-direction:column;gap:5px;padding:16px 22px;background:#f4f7ee;font-size:12px;line-height:1.6;color:#75816c}
+.park-story footer strong{font-size:14px;color:#43644a}
+[data-choice-copy="parkFullTitle"]{display:block;max-width:600px;word-break:keep-all;font-size:clamp(17px,3vw,24px);line-height:1.5}
+@media(max-width:480px){.tab-bar .tab-item{font-size:11px!important;min-height:79px}.tab-bar .ti{font-size:22px!important}.tab-bar [data-choice-copy="exhibitionTab"]{max-width:83px}.tab-bar .ice-nav-discount{font-size:8px!important;padding:2px 3px!important}.park-highlights{grid-template-columns:1fr}.park-highlights article{padding:14px 5px}.park-story h2{font-size:20px}.park-story-intro{padding:19px}.park-highlights p{font-size:13px}.home-harbor-notice strong{font-size:15px!important}#coco-road-map .um-popup-photo img{height:225px}}
+@media(max-width:350px){.tab-bar .tab-item{font-size:10px!important;padding-inline:2px!important}.tab-bar .ti{font-size:20px!important}.tab-bar .ice-nav-discount{font-size:7px!important}.tab-bar [data-choice-copy="exhibitionTab"]{max-width:70px}#coco-road-map .um-popup-photo img{height:190px}#coco-road-map .um-tip-list{font-size:12px}.recommendation-copy p{font-size:14px}.dalkom-recommendation .recommendation-copy{padding:0 16px 16px}}
+@media(prefers-reduced-motion:reduce){.home-harbor-notice strong,#page-hundert.active .park-highlights article{animation:none;opacity:1;transform:none}}
+/* v23: readable benefits, a shared guide style, and bounded invitation motion. */
+.dalkom-welcome{margin-bottom:18px;border:1px solid #f1d9ba;border-radius:22px;overflow:hidden;background:#fffbf5}
+.dalkom-welcome>.fade-up{margin:0!important;border-radius:0!important;padding:21px 20px!important}
+.dalkom-welcome>.fade-up>div:nth-child(2){font-size:46px!important;flex-shrink:0}
+.dalkom-welcome>.fade-up>div:last-child>div:first-child{font-size:23px!important;line-height:1.4}
+.dalkom-welcome>.fade-up>div:last-child>div:nth-child(2){font-size:14px!important;line-height:1.5}
+.dalkom-welcome>.fade-up>div:last-child>div:last-child{font-size:13px!important;line-height:1.5;margin-top:7px!important}
+.dalkom-location-actions{padding:14px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+.dalkom-location-actions .dalkom-directions{display:flex;flex-direction:column;gap:6px;margin:0}
+.dalkom-location-actions .map-link-btn{margin:0!important;border:1px solid #d2dfd0;border-radius:12px;background:#fff;color:#315b44;min-height:46px;padding:10px 13px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;box-shadow:none;line-height:1.5}
+.dalkom-location-actions #dalkom-directions{background:#285f42;border-color:#285f42;color:#fff}
+.dalkom-location-actions .dalkom-directions-web{font-size:12px;min-height:30px;padding:4px;line-height:1.5;color:#6a7663;text-align:center}
+.taste-proof{border-block:1px solid #eee3d6;margin:18px 0}
+.taste-proof article{display:flex;gap:12px;padding:18px 0;border-bottom:1px solid #eee3d6}
+.taste-proof article:last-child{border-bottom:0}
+.taste-proof article>span{flex-shrink:0;font-size:26px;line-height:1.4}
+.taste-proof h3{font-size:17px;line-height:1.5;color:#783f20;margin:0 0 5px}
+.taste-proof p{font-size:15px;margin:0;line-height:1.75}
+.dalkom-recommendation .owner-host-speech>div:nth-child(2){font-size:20px!important;line-height:1.55!important;font-weight:900;color:#733021}
+.brand-mission p{font-size:16px!important;line-height:1.85!important}
+.brand-mission .brand-proof{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}
+.brand-proof strong{padding:12px;border:1px solid #dae5da;border-radius:10px;background:#f3f7ef;font-size:14px;line-height:1.5;color:#3b5b46}
+.brand-mission .brand-journey{display:flex;flex-direction:column;gap:9px;margin:20px 0}
+.brand-mission .brand-journey button{display:flex;align-items:center;gap:12px;text-align:left;padding:16px 14px;border:1px solid #e5d4bc;border-radius:14px;background:#fff8ed;min-width:0;font:inherit;color:#5d4a35}
+.brand-mission .brand-journey button:nth-child(2){background:#f2f7ed;border-color:#d9e3ce;color:#365a40}
+.brand-mission .brand-journey button:nth-child(3){background:#f8f4ed;border-color:#e5dace}
+.brand-journey button>span:first-child{font-size:28px;flex-shrink:0}
+.brand-journey button>span:nth-child(2){flex:1;min-width:0}
+.brand-journey strong{display:block;font-size:16px;line-height:1.5}
+.brand-journey button>span:nth-child(2)>span{display:block;font-size:13px;line-height:1.5;margin-top:4px;font-weight:400}
+.brand-journey b{font-size:23px;color:#b14935;flex-shrink:0}
+#page-coconara .rental-guide-card{margin:0 0 12px!important;border:1px solid #d8e3db!important;border-radius:18px!important;background:#fff!important;box-shadow:0 3px 14px #294b3410!important;overflow:hidden}
+#page-coconara .rental-guide-card>button:first-child{min-height:64px;padding:18px!important}
+#page-coconara .rental-guide-card>button:first-child>span:first-child{font-size:16px!important;color:#2e5944!important;line-height:1.5}
+#page-coconara .battery-category,#page-coconara .rental-eligibility{padding:18px!important}
+#page-coconara .battery-category>div:first-child,#page-coconara .rental-eligibility h2{color:#2e5944!important;font-size:16px!important;line-height:1.5;margin:0 0 14px!important}
+#page-coconara .battery-category>div:nth-child(2),#page-coconara .rental-eligibility p{font-size:14px!important;line-height:1.75!important;color:#536c5c!important}
+#page-coconara .battery-category>div:nth-child(2)>span{font-size:12px!important;line-height:1.6!important}
+#page-coconara .eligibility-facts strong{background:#edf5ee;font-size:14px;padding:10px 12px}
+#page-coconara .rental-eligibility button{margin:0;padding:8px 0!important;min-height:36px!important}
+.benefit-ticket{border:1px solid #c6ddcf;border-radius:20px!important;box-shadow:0 5px 18px #335e4010!important;isolation:isolate}
+.benefit-ticket>div:first-child{position:relative;background:#27734b!important;padding:22px!important;display:grid!important;grid-template-columns:1fr auto;gap:15px!important;align-items:center!important;border-bottom:2px dashed #ffffff6b}
+.benefit-ticket-cafe>div:first-child{background:#516c51!important}
+.benefit-ticket>div:first-child:after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;right:-10px;bottom:-10px;background:#fafbf8;box-shadow:calc(-1 * var(--ticket-width,700px) + 20px) 0 #fafbf8}
+.benefit-ticket>div:first-child>div>div:first-child{font-size:13px!important;letter-spacing:.3px!important;line-height:1.5}
+.benefit-ticket>div:first-child>div>div:nth-child(2){font-size:22px!important;line-height:1.4;margin:8px 0!important}
+.benefit-ticket .discount-stamp{display:inline-block;font-size:50px!important;line-height:1.1;transform-origin:center;white-space:nowrap}
+.benefit-ticket>div:first-child>div>div:nth-child(3){font-size:13px!important;line-height:1.5}
+.benefit-ticket>div:first-child>button{font-size:15px!important;line-height:1.5;min-height:48px;padding:12px 16px!important;box-shadow:0 4px 0 #144a2b55}
+.benefit-ticket>div:last-child{padding:17px 19px!important;align-items:flex-start!important}
+.benefit-ticket>div:last-child>div{font-size:14px!important;line-height:1.75!important}
+.benefit-ticket>div:last-child>span{font-size:20px!important}
+#_barcodeBox{max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain;animation:barcode-pop .32s cubic-bezier(.2,.8,.25,1.2) both}
+#_barcodeBox>div:nth-child(2){font-size:18px!important;line-height:1.5}
+#_barcodeBox img{display:block;filter:none!important;background:#fff;object-fit:contain!important}
+@keyframes barcode-pop{from{opacity:0;transform:translate(-50%,30px) scale(.92)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+#couponPopupBg .coupon-popup{width:min(650px,100%);max-height:90dvh;padding:24px;overflow-y:auto;overscroll-behavior:contain}
+#couponPopupBg .coupon-popup>div:first-child>div>div:first-child{font-size:14px!important;line-height:1.5}
+#couponPopupBg .coupon-popup>div:first-child>div>div:last-child{font-size:24px!important;line-height:1.5}
+#couponPopupBg .coupon-popup>div:first-child>button{width:44px!important;height:44px!important;flex-shrink:0;font-size:22px!important}
+.gift-partner-card{padding:20px!important;cursor:pointer}
+.gift-partner-card>div:first-child{gap:14px!important;align-items:flex-start!important}
+.gift-partner-card>div:first-child>div:first-child{width:64px!important;height:64px!important;font-size:38px!important;border-radius:18px!important}
+.gift-partner-card>div:first-child>div:nth-child(2){min-width:0}
+.gift-partner-card>div:first-child>div:nth-child(2)>div:first-child{font-size:20px!important;line-height:1.4!important;margin-bottom:6px!important}
+.gift-partner-card>div:first-child>div:nth-child(2)>div:nth-child(2){font-size:14px!important;line-height:1.55!important;color:#6f7169!important}
+.gift-partner-card>div:first-child>div:nth-child(2)>div:last-child{flex-wrap:wrap;gap:7px!important}
+.gift-partner-card>div:first-child>div:nth-child(2)>div:last-child>span{font-size:17px!important;padding:6px 10px!important;display:inline-block;line-height:1.4}
+.gift-partner-card>div:last-child{font-size:14px!important;line-height:1.6!important;color:#73756d!important;margin-top:14px!important;padding-top:14px!important}
+.gift-partner-card:focus-visible{outline:3px solid #355c40;outline-offset:3px}
+#giftFab{min-width:154px!important;padding:13px 17px!important;gap:9px!important}
+#giftFab>span:first-child{font-size:30px!important}#giftFab>span:last-child{font-size:14px!important;line-height:1.35!important}
+.sailing-speech{position:absolute;z-index:3;top:8px;left:50%;transform:translateX(-50%);max-width:calc(100% - 35px);width:max-content;background:#fff9df;color:#285d43;border:2px solid #e2bd66;border-radius:17px;padding:10px 15px;font-size:17px;line-height:1.4;font-weight:900;text-align:center;box-shadow:0 4px 0 #dfba5a32;animation:harbor-pop 1.4s ease-in-out 3;animation-play-state:var(--scene-motion,paused)}
+.sailing-speech:after{content:'';position:absolute;left:50%;bottom:-8px;width:12px;height:12px;background:#fff9df;border-bottom:2px solid #e2bd66;border-right:2px solid #e2bd66;transform:translateX(-50%) rotate(45deg)}
+.ferry-sailing-scene{height:188px}
+@keyframes harbor-pop{0%,70%,100%{transform:translateX(-50%) scale(1)}12%{transform:translateX(-50%) translateY(-3px) scale(1.06)}25%{transform:translateX(-50%) scale(.98)}38%{transform:translateX(-50%) scale(1.02)}}
+@keyframes benefit-wiggle{0%,40%,100%{transform:rotate(0)}10%{transform:rotate(-7deg)}20%{transform:rotate(7deg)}30%{transform:rotate(-4deg)}}
+@keyframes discount-impact{0%,50%,100%{transform:scale(1) rotate(-2deg)}10%{transform:scale(1.12) rotate(3deg)}23%{transform:scale(.97) rotate(-3deg)}35%{transform:scale(1.025) rotate(-2deg)}}
+.benefit-in-view .discount-stamp{animation:discount-impact 1.4s ease-out 3}
+.benefit-in-view.dalkom-welcome>.fade-up>div:nth-child(2),#couponPopupBg.open .gift-partner-dalkom>div:first-child>div:first-child{animation:benefit-wiggle 1.4s ease-in-out 3}
+#couponPopupBg.open .gift-partner-dalkom>div:first-child>div:nth-child(2)>div:last-child>span{animation:discount-impact 1.4s ease-out 3}
+#page-dalkom.active .coupon-offer-header .discount-stamp{animation:discount-impact 1.4s ease-out 3}
+@media(max-width:520px){.dalkom-location-actions{grid-template-columns:1fr}.dalkom-location-actions>.map-link-btn{margin-top:0!important}.dalkom-location-actions .dalkom-directions{display:grid;grid-template-columns:1fr}.benefit-ticket>div:first-child{grid-template-columns:1fr!important;padding:20px!important;gap:10px!important}.benefit-ticket>div:first-child>button{width:100%}.brand-mission .brand-journey button{gap:9px;padding:14px 12px}.brand-journey strong{font-size:15px}.brand-journey b{font-size:21px}#couponPopupBg .coupon-popup{padding:20px 16px}.gift-partner-card{padding:17px!important}.gift-partner-card>div:first-child{gap:10px!important}.gift-partner-card>div:first-child>div:first-child{width:48px!important;height:54px!important;font-size:33px!important}.gift-partner-card>div:first-child>div:nth-child(2)>div:first-child{font-size:18px!important}.gift-partner-card>div:first-child>span:last-child{display:none}.gift-partner-card>div:first-child>div:nth-child(2)>div:last-child>span{font-size:16px!important}.sailing-speech{font-size:15px}}
+@media(prefers-reduced-motion:reduce){.sailing-speech,.benefit-in-view .discount-stamp,.benefit-in-view.dalkom-welcome>.fade-up>div:nth-child(2),#couponPopupBg.open .gift-partner-dalkom>div:first-child>div:first-child,#couponPopupBg.open .gift-partner-dalkom>div:first-child>div:nth-child(2)>div:last-child>span,#page-dalkom.active .coupon-offer-header .discount-stamp,#_barcodeBox{animation:none!important}}
+.tab-bar .ice-nav-discount{animation:discount-impact 1.4s ease-out 3;transform-origin:center}
+@media(prefers-reduced-motion:reduce){.tab-bar .ice-nav-discount{animation:none!important}}

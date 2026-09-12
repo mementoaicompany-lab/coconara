@@ -1,7 +1,6 @@
 /* Mobile navigation, labelled map, harbour motion and Dalkom photo/tasting scenes. */
 (()=>{'use strict';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const order=['home','ferry','coconara','dalkom','hundert','food'];
 const words={
  ko:['이전 사진','다음 사진','자동 넘김 멈추기','자동 넘김 재생','움직임 멈추기','움직임 재생','아이스크림을 먹는 달콤아재 캐릭터','닫기','사진 전체 보기'],
  en:['Previous photo','Next photo','Pause slideshow','Play slideshow','Pause motion','Play motion','Dalkom Ajae character enjoying ice cream','Close','View full photo'],
@@ -21,12 +20,30 @@ window.getPins=()=>getOriginalPins().map(window.cocoMapPin);
 function svg(type,attrs){const el=document.createElementNS(ns,type);Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));return el;}
 
 function setupNavigation(){
- const nav=$('.tab-bar'),buttons=$$('.tab-item');
- nav.setAttribute('role','navigation');nav.setAttribute('aria-label','Main navigation');document.querySelector('.language-bar').after(nav);
- buttons.forEach((button,i)=>{button.dataset.page=order[i];button.setAttribute('aria-controls','page-'+order[i]);button.onclick=()=>window.showPage(order[i],button);});
+ const nav=$('.tab-bar');if(!nav)return;
+ const buttons=[...nav.querySelectorAll('.tab-item')],page=id=>id&&document.getElementById('page-'+id);
+ // A tab's destination belongs to its markup, independent of visible order/count.
+ const entries=buttons.flatMap(button=>{
+  const inline=(button.getAttribute('onclick')||'').match(/\bshowPage\s*\(\s*(['"])([a-z][a-z0-9-]*)\1\s*(?:,|\))/i);
+  const id=[button.dataset.page,inline?.[2]].find(value=>page(value)?.classList.contains('page'));
+  if(!id)return[];
+  button.dataset.page=id;button.setAttribute('aria-controls','page-'+id);button.onclick=()=>window.showPage(id,button);
+  return[{button,id}];
+ });
+ nav.setAttribute('role','navigation');nav.setAttribute('aria-label','Main navigation');document.querySelector('.language-bar')?.after(nav);
  const original=window.showPage;
- window.showPage=function(id){original.call(this,id,buttons[order.indexOf(id)]);sync();document.dispatchEvent(new Event('coco:page'));nav.scrollIntoView({block:'start',behavior:'instant'});};
- function sync(){buttons.forEach((b,i)=>{if($('#page-'+order[i]).classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});}
+ window.showPage=function(id){
+  if(!page(id)?.classList.contains('page'))return;
+  // Existing deep links (including food) remain usable without a visible tab.
+  original.call(this,id,entries.find(entry=>entry.id===id)?.button||null);
+  sync();document.dispatchEvent(new Event('coco:page'));
+  // A sticky nav has a moving viewport position; scroll to the new page's start.
+  window.scrollTo({top:Math.max(0,window.scrollY+page(id).getBoundingClientRect().top-nav.getBoundingClientRect().height),behavior:'instant'});
+ };
+ function sync(){
+  buttons.forEach(button=>{button.classList.remove('active');button.removeAttribute('aria-current');});
+  entries.forEach(({button,id})=>{if(page(id)?.classList.contains('active')){button.classList.add('active');button.setAttribute('aria-current','page');}});
+ }
  function measure(){const height=nav.getBoundingClientRect().height;if(height>0)document.documentElement.style.setProperty('--top-nav-space',Math.ceil(height)+'px');}
  if('ResizeObserver'in window)new ResizeObserver(measure).observe(nav);
  window.addEventListener('resize',measure,{passive:true});window.addEventListener('popstate',()=>queueMicrotask(sync));sync();measure();

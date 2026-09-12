@@ -7,12 +7,15 @@ function refresh(){
  document.querySelectorAll('[data-vehicle-book]').forEach(el=>el.setAttribute('aria-label',words()[el.dataset.vehicleBook+'Book']));
  const tab=document.querySelector('.tab-item [data-choice-copy="iceTab"]')?.closest('.tab-item');
  if(tab){
-  tab.classList.add('ice-cream-tab');tab.setAttribute('aria-label',words().iceNavAria);
+  tab.classList.add('ice-cream-tab');tab.setAttribute('aria-label',words().iceNavAria+' · '+words().iceOfferAria);
   const icon=tab.querySelector('.ti');
   if(icon&&!icon.querySelector('.ice-nav-icon')){
    const wrapper=document.createElement('span');wrapper.className='ice-nav-icon';wrapper.setAttribute('aria-hidden','true');
    while(icon.firstChild)wrapper.append(icon.firstChild);icon.append(wrapper);
    const sparkle=document.createElement('span');sparkle.className='ice-nav-sparkle';sparkle.setAttribute('aria-hidden','true');sparkle.textContent='✦';icon.append(sparkle);
+  }
+  if(icon&&!icon.querySelector('.ice-nav-discount')){
+   const offer=document.createElement('span');offer.className='ice-nav-discount';offer.setAttribute('aria-hidden','true');offer.dataset.localized='true';offer.textContent='20% OFF';icon.append(offer);
   }
  }
 }

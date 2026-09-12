@@ -16,7 +16,8 @@ const plain=s=>String(s).replace(/\[br\]/g,' ').replace(/\[\/?\d+\]/g,'').replac
 const textIds=new Map((window.COCO_TRANSLATIONS?.catalog||[]).map(c=>[plain(c.source),c.id]));
 function translated(value){if(!value||locale()==='ko')return value||'';const id=textIds.get(plain(value));return id?plain(window.COCO_TRANSLATIONS.languages[locale()]?.[id]||value):(window.cocoTranslate?.(value)||value);}
 function placeName(p){return locale()==='ko'?p.name:(compactNames[locale()]?.[data.places.indexOf(p)]||translated(p.name));}
-function description(p){return window.COCO_TRANSLATIONS?.tour?.[locale()]?.[tourIds[p.id]||p.id]||translated(p.content.desc);}
+const brief=p=>window.COCO_MAP_BRIEFS?.[locale()]?.[p.id];
+function description(p){return brief(p)?.desc||window.COCO_TRANSLATIONS?.tour?.[locale()]?.[tourIds[p.id]||p.id]||translated(p.content.desc);}
 let projectionNow=null,gpsGroup=null,geoState={enabled:false,status:'off',fix:null},historyClose=false,bodyOverflow='';
 const gps=window.CoconaraGPS.create({provider:navigator.geolocation,secure:window.isSecureContext,onChange:s=>{geoState=s;renderGPS();}});
 const retry=document.createElement('button');retry.type='button';retry.className='um-gps-retry';retry.hidden=true;root.querySelector('.um-gps-status').after(retry);retry.addEventListener('click',()=>gps.start());
@@ -52,7 +53,6 @@ function refreshUI(){
  root.querySelector('h2').textContent=words().title;
  root.querySelector('.um-food-switch').replaceChildren(document.createTextNode(words().foods+' '),Object.assign(document.createElement('span'),{textContent:state.foods?'ON':'OFF'}));
  root.querySelector('.um-tap-hint strong').textContent=words().hint;root.querySelector('.um-tap-hint div>span').textContent=words().hintSub;
- root.querySelector('.um-harbor-kicker').textContent=words().harbor;root.querySelector('.um-harbor-guide strong').textContent=placeName(data.places.find(p=>p.id==='haumok'))+'!';root.querySelector('.um-guide-arrow').textContent=words().guide;
  root.querySelector('.um-gps-privacy').textContent=words().privacy;root.querySelector('.um-motion-control').textContent=state.paused?words().play:words().pause;
  root.querySelector('.um-geography').setAttribute('aria-label',words().map);
  root.querySelector('.um-dialog-close').setAttribute('aria-label',words().close);root.querySelector('.um-photo-prev').setAttribute('aria-label',words().prev);root.querySelector('.um-photo-next').setAttribute('aria-label',words().next);
@@ -75,11 +75,11 @@ function openPlace(id){
  root.querySelector('#coco-road-dialog-title').textContent=(p.kind==='food'?'':(c.emoji||'📍')+' ')+translated(c.title||c.name||p.name);
  root.querySelector('.um-owner-label').textContent='👩🏻 '+(translated(c.ownerLabel)===c.ownerLabel&&locale()!=='ko'?words().owner:translated(c.ownerLabel));
  const desc=root.querySelector('.um-owner-words');desc.replaceChildren();String(description(p)).split(/\n\n/).forEach(t=>{const paragraph=document.createElement('p');paragraph.textContent=t;desc.append(paragraph);});
- const tips=root.querySelector('.um-tip-list');tips.replaceChildren();(c.tips||[]).forEach(t=>{const row=document.createElement('div');row.className='um-tip';const icon=document.createElement('span'),text=document.createElement('span');icon.textContent=t.i;text.textContent=translated(t.t);row.append(icon,text);tips.append(row);});
+ const tips=root.querySelector('.um-tip-list');tips.replaceChildren();(brief(p)?.tips||c.tips||[]).forEach(t=>{const row=document.createElement('div');row.className='um-tip';const icon=document.createElement('span'),text=document.createElement('span');icon.textContent=t.i;text.textContent=translated(t.t);row.append(icon,text);tips.append(row);});
  const tags=root.querySelector('.um-menu-tags');tags.replaceChildren();(c.tags||[]).forEach(t=>{const tag=document.createElement('span');tag.className='um-menu-tag';tag.textContent=translated(t);tags.append(tag);});
  root.querySelector('.um-food-info').textContent=translated(c.info||'');
  const links=root.querySelector('.um-popup-links');links.replaceChildren();const linkData=p.kind==='food'?[[words().naver,c.naverUrl],[words().google,c.googleUrl]]:[[words().source,p.source]];linkData.forEach(([name,href])=>{if(!href)return;const a=document.createElement('a');a.textContent=name;a.href=href;a.target='_blank';a.rel='noopener noreferrer';links.append(a);});
- const credit=root.querySelector('.um-photo-credit');credit.replaceChildren();if(c.credit){const a=document.createElement('a');a.textContent=c.credit.author+' · '+c.credit.license;a.href=c.credit.source;a.target='_blank';a.rel='noopener noreferrer';credit.append(a);}
+ const credit=root.querySelector('.um-photo-credit');credit.replaceChildren();if(c.credit){const a=document.createElement('a');a.textContent=c.credit.author.replace(' / Wikimedia Commons','').replace(' / '+c.credit.license,'').replace(' / 공공누리 제1유형','')+' · '+c.credit.license;a.href=c.credit.source;a.target='_blank';a.rel='noopener noreferrer';credit.append(a);}
  currentPhotos=c.photos||[c.photo];currentPhotos=currentPhotos.filter(Boolean);root.querySelector('.um-popup-photo').hidden=!currentPhotos.length;root.querySelector('.um-photo-nav').hidden=currentPhotos.length<2;setPhoto(0);clearGallery();
  if(currentPhotos.length>1)photoTimer=setInterval(()=>{if(dialog.open&&!document.hidden)setPhoto(photoIndex+1);},4200);
  root.querySelector('.um-popup-body').scrollTop=0;if(!dialog.open){bodyOverflow=document.body.style.overflow;document.body.style.overflow='hidden';dialog.showModal();window.pushPopupState?.();}updateAnimationState();root.querySelector('.um-dialog-close').focus();
@@ -88,7 +88,6 @@ root.querySelector('.um-dialog-close').addEventListener('click',()=>dialog.close
 dialog.addEventListener('click',e=>{const r=dialog.getBoundingClientRect();if(e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))dialog.close();});
 dialog.addEventListener('close',()=>{document.body.style.overflow=bodyOverflow;if(!historyClose)window.popPopupState?.();historyClose=false;clearGallery();lastTime=null;state.selected=null;labels.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));updateAnimationState();labels.querySelector(`[data-place="${focusId}"]`)?.focus();});
 root.querySelector('.um-photo-prev').addEventListener('click',()=>setPhoto(photoIndex-1));root.querySelector('.um-photo-next').addEventListener('click',()=>setPhoto(photoIndex+1));
-root.querySelector('.um-harbor-guide').addEventListener('click',()=>openPlace('haumok'));
 function updateAnimationState(){root.style.setProperty('--um-animation-state',state.paused||dialog.open||document.hidden||!visible?'paused':'running');}
 function renderFerry(){
  if(!ferry||!ferryPath||!ferryLength)return;
@@ -130,7 +129,7 @@ function draw(){
  drawFerry(projection,w,h);
  const leaders=svg.append('g'),dots=svg.append('g');const occupied=[];const priority=p=>p.id==='haumok'?4:['coconara','dalkom'].includes(p.id)?3:p.kind==='food'?2:1;
  data.places.filter(p=>state.foods||p.kind!=='food').sort((a,b)=>priority(b)-priority(a)).forEach(p=>{
-  const [x,y]=projection([p.lon,p.lat]),store=['coconara','dalkom'].includes(p.id),harbor=p.id==='haumok',food=p.kind==='food';const b=document.createElement('button');b.type='button';b.dataset.place=p.id;b.className='um-pin-label'+(store?' um-store':'')+(p.id==='dalkom'?' um-dalkom':'')+(harbor?' um-harbor':'')+(food?' um-food':'')+(p.id==='hundert'?' um-quiet':'');b.textContent=(p.id==='dalkom'?'🍦 ':p.id==='coconara'?'🌷 ':harbor?'⚓ ':'')+placeName(p);b.setAttribute('aria-pressed',String(p.id===state.selected));b.setAttribute('aria-haspopup','dialog');b.setAttribute('aria-label',placeName(p)+' '+words().details);b.addEventListener('click',()=>openPlace(p.id));labels.append(b);
+  const [x,y]=projection([p.lon,p.lat]),store=['coconara','dalkom'].includes(p.id),harbor=p.id==='haumok',food=p.kind==='food';const b=document.createElement('button');b.type='button';b.dataset.place=p.id;b.className='um-pin-label'+(store?' um-store':'')+(p.id==='dalkom'?' um-dalkom':'')+(harbor?' um-harbor':'')+(food?' um-food':'')+(p.id==='hundert'?' um-quiet':'');b.textContent=(p.id==='dalkom'?'🍦 ':p.id==='coconara'?'🛵 ':harbor?'⚓ ':'')+placeName(p);b.setAttribute('aria-pressed',String(p.id===state.selected));b.setAttribute('aria-haspopup','dialog');b.setAttribute('aria-label',placeName(p)+' '+words().details);b.addEventListener('click',()=>openPlace(p.id));labels.append(b);
   const bw=b.offsetWidth,bh=b.offsetHeight,base=offsets[p.id]||[0,-27];let chosen;
   const candidates=[base,[base[0],base[1]-24],[base[0],base[1]+24],[-bw/2-15,0],[bw/2+15,0],[0,-58],[0,58],[0,-85],[0,85],[-80,-90],[80,-90],[-90,90],[90,90]];
   for(let step=110;step<=190;step+=25)candidates.push([-70,-step],[70,-step],[-70,step],[70,step]);

@@ -1,0 +1,41 @@
+/* v21 — four destinations, clear essentials and shareable attraction cards. */
+.tab-bar{display:grid!important;grid-template-columns:.7fr .9fr 1.35fr 1.15fr!important;gap:5px!important}
+.tab-bar .tab-item{min-width:0!important;width:auto!important;padding-inline:4px!important}
+.tab-bar [data-choice-copy="exhibitionTab"]{max-width:105px;line-height:1.22;word-break:keep-all;overflow-wrap:normal}
+.home-port-contacts{margin:20px 0 8px;border-top:1px solid #dde5df;padding:12px 0;color:#65776c;font-size:13px}
+.home-port-contacts summary{cursor:pointer;padding:10px 3px}
+.home-port-contacts>div{display:grid;gap:8px;padding-top:8px}
+.home-port-contacts a{padding:10px 12px!important;border:1px solid #e4e9e5;border-radius:12px!important;box-shadow:none!important}
+.home-port-contacts a>div>div:first-child{display:none!important}
+.rental-eligibility{padding:17px 18px;margin:0 0 22px;background:#edf5ef;border:1px solid #cbded1;border-radius:18px}
+.rental-eligibility h2{font-size:16px;margin:0 0 11px;color:#254e40}
+.eligibility-facts{display:flex;gap:8px;flex-wrap:wrap}
+.eligibility-facts strong{font-size:14px;line-height:1.5;color:#175443;background:white;padding:8px 11px;border-radius:10px}
+.rental-eligibility p{font-size:13px;line-height:1.6;margin:10px 0;color:#597165;word-break:keep-all}
+.rental-eligibility button{padding:8px 0;background:none;border:0;text-decoration:underline;text-underline-offset:3px;font-family:inherit;font-size:13px;font-weight:700;line-height:1.5;color:#345f4e;cursor:pointer}
+.vehicle-choice-fami .vehicle-choice-badge{max-width:125px;text-align:center;white-space:normal;word-break:keep-all;line-height:1.45}
+#home-directions:focus-visible,#directions-close:focus-visible{outline:3px solid #278871;outline-offset:4px}
+#panel-directions>div:has(>#directions-close){position:sticky;top:-1px;background:white;z-index:3;gap:12px;padding:12px 0}
+#directions-panel-title{font-size:19px!important;line-height:1.4;word-break:keep-all}
+#directions-close{flex-shrink:0;display:flex;align-items:center;gap:5px;background:#f2f6f2;border:1px solid #dce6de;border-radius:12px;color:#345e4b;font:inherit;font-size:12px;min-height:44px;padding:4px 9px;cursor:pointer}
+#directions-close>span:first-child{font-size:26px;line-height:1}
+body:has(#panel-directions.open) #giftFab{visibility:hidden}
+.coupon-recommend{margin:0!important;font-weight:700;color:#694833;line-height:1.7}
+.coupon-funding{margin:10px 0 0!important;font-size:.9em;color:#936247;line-height:1.6}
+#coco-road-map .um-dialog-header{padding:12px 16px;gap:8px}
+#coco-road-map .um-dialog h3{font-size:21px}
+#coco-road-map .um-dialog-tag{font-size:10px;margin-bottom:2px}
+#coco-road-map .um-tip-list{margin:0;padding:13px 16px;gap:7px;border:0;border-bottom:1px solid #e4ebdf;background:#eff5e9;color:#31543c;font-size:15px;font-weight:700;line-height:1.45;word-break:keep-all}
+#coco-road-map .um-popup-photo{min-height:0}
+#coco-road-map .um-popup-photo img{height:165px;object-fit:contain}
+#coco-road-map .um-photo-credit{font-size:9px;line-height:1.35;padding:5px 16px;color:#697660;overflow-wrap:anywhere}
+#coco-road-map .um-popup-copy{padding:13px 16px 15px}
+#coco-road-map .um-owner-label{font-size:11px;margin-bottom:6px}
+#coco-road-map .um-owner-words{font-size:13px;line-height:1.65}
+#coco-road-map .um-popup-links{margin-top:12px}
+@media(max-width:380px){.tab-bar .tab-item{font-size:11px!important}.tab-bar [data-choice-copy="exhibitionTab"]{max-width:79px}.vehicle-choice-fami .vehicle-choice-badge{max-width:105px;font-size:11px}#coco-road-map .um-dialog h3{font-size:18px}#coco-road-map .um-popup-photo img{height:140px}#coco-road-map .um-tip-list{font-size:14px}#directions-panel-title{font-size:17px!important}#directions-close{font-size:10px}}
+
+@media(max-width:460px){.tab-bar [data-choice-copy="exhibitionTab"]{max-width:78px;font-size:12px;line-height:1.25}}
+/* Tab changes are immediate; smooth root scrolling can race sticky navigation. */
+html{scroll-behavior:auto!important}
+.tab-bar [data-choice-copy="exhibitionTab"]{white-space:normal!important;display:block}
