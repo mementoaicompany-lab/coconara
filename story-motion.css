@@ -34,8 +34,8 @@
 .departure-card .home-harbor-notice p{font-size:13px!important;line-height:1.65!important}
 .departure-card [id^=ferryLastInfo]{font-size:15px!important;line-height:1.7!important;padding:10px 12px!important;border-radius:11px!important;margin-top:11px!important}
 @media(max-width:350px){#page-home .departure-card,#page-ferry .departure-card{padding:16px!important}.departure-ports strong{font-size:15px}.departure-ports>div{gap:4px}.departure-ports>div>span{font-size:22px}.departure-card .ferry-departure-line{font-size:26px!important}.departure-card .ferry-departure-label{display:block!important;margin:5px 0 0}.departure-route{padding:12px 10px 3px}.departure-card-heading>span:first-child{font-size:15px!important}}
-@media(prefers-reduced-motion:reduce){.departure-traveler{animation:none;left:calc(50% - 34px);opacity:1}}
-/* The offer, customer journey and real coupon form one readable card. */
+
+/* The offer, ticket journey and real coupon form one readable card. */
 #page-dalkom .customer-journey .coupon-offer-header{padding:19px 18px 4px!important;display:flex!important;align-items:center;gap:8px!important;background:#fff6e9!important}
 #page-dalkom .customer-journey .coupon-offer-header>div:first-child{flex:1 1 auto!important}
 #page-dalkom .customer-journey .coupon-offer-header>div:first-child>div:first-child{font-size:14px!important;margin-bottom:3px!important}
@@ -52,6 +52,8 @@
 #page-dalkom .customer-journey .coupon-caption strong{font-size:15px!important}
 #page-dalkom .customer-journey .coupon-journey-steps button{font-size:14px;min-height:44px;padding:8px 4px}
 #page-dalkom .customer-journey .coupon-journey-steps{gap:6px}
+#page-dalkom .customer-journey .coupon-journey-steps button span{word-break:keep-all;overflow-wrap:normal}
+@media(max-width:380px){#page-dalkom .customer-journey .coupon-journey-steps button{font-size:12px;gap:3px;padding:8px 3px}}
 #page-dalkom .customer-journey .coupon-proof{position:relative;margin:16px auto!important;overflow:visible}
 #page-dalkom .customer-journey{overflow:visible!important}
 #page-dalkom .customer-journey .coupon-flight{border:0!important;background:none!important;box-shadow:none!important;aspect-ratio:auto!important;animation:none!important;transform-origin:center}

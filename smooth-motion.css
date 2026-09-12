@@ -36,7 +36,7 @@
 .ferry-route-card>div:nth-child(2)>span:first-child{font-size:14px!important}
 .ferry-route-card .ferry-time-layout{gap:12px!important}
 @media(max-width:350px){.coupon-continuous .coupon-canvas{gap:10px;grid-template-columns:minmax(0,.9fr) minmax(0,1.15fr);min-height:170px}.coupon-continuous .coupon-offer-header>div:first-child>div:first-child{font-size:13px!important}.coupon-continuous .coupon-journey-steps button{font-size:12px}.ferry-direction-route{grid-template-columns:minmax(0,.8fr) 27px minmax(0,1.25fr);padding:12px 8px!important;font-size:17px!important}.ferry-route-arrow{font-size:26px}.ocean-scene .sailing-speech{font-size:16px}.ferry-sailing-scene.ocean-scene{height:225px}.coupon-funding strong{font-size:20px}}
-@media(prefers-reduced-motion:reduce){.coupon-funding strong,.battery-range{animation:none!important}.coupon-smooth-art img{will-change:auto}}
+
 #page-coconara .battery-category .battery-range{color:#ce293d!important}
 #page-coconara .battery-category>.battery-copy{font-size:16px!important}
 @media(max-width:430px){

@@ -1,6 +1,6 @@
 /* Stable artwork, elapsed-time animation, and a textured sea updated at display refresh. */
 (()=>{'use strict';
-const tau=Math.PI*2,mq=matchMedia('(prefers-reduced-motion: reduce)');
+const tau=Math.PI*2;
 function picture(src,cls){const img=new Image();img.src=src;img.alt='';img.className=cls;img.decoding='async';img.draggable=false;return img;}
 function ocean(scene){
  scene.classList.add('ocean-scene');
@@ -60,7 +60,7 @@ function ocean(scene){
  new MutationObserver(sync).observe(scene,{attributes:true,attributeFilter:['style','hidden']});
  new MutationObserver(sync).observe(scene.closest('.page'),{attributes:true,attributeFilter:['class']});
  window.cocoObserveMotion(scene,v=>{visible=v;sync();});
- document.addEventListener('visibilitychange',sync);mq.addEventListener('change',()=>{if(mq.matches){time=0;draw(0);}sync();});
+ document.addEventListener('visibilitychange',sync);
  texture.decode().then(()=>{ready=true;resize();sync();}).catch(()=>{});
 }
 window.CocoSmoothMotion=Object.freeze({ocean});

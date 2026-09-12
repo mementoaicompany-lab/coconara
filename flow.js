@@ -60,10 +60,10 @@
    pill.innerHTML='<div class="departure-ports"><div><span aria-hidden="true">⚓</span><strong class="port-seongsan"></strong></div><div><span aria-hidden="true">🏝️</span><strong class="port-udo"></strong></div></div><div class="departure-track" aria-hidden="true"><span class="departure-traveler"><img src="sailing-ferry.webp" alt=""></span></div>';
    timeLayout.after(pill);
    card.querySelector('[id^=ferryBar]')?.parentElement.classList.add('departure-old-progress');
-   let visible=false;const mq=matchMedia('(prefers-reduced-motion: reduce)');
-   function motion(){const active=['normal','shortened'].includes(card.dataset.ferryStatus)&&visible&&!document.hidden&&!mq.matches;card.style.setProperty('--route-motion',active?'running':'paused');}
+   let visible=false;
+   function motion(){const active=['normal','shortened'].includes(card.dataset.ferryStatus)&&visible&&!document.hidden;card.style.setProperty('--route-motion',active?'running':'paused');}
    window.cocoObserveMotion?.(card,v=>{visible=v;motion();});
-   new MutationObserver(motion).observe(card,{attributes:true,attributeFilter:['data-ferry-status']});document.addEventListener('visibilitychange',motion);mq.addEventListener('change',motion);
+   new MutationObserver(motion).observe(card,{attributes:true,attributeFilter:['data-ferry-status']});document.addEventListener('visibilitychange',motion);
    routes.push({pill,label,outgoing,eyebrow,time});
   });
   function refresh(){const w=window.COCO_CHOICE_COPY[window.cocoLanguage?.()||'ko']||window.COCO_CHOICE_COPY.ko;

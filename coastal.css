@@ -26,7 +26,7 @@
 @keyframes road-suspension{0%,100%{transform:translateY(0)}30%{transform:translateY(.35px)}65%{transform:translateY(-.25px)}}
 @keyframes wheel-roll{to{transform:rotate(360deg)}}
 @keyframes coastal-wind{0%{transform:translateX(0);opacity:0}15%,75%{opacity:.7}100%{transform:translateX(-650px);opacity:0}}
-@media(prefers-reduced-motion:reduce){.vehicle-stage .vehicle-sprite,.vehicle-wind i{animation:none}.road-grain,.road-dashes{animation-duration:6s}.wheel-detail b{animation-duration:3s}}
+
 .vehicle-speech{position:absolute;z-index:3;top:4%;left:50%;width:max-content;max-width:88%;padding:10px 17px;border:2px solid #fff;border-radius:20px;background:#fffffff5;color:#28594e;box-shadow:0 5px 0 #294a421a,0 8px 20px #396b4915;font-size:clamp(16px,4.5vw,23px);font-weight:900;line-height:1.35;text-align:center;transform:translateX(-50%);transform-origin:45% 100%;animation:vehicle-introduction 5s ease-in-out infinite;animation-play-state:var(--coastal-motion,paused);word-break:keep-all;overflow-wrap:anywhere}
 .vehicle-speech:after{content:'';position:absolute;bottom:-11px;left:43%;width:17px;height:17px;background:#fff;clip-path:polygon(0 0,100% 0,12% 100%)}
 .vehicle-stage .motion-toggle{z-index:4;bottom:10px;right:10px;background:#ffffffec;border-color:#e1e9e4;min-height:36px;font-size:12px;color:#375c50}

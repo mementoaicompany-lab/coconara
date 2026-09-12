@@ -3,14 +3,12 @@
 const $=s=>document.querySelector(s),clamp=n=>Math.max(0,Math.min(1,n));
 const ease=n=>{n=clamp(n);return n*n*(3-2*n);};
 const words=()=>window.COCO_JOURNEY_COPY[window.cocoLanguage?.()||'ko']||window.COCO_JOURNEY_COPY.ko;
-const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const records=new Set();let running=false;
 function clock(root,cycle,paint,refresh=()=>{},ready=()=>true){
- const r={root,cycle,paint,refresh,ready,time:0,last:0,visible:false,paused:reduced()};records.add(r);
+ const r={root,cycle,paint,refresh,ready,time:0,last:0,visible:false,paused:false};records.add(r);
  const api={seek(t){r.time=t;r.last=0;paint(r.time);refresh();},toggle(){r.paused=!r.paused;r.last=0;refresh();},get paused(){return r.paused;},get playing(){return !r.paused&&r.visible&&!document.hidden&&ready();}};
  window.cocoObserveMotion(root,v=>{r.visible=v;r.last=0;refresh();});
  document.addEventListener('visibilitychange',()=>{r.last=0;refresh();});
- matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{if(e.matches){r.paused=true;r.last=0;paint(r.time);refresh();}});
  paint(0);
  if(!running){running=true;requestAnimationFrame(tick);}
  function tick(now){for(const item of records){
@@ -31,7 +29,7 @@ function strip(root,src){
   const duration=cycle/6,index=Math.floor(time/duration)%6,progress=(time%duration)/duration;
   const mix=ease((time%duration-(duration-320))/320);
   frame(layers[0],index);frame(layers[1],(index+1)%6);
-  const amplitude=reduced()?0:1;
+  const amplitude=1;
   layers[0].layer.style.transform='translate('+(Math.sin(time/1700)*1.8*amplitude).toFixed(2)+'px,'+(Math.sin(time/950)*1.1*amplitude).toFixed(2)+'px) scale('+(1+.009*amplitude)+')';
   layers[1].layer.style.transform=layers[0].layer.style.transform;
   layers[1].layer.style.opacity=String(mix);
@@ -45,15 +43,15 @@ function setupCouponStory(text){
  const film=document.createElement('div');film.className='coupon-film';film.dataset.localized='true';
  film.innerHTML='<div class="coupon-canvas"><div class="coupon-art" role="img"></div><div class="coupon-caption"><span class="coupon-scene-number"></span><strong></strong></div></div><div class="coupon-journey-steps"></div><div class="coupon-film-footer"><div class="coupon-time-track" aria-hidden="true"><i></i></div><button type="button" class="coupon-play"></button></div>';
  header.after(film);film.after(proof);
- // The customer uses the whole stage; the offer remains immediately above it.
+ // The shops and travelling ticket use the full stage, with the real coupon below.
  const canvas=film.querySelector('.coupon-canvas'),caption=film.querySelector('.coupon-caption');canvas.after(caption);
  film.removeAttribute('data-localized');film.querySelectorAll('.coupon-art,.coupon-caption,.coupon-journey-steps,.coupon-film-footer').forEach(el=>el.dataset.localized='true');
 proof.setAttribute('role','button');proof.tabIndex=0;
  proof.onclick=()=>window.cocoShowPhotos?.([photo.src],0,text().couponZoom);
  proof.addEventListener('keydown',e=>{if(e.target===proof&&(e.key==='Enter'||e.key===' ')){e.preventDefault();proof.click();}});
- const art=film.querySelector('.coupon-art'),poses=window.CocoCustomerStory.create(art),steps=film.querySelector('.coupon-journey-steps'),play=film.querySelector('.coupon-play');
+ const art=film.querySelector('.coupon-art'),poses=window.CocoTicketStory.create(art),steps=film.querySelector('.coupon-journey-steps'),play=film.querySelector('.coupon-play');
  const cycle=24000;let phase=-1,api,geometry=null;
- const flight=document.createElement('img');flight.className='coupon-flight';flight.src='traveler-ticket.webp';flight.alt='';flight.setAttribute('aria-hidden','true');card.append(flight);
+ const flight=document.createElement('img');flight.className='coupon-flight';flight.src='gold-coupon.webp';flight.alt='';flight.setAttribute('aria-hidden','true');card.append(flight);
  function measure(){const box=card.getBoundingClientRect(),a=art.getBoundingClientRect(),p=photo.getBoundingClientRect();geometry={ax:a.left-box.left,ay:a.top-box.top,scale:a.width/480,px:p.left-box.left+p.width/2,py:p.top-box.top+p.height/2,pw:p.width};}
  new ResizeObserver(measure).observe(card);photo.addEventListener('load',measure);window.addEventListener('resize',measure,{passive:true});
  function refresh(){
@@ -71,7 +69,7 @@ proof.setAttribute('role','button');proof.tabIndex=0;
   flight.style.opacity=flying?String(Math.min(1,p*12,(1-p)*10)):'0';
   if(flying&&g){const sx=g.ax+a.x*g.scale,sy=g.ay+a.y*g.scale,scale=.4+q*1.25;
    const x=sx+(g.px-sx)*q+Math.sin(p*Math.PI)*35,y=sy+(g.py-sy)*q-Math.sin(p*Math.PI)*70;
-   flight.style.width='88px';flight.style.height='66px';flight.style.transform=`translate3d(${x-44}px,${y-33}px,0) rotate(${-12+q*12}deg) scale(${scale})`;}
+   flight.style.width='104px';flight.style.height='64px';flight.style.transform=`translate3d(${x-52}px,${y-32}px,0) rotate(${-8+q*8}deg) scale(${scale})`;}
   const ring=burst?Math.sin(burst*18)*Math.exp(-burst*2.2):0;
   photo.style.transform=`scale(${1+Math.abs(ring)*.075}) rotate(${ring*2}deg)`;
   proof.style.setProperty('--coupon-spark',String(Math.abs(ring)));proof.dataset.landing=burst?'true':'false';
