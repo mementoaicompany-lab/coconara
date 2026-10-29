@@ -1,0 +1,69 @@
+.tab-bar.latte-navigation{display:flex!important;flex-wrap:nowrap;overflow-x:auto;gap:3px!important}
+.tab-bar.latte-navigation .tab-item{flex:1 0 60px;width:auto!important;min-width:60px}
+.tab-bar.latte-navigation .ice-cream-tab{flex-basis:96px;min-width:96px}
+.tab-bar.latte-navigation .latte-tab{flex-basis:106px;min-width:106px}
+body:has(#page-latte.active) #giftFab{display:none!important}
+/* Seasonal latte: scoped to the new destination; existing guide content stays intact. */
+.tab-bar .latte-tab{min-width:106px;background:#ffffff0b;position:relative}
+.tab-bar .latte-tab .ti{display:flex;align-items:center;gap:5px;overflow:visible}
+.latte-nav-cup{display:inline-block;transform-origin:50% 85%}
+.tab-bar .latte-nav-season{display:inline-block;padding:4px 6px;border-radius:6px;background:#edf7f8;color:#28574f;font-size:10px!important;font-weight:900;line-height:1.15;white-space:nowrap;border:1px solid #c6e4e3;transform-origin:50% 10%;animation:latte-bell 1.4s ease-in-out 3}
+.tab-bar .latte-nav-label{display:block;max-width:102px;white-space:normal;word-break:keep-all;line-height:1.25;color:#fff0cf;font-size:12px;font-weight:850}
+.tab-bar .latte-tab.active .latte-nav-label{color:#fff}
+.tab-bar .latte-tab.active{background:#c73e70}
+.latte-tab.latte-away .latte-nav-season{animation-play-state:paused}
+@keyframes latte-bell{0%,55%,100%{transform:rotate(0)}10%{transform:rotate(9deg)}20%{transform:rotate(-8deg)}30%{transform:rotate(6deg)}40%{transform:rotate(-4deg)}}
+#page-latte{--latte-cream:#fff8eb;--latte-ink:#4b3024;--latte-peanut:#ac773f;--latte-muted:#755d4c;background:var(--latte-cream);color:var(--latte-ink)}
+#page-latte .latte-content{padding:26px 18px 34px}
+#page-latte .latte-story{margin:0 auto;max-width:560px}
+#page-latte .latte-heading{margin-bottom:22px}
+#page-latte .latte-brand-line{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:15px;font-weight:800;color:var(--latte-muted);margin-bottom:12px}
+#page-latte .latte-season{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid #c8dedd;border-radius:7px;background:#edf7f8;color:#28574f;font-size:12px;white-space:nowrap}
+#page-latte h2{font-size:38px;font-weight:900;line-height:1.25;letter-spacing:-1.5px;margin:0 0 10px;color:var(--latte-ink);word-break:keep-all}
+#page-latte .latte-heading>p{font-size:16px;line-height:1.7;word-break:keep-all;color:var(--latte-muted);margin:0}
+#page-latte .latte-photo{margin:0}
+#page-latte .latte-photo img{display:block;width:100%;height:auto;border-radius:22px 22px 64px 22px;object-fit:contain!important;box-shadow:0 8px 20px #4b302414}
+#page-latte figcaption{font-size:12px;color:var(--latte-muted);margin-top:10px;text-align:center;line-height:1.5}
+#page-latte .latte-intro{padding:24px 0 0}
+#page-latte h3{font-size:20px;font-weight:800;line-height:1.5;letter-spacing:-.5px;margin:0 0 9px;word-break:keep-all;color:var(--latte-ink)}
+#page-latte p{font-size:16px;line-height:1.8;word-break:keep-all;overflow-wrap:anywhere;margin:0;color:var(--latte-muted)}
+#page-latte .latte-temperature{display:flex;gap:8px;margin-top:20px}
+#page-latte .latte-temperature>span{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;border-radius:8px;background:#f4e5d4;color:#85452f}
+#page-latte .latte-temperature>span:last-child{background:#e5eeee;color:#315d60}
+#page-latte .latte-temperature b{font-size:15px;font-weight:900;letter-spacing:.4px}
+#page-latte .latte-temperature small{font-size:13px;line-height:1.4}
+#page-latte .latte-temperature-note{font-size:13px;margin-top:10px;line-height:1.6}
+#page-latte .latte-details{margin-top:28px}
+#page-latte .latte-flavour{padding-top:26px;border-top:1px solid #dcc9b1}
+#page-latte .latte-dip{display:flex;gap:15px;align-items:flex-start;background:#f4e8d2;border-radius:18px;padding:23px 20px;margin-top:26px}
+#page-latte .latte-peanut{font-size:32px;line-height:1.4;flex-shrink:0}
+#page-latte .latte-dip h3{font-size:21px}
+#page-latte .latte-memory{padding:28px 0}
+#page-latte .latte-visit{border-top:1px solid #dcc9b1;padding-top:24px;display:flex;flex-direction:column;gap:16px}
+#page-latte .latte-visit strong{display:block;font-size:18px;line-height:1.5;font-weight:800}
+#page-latte .latte-visit p{font-size:14px;margin-top:4px}
+#page-latte .latte-visit a{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px 18px;background:#244d42;color:#fff;border-radius:12px;font-size:15px;font-weight:800;text-decoration:none}
+#page-latte a:focus-visible,.tab-bar .latte-tab:focus-visible{outline:3px solid #b55178;outline-offset:3px}
+@media(min-width:540px){
+ #page-latte .latte-content{padding:32px 24px 40px}
+ #page-latte .latte-hero{display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:22px}
+ #page-latte .latte-intro{padding:0}
+ #page-latte .latte-intro h3{font-size:21px}
+ #page-latte .latte-intro p{font-size:15px}
+ #page-latte .latte-temperature{flex-wrap:wrap;gap:6px;margin-top:14px}
+ #page-latte .latte-temperature>span{padding:8px;gap:5px}
+ #page-latte .latte-temperature small{font-size:12px}
+ #page-latte .latte-temperature-note{font-size:12px!important}
+ #page-latte .latte-visit{flex-direction:row;align-items:center;justify-content:space-between}
+ #page-latte .latte-visit a{max-width:47%}
+}
+@media(max-width:539px){
+ .tab-bar .latte-tab{flex-shrink:0;min-width:102px}
+ #page-latte h2{font-size:34px}
+ #page-latte .latte-photo{max-width:390px;margin:0 auto}
+}
+@media(prefers-reduced-motion:reduce){.latte-nav-season{animation:none!important}}
+
+#page-latte .latte-title-line{display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;margin-bottom:10px}
+#page-latte .latte-title-line h2{margin-bottom:0}
+#page-latte .latte-availability{font-size:12px;font-weight:800;color:#59675b;white-space:nowrap;padding:3px 8px;border:1px solid #d6dbcc;border-radius:6px}

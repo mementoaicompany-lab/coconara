@@ -703,6 +703,7 @@ body.admin-mode .dalkom-edit-btn { display:block; }
 <link rel="stylesheet" href="smooth-motion.css?v=27.1">
 <link rel="stylesheet" href="flow.css?v=27.1">
 <link rel="stylesheet" href="story-motion.css?v=27.1">
+<link rel="stylesheet" href="peanut-latte.css?v=20261029">
 </head>
 <body>
 
@@ -724,11 +725,12 @@ body.admin-mode .dalkom-edit-btn { display:block; }
 
 <!-- 탭바 -->
 <nav class="language-bar" aria-label="Language"><button type="button" data-lang="ko" lang="ko" aria-pressed="true"><span aria-hidden="true">🇰🇷</span> 한국어</button><button type="button" data-lang="en" lang="en" aria-pressed="false"><span aria-hidden="true">🇺🇸</span> English</button><button type="button" data-lang="zh-HK" lang="zh-HK" aria-pressed="false"><span aria-hidden="true">🇭🇰</span> 香港 · 繁中</button><button type="button" data-lang="ms" lang="ms" aria-pressed="false"><span aria-hidden="true">🇲🇾</span> Melayu</button><button type="button" data-lang="zh-TW" lang="zh-TW" aria-pressed="false"><span aria-hidden="true">🇹🇼</span> 台灣 · 繁中</button><button type="button" data-lang="ja" lang="ja" aria-pressed="false"><span aria-hidden="true">🇯🇵</span> 日本語</button></nav>
-<div class="tab-bar">
+<div class="tab-bar latte-navigation">
   <button class="tab-item active" onclick="showPage('home',this)"><span class="ti">🏠</span>홈</button>
   <button class="tab-item" onclick="showPage('coconara',this)"><span class="ti">🛵</span><span data-choice-copy="rentalTab" data-localized="true">대여장비</span></button>
   <button class="tab-item" onclick="showPage('broadcast',this)"><span class="ti" aria-hidden="true">📺</span><span class="" data-choice-copy="broadcastTab" data-localized="true">방송출연</span></button>
 <button class="tab-item" onclick="showPage('dalkom',this)"><span class="ti">🍦</span><span data-choice-copy="iceTab" data-localized="true">우도땅콩 아이스크림</span></button>
+  <button type="button" class="tab-item latte-tab" data-page="latte" data-localized="true" onclick="showPage('latte',this)"><span class="ti" aria-hidden="true"><span class="latte-nav-cup">☕</span><span class="latte-nav-season" data-latte-copy="season">겨울 한정</span></span><span class="latte-nav-label" data-latte-copy="nav">우도땅콩라떼</span></button>
   <button class="tab-item" onclick="showPage('hundert',this)"><span class="ti">🎨</span><span data-choice-copy="exhibitionTab" data-localized="true">우도 예술 테마파크</span></button>
 </div>
 
@@ -3320,6 +3322,34 @@ window.addEventListener('load', function() {
       <iframe width="100%" height="100%" src="https://www.youtube.com/embed/iV_VAbLMJJ0?autoplay=0&rel=0&playsinline=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display:block;"></iframe>
     </div>
   </div></section></div></div>
+<!-- ===== 달콤아재 겨울 한정 우도땅콩라떼 ===== -->
+<section class="page" id="page-latte" aria-labelledby="latte-title" data-localized="true">
+  <div class="latte-content">
+    <article class="latte-story">
+      <header class="latte-heading">
+        <div class="latte-brand-line"><span data-latte-copy="brand">달콤아재</span><span class="latte-season"><span aria-hidden="true">❄</span> <span data-latte-copy="season">겨울 한정</span></span></div>
+        <div class="latte-title-line"><h2 id="latte-title" data-latte-copy="title">우도땅콩라떼</h2><span class="latte-availability" lang="en">HOT / ICE</span></div>
+        <p data-latte-copy="tagline">직접 기른 우도땅콩, 한 잔에 담은 고소함.</p>
+      </header>
+      <div class="latte-hero">
+        <figure class="latte-photo"><img src="udo-peanut-latte.jpg" width="760" height="825" loading="lazy" decoding="async" alt="부드러운 땅콩크림 위에 직접 만든 땅콩 모양 땅콩빵을 올린 달콤아재 우도땅콩라떼"><figcaption data-latte-copy="caption">달콤아재가 새롭게 선보이는 겨울 메뉴</figcaption></figure>
+        <div class="latte-intro">
+          <h3 data-latte-copy="peanutTitle">진짜 우도땅콩으로 만들어요.</h3>
+          <p data-latte-copy="peanutBody">직접 농사짓고 구운 우도땅콩을 사용해, 달콤아재만의 진하고 고소한 풍미를 담았습니다.</p>
+          <div class="latte-temperature" aria-label="제공 온도"><span><b lang="en">HOT</b><small data-latte-copy="hot">따뜻하게</small></span><span><b lang="en">ICE</b><small data-latte-copy="ice">시원하게</small></span></div>
+          <p class="latte-temperature-note" data-latte-copy="temperatureNote">따뜻하게도, 시원하게도 즐길 수 있어요.</p>
+        </div>
+      </div>
+      <div class="latte-details">
+        <section class="latte-flavour"><h3 data-latte-copy="creamTitle">부드러운 크림, 깊은 고소함</h3><p data-latte-copy="creamBody">진한 땅콩 풍미에 부드러운 땅콩크림, 우유와 에스프레소를 더했어요. 한 모금마다 고소함이 차분하게 어우러집니다.</p></section>
+        <section class="latte-dip"><span class="latte-peanut" aria-hidden="true">🥜</span><div><h3 data-latte-copy="breadTitle">땅콩빵을 크림에 콕.</h3><p data-latte-copy="breadBody">직접 만든 땅콩 모양 땅콩빵을 음료 위에 올렸어요. 부드러운 땅콩크림에 찍어 먹는 재미까지 함께 즐겨보세요.</p></div></section>
+        <section class="latte-memory"><h3 data-latte-copy="photoTitle">마시기 전, 여행 사진 한 장</h3><p data-latte-copy="photoBody">겹겹이 담긴 라떼와 귀여운 땅콩빵 토핑. 우도에서의 한 장면을 달콤아재 시그니처 음료와 남겨보세요.</p></section>
+      </div>
+      <footer class="latte-visit"><div><strong data-latte-copy="visitTitle">우도 달콤아재에서 만나요.</strong><p data-latte-copy="location">하고수동 해수욕장 바로 앞</p></div><a href="https://map.naver.com/p/entry/place/1497457696" target="_blank" rel="noopener noreferrer" data-latte-copy="directions">네이버 지도 길찾기</a></footer>
+    </article>
+  </div>
+</section>
+
 <!-- ===== 달콤아재 페이지 ===== -->
 <div class="page" id="page-dalkom"><div class="scroll-content"><section class="dalkom-welcome"><div class="fade-up" style="background:linear-gradient(135deg,#FF6B35,#FFB347);border-radius:16px;padding:14px 18px;margin-bottom:14px;color:white;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;">
     <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(255,255,255,0.1);border-radius:50%;"></div>
@@ -4367,12 +4397,12 @@ window.addEventListener('load', initHundert);
 // ── 안드로이드 뒤로가기: 탭 + 팝업 통합 관리 ──
 (function() {
 
-  var TAB_ORDER = ['home','ferry','coconara','broadcast','dalkom','hundert','food'];
-  var _currentPage = 'home';
+  var TAB_ORDER = ['home','ferry','coconara','broadcast','dalkom','latte','hundert','food'];
+  var _currentPage = TAB_ORDER.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home';
   var _popupDepth  = 0;  // 현재 떠있는 팝업 개수
 
   // ── 페이지 초기 state 세팅 ──
-  history.replaceState({ page: 'home', popupDepth: 0 }, '');
+  history.replaceState({ page: _currentPage, popupDepth: 0 }, '');
 
   // ── showPage 훅: 탭 전환 시 history push ──
   var _origShowPage = window.showPage;
@@ -4385,7 +4415,7 @@ window.addEventListener('load', initHundert);
     // 팝업 열려있으면 먼저 전부 닫기
     _popupDepth = 0;
     _currentPage = id;
-    history.pushState({ page: id, popupDepth: 0 }, '');
+    history.pushState({ page: id, popupDepth: 0 }, '', '#'+id);
     _origShowPage.apply(this, arguments);
   };
 
@@ -4596,7 +4626,7 @@ window.addEventListener('load', initHundert);
 })();
 </script>
 <script src="translations.js?v=27.1"></script>
-<script src="reset.js?v=27.1"></script>
+<script src="reset.js?v=20261029"></script>
 <script src="mobile.js?v=27.1"></script>
 <script src="smooth-motion.js?v=27.1"></script>
 <script src="story-motion.js?v=27.1"></script>
@@ -4660,5 +4690,7 @@ window.addEventListener('load', initHundert);
 
     </div></dialog>
 <script src="flow.js?v=27.1"></script>
+<script src="peanut-latte-copy.js?v=20261029"></script>
+<script src="peanut-latte.js?v=20261029"></script>
 </body>
 </html>
