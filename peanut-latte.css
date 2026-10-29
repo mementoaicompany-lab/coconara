@@ -1,7 +1,7 @@
 .tab-bar.latte-navigation{display:flex!important;flex-wrap:nowrap;overflow-x:auto;gap:3px!important}
 .tab-bar.latte-navigation .tab-item{flex:1 0 60px;width:auto!important;min-width:60px}
 .tab-bar.latte-navigation .ice-cream-tab{flex-basis:96px;min-width:96px}
-.tab-bar.latte-navigation .latte-tab{flex-basis:96px;min-width:96px}
+.tab-bar.latte-navigation .latte-tab{flex-basis:106px;min-width:106px}
 .tab-bar.latte-navigation .ice-cream-tab,.tab-bar.latte-navigation .latte-tab{justify-content:flex-start}
 body:has(#page-latte.active) #giftFab{display:none!important}
 /* Seasonal latte: scoped to the new destination; existing guide content stays intact. */
@@ -11,15 +11,19 @@ body:has(#page-latte.active) #giftFab{display:none!important}
 .tab-bar .latte-tab .ice-nav-discount{animation:discount-impact 1.4s ease-out 3}
 .tab-bar .latte-tab{gap:3px}
 .latte-nav-cup{display:inline-block;transform-origin:50% 85%}
-.tab-bar .latte-nav-season{position:absolute;top:-4px;right:4px;display:inline-flex;align-items:center;gap:3px;padding:1px 5px;border-radius:5px;background:#edf7f8;color:#28574f;font-size:9px!important;font-weight:800;line-height:12px;white-space:nowrap;border:1px solid #c6e4e3;pointer-events:none}
-.tab-bar .latte-nav-season::before{content:"❄";font-size:10px}
-html[lang="ms"] .tab-bar .latte-nav-season{font-size:8px!important;letter-spacing:-.2px;gap:2px;padding-inline:3px}
+/* Winter mark sits beside the menu name and never adds a navigation row. */
+.tab-bar .latte-nav-copy{position:relative;display:flex;align-items:flex-start;justify-content:center;width:100%;min-width:0}
+.tab-bar .latte-nav-season{position:absolute;left:1px;top:50%;width:22px;padding:2px 1px;border-radius:6px;background:#edf7f8;color:#28574f;font-size:9px!important;font-weight:900;line-height:11px;text-align:center;white-space:pre-line;border:1px solid #c6e4e3;pointer-events:none;transform:translateY(-50%);transform-origin:50% 30%;animation:latte-season-ring 1.4s ease-in-out 3}
+html:not([lang="ko"]) .tab-bar .latte-nav-copy{padding-left:34px}
+html:not([lang="ko"]) .tab-bar .latte-nav-label{min-width:0;word-break:normal;overflow-wrap:anywhere}
+html[lang="en"] .tab-bar .latte-nav-season,html[lang="ms"] .tab-bar .latte-nav-season{width:28px;font-size:7px!important;letter-spacing:-.15px}
+@keyframes latte-season-ring{0%,50%,100%{transform:translateY(-50%) rotate(0)}10%{transform:translateY(-50%) rotate(7deg)}20%{transform:translateY(-50%) rotate(-6deg)}30%{transform:translateY(-50%) rotate(4deg)}40%{transform:translateY(-50%) rotate(-2deg)}}
 .tab-bar .latte-nav-label{display:block;max-width:108px;text-align:center;white-space:pre-line;word-break:keep-all;overflow-wrap:normal;line-height:1.2;color:#fff0cf;font-size:12px;font-weight:850;animation:ice-nav-label 4s ease-in-out infinite}
 @media(min-width:650px){.tab-bar .latte-nav-label{font-size:12px}}
 html[lang="ko"] .tab-bar .latte-nav-label{max-width:72px}
 .tab-bar .latte-tab.active .latte-nav-label{color:#fff}
 .tab-bar .latte-tab.active{background:#c73e70}
-.latte-tab.latte-away .ice-nav-icon,.latte-tab.latte-away .ice-nav-sparkle,.latte-tab.latte-away .ice-nav-discount,.latte-tab.latte-away .latte-nav-label{animation-play-state:paused!important}
+.latte-tab.latte-away .ice-nav-icon,.latte-tab.latte-away .ice-nav-sparkle,.latte-tab.latte-away .ice-nav-discount,.latte-tab.latte-away .latte-nav-label,.latte-tab.latte-away .latte-nav-season{animation-play-state:paused!important}
 #page-latte{--latte-cream:#fff8eb;--latte-ink:#4b3024;--latte-peanut:#ac773f;--latte-muted:#755d4c;background:var(--latte-cream);color:var(--latte-ink)}
 #page-latte .latte-content{padding:26px 18px 34px}
 #page-latte .latte-story{margin:0 auto;max-width:560px}
@@ -69,8 +73,10 @@ html[lang="ko"] .tab-bar .latte-nav-label{max-width:72px}
  #page-latte h2{font-size:34px}
  #page-latte .latte-photo{max-width:390px;margin:0 auto}
 }
-@media(prefers-reduced-motion:reduce){.latte-tab .ice-nav-icon,.latte-tab .ice-nav-sparkle,.latte-tab .ice-nav-discount,.latte-tab .latte-nav-label{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.latte-tab .ice-nav-icon,.latte-tab .ice-nav-sparkle,.latte-tab .ice-nav-discount,.latte-tab .latte-nav-label,.latte-tab .latte-nav-season{animation:none!important}}
 
 #page-latte .latte-title-line{display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;margin-bottom:10px}
 #page-latte .latte-title-line h2{margin-bottom:0}
 #page-latte .latte-availability{font-size:12px;font-weight:800;color:#59675b;white-space:nowrap;padding:3px 8px;border:1px solid #d6dbcc;border-radius:6px}
+
+html[lang="ja"] #page-latte h2{min-width:0;max-width:100%;word-break:normal;overflow-wrap:anywhere}
