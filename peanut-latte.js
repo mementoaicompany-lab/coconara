@@ -7,7 +7,7 @@
    const all=window.COCO_LATTE_COPY,copy=all?.[window.cocoLanguage?.()||'ko']||all?.ko;
    if(!copy)return;
    document.querySelectorAll('[data-latte-copy]').forEach(el=>{const value=copy[el.dataset.latteCopy];if(value&&el.textContent!==value)el.textContent=value;});
-   tab.setAttribute('aria-label',copy.navAria);
+   tab.setAttribute('aria-label',copy.navAria+' · 20% OFF');
    panel.querySelector('img').alt=copy.alt;
    panel.querySelector('.latte-temperature').setAttribute('aria-label',copy.temperatureLabel);
   }
