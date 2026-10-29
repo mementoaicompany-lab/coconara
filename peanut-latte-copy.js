@@ -1,7 +1,7 @@
 /* Winter latte copy is separate from the original guide translation catalog. */
 window.COCO_LATTE_COPY = {
   ko: {
-    nav: '우도땅콩라떼',
+    nav: '우도땅콩\n라떼',
     brand: '달콤아재',
     season: '겨울 한정',
     title: '우도땅콩라떼',
