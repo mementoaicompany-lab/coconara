@@ -4,12 +4,12 @@ const $=s=>document.querySelector(s),clamp=n=>Math.max(0,Math.min(1,n));
 const ease=n=>{n=clamp(n);return n*n*(3-2*n);};
 const words=()=>window.COCO_JOURNEY_COPY[window.cocoLanguage?.()||'ko']||window.COCO_JOURNEY_COPY.ko;
 const records=new Set();let running=false;
-function clock(root,cycle,paint,refresh=()=>{},ready=()=>true){
- const r={root,cycle,paint,refresh,ready,time:0,last:0,visible:false,paused:false};records.add(r);
+function clock(root,cycle,paint,refresh=()=>{},ready=()=>true,options={}){
+ const r={root,cycle,paint,refresh,ready,time:options.start||0,last:0,visible:false,paused:Boolean(options.paused)};records.add(r);
  const api={seek(t){r.time=t;r.last=0;paint(r.time);refresh();},toggle(){r.paused=!r.paused;r.last=0;refresh();},get paused(){return r.paused;},get playing(){return !r.paused&&r.visible&&!document.hidden&&ready();}};
  window.cocoObserveMotion(root,v=>{r.visible=v;r.last=0;refresh();});
  document.addEventListener('visibilitychange',()=>{r.last=0;refresh();});
- paint(0);
+ paint(r.time);
  if(!running){running=true;requestAnimationFrame(tick);}
  function tick(now){for(const item of records){
   if(!item.root.isConnected){records.delete(item);continue;}
@@ -43,39 +43,29 @@ function setupCouponStory(text){
  const film=document.createElement('div');film.className='coupon-film';film.dataset.localized='true';
  film.innerHTML='<div class="coupon-canvas"><div class="coupon-art" role="img"></div><div class="coupon-caption"><span class="coupon-scene-number"></span><strong></strong></div></div><div class="coupon-journey-steps"></div><div class="coupon-film-footer"><div class="coupon-time-track" aria-hidden="true"><i></i></div><button type="button" class="coupon-play"></button></div>';
  header.after(film);film.after(proof);
- // The shops and travelling ticket use the full stage, with the real coupon below.
+ // The compact customer story sits above the real coupon and its pickup information.
  const canvas=film.querySelector('.coupon-canvas'),caption=film.querySelector('.coupon-caption');canvas.after(caption);
  film.removeAttribute('data-localized');film.querySelectorAll('.coupon-art,.coupon-caption,.coupon-journey-steps,.coupon-film-footer').forEach(el=>el.dataset.localized='true');
 proof.setAttribute('role','button');proof.tabIndex=0;
  proof.onclick=()=>window.cocoShowPhotos?.([photo.src],0,text().couponZoom);
  proof.addEventListener('keydown',e=>{if(e.target===proof&&(e.key==='Enter'||e.key===' ')){e.preventDefault();proof.click();}});
  const art=film.querySelector('.coupon-art'),poses=window.CocoTicketStory.create(art),steps=film.querySelector('.coupon-journey-steps'),play=film.querySelector('.coupon-play');
- const cycle=24000;let phase=-1,api,geometry=null;
- const flight=document.createElement('img');flight.className='coupon-flight';flight.src='gold-coupon.webp';flight.alt='';flight.setAttribute('aria-hidden','true');card.append(flight);
- function measure(){const box=card.getBoundingClientRect(),a=art.getBoundingClientRect(),p=photo.getBoundingClientRect();geometry={ax:a.left-box.left,ay:a.top-box.top,scale:a.width/480,px:p.left-box.left+p.width/2,py:p.top-box.top+p.height/2,pw:p.width};}
- new ResizeObserver(measure).observe(card);photo.addEventListener('load',measure);window.addEventListener('resize',measure,{passive:true});
+ const cycle=24000;let phase=-1,api;
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  function refresh(){
   proof.setAttribute('aria-label',text().couponZoom);art.setAttribute('aria-label',text().art);
   [...steps.children].forEach((b,i)=>{b.lastElementChild.textContent=text().steps[i];b.setAttribute('aria-pressed',String(i===phase));});
   film.querySelector('.coupon-scene-number').textContent=['01','02','03'][Math.max(0,phase)];film.querySelector('.coupon-caption strong').textContent=text().captions[Math.max(0,phase)];
   play.textContent=(api?.paused?'▶ ':'⏸ ')+text()[api?.paused?'resume':'pause'];play.setAttribute('aria-pressed',String(Boolean(api?.paused)));
  }
- for(let i=0;i<3;i++){const b=document.createElement('button');b.type='button';b.innerHTML='<b>'+(i+1)+'</b><span></span>';b.onclick=()=>api.seek(i*8000);steps.append(b);}
+ for(let i=0;i<3;i++){const b=document.createElement('button');b.type='button';b.innerHTML='<b>'+(i+1)+'</b><span></span>';b.onclick=()=>api.seek([900,10000,18400][i]);steps.append(b);}
  function paint(time){poses.paint(time,cycle);const next=Math.floor(time/8000);if(next!==phase){phase=next;refresh();}
   film.querySelector('.coupon-time-track i').style.width=(time/cycle*100)+'%';
-  if(!geometry||!geometry.pw)measure();
-  const g=geometry,t=time/1000,p=clamp((t-4.2)/1.25),q=ease(p),a=poses.couponAnchor();
-  const flying=t>=4.2&&t<5.45,burst=t>=5.4&&t<7?(t-5.4):0;
-  flight.style.opacity=flying?String(Math.min(1,p*12,(1-p)*10)):'0';
-  if(flying&&g){const sx=g.ax+a.x*g.scale,sy=g.ay+a.y*g.scale,scale=.4+q*1.25;
-   const x=sx+(g.px-sx)*q+Math.sin(p*Math.PI)*35,y=sy+(g.py-sy)*q-Math.sin(p*Math.PI)*70;
-   flight.style.width='104px';flight.style.height='64px';flight.style.transform=`translate3d(${x-52}px,${y-32}px,0) rotate(${-8+q*8}deg) scale(${scale})`;}
-  const ring=burst?Math.sin(burst*18)*Math.exp(-burst*2.2):0;
-  photo.style.transform=`scale(${1+Math.abs(ring)*.075}) rotate(${ring*2}deg)`;
-  proof.style.setProperty('--coupon-spark',String(Math.abs(ring)));proof.dataset.landing=burst?'true':'false';
  }
- api=clock(film,cycle,paint,refresh,poses.ready);play.onclick=()=>api.toggle();
- document.addEventListener('coco:language',()=>{refresh();poses.refreshLanguage();measure();});refresh();measure();
+ api=clock(film,cycle,paint,refresh,poses.ready,{start:900,paused:reduced.matches});play.onclick=()=>api.toggle();
+ reduced.addEventListener('change',()=>{if(reduced.matches&&!api.paused)api.toggle();});
+ document.addEventListener('coco:language',()=>{refresh();poses.refreshLanguage();});refresh();
+
 }
 function setupCrewScenes(originalWords){
  const warning=$('#ferryLastInfo3')?.closest('.fade-up')?.nextElementSibling;
