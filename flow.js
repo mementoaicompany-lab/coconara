@@ -43,7 +43,7 @@
 /* v25: legible port direction and only-on-screen emphasis. */
 (()=>{'use strict';
  function init(){
-  const routes=[];
+  const routes=[],reduced=matchMedia('(prefers-reduced-motion: reduce)');
   document.querySelectorAll('.mini-ferry-boat.lr,.mini-ferry-boat.rl').forEach(boat=>{
    const pill=boat.parentElement.parentElement,card=pill.closest('.fade-up');
    if(!card)return;
@@ -53,21 +53,37 @@
    const label=header.firstElementChild;label.dataset.localized='true';
    const time=card.querySelector('[id^="nextFerryTime"]');
    timeLine.classList.add('departure-primary');timeLayout.classList.add('departure-time-layout');
-   const eyebrow=document.createElement('div');eyebrow.className='departure-time-eyebrow';eyebrow.dataset.localized='true';timeLine.before(eyebrow);
+   const eyebrow=document.createElement('div');eyebrow.className='departure-time-eyebrow';eyebrow.dataset.localized='true';
+   const headerInfo=document.createElement('div');headerInfo.className='departure-header-info';headerInfo.dataset.localized='true';
+   const toggle=document.createElement('button');toggle.type='button';toggle.className='departure-motion-toggle';
+   headerInfo.append(eyebrow,toggle);header.append(headerInfo);
    const detail=timeLine.nextElementSibling;detail?.classList.add('departure-detail');
    const countdown=card.querySelector('[id^="remainMin"]')?.parentElement;countdown?.classList.add('departure-countdown');
    pill.className='departure-route';pill.removeAttribute('style');pill.dataset.localized='true';
-   pill.innerHTML='<div class="departure-ports"><div><span aria-hidden="true">⚓</span><strong class="port-seongsan"></strong></div><div><span aria-hidden="true">🏝️</span><strong class="port-udo"></strong></div></div><div class="departure-track" aria-hidden="true"><span class="departure-traveler"><img src="sailing-ferry.webp" alt=""></span></div>';
+   pill.innerHTML='<div class="departure-ports"><div><span aria-hidden="true">⚓</span><strong class="port-seongsan"></strong></div><div><span aria-hidden="true">🏝️</span><strong class="port-udo"></strong></div></div><div class="departure-track" aria-hidden="true"><span class="departure-water"></span><span class="departure-traveler"><span class="departure-wake"></span><span class="departure-vessel"><img src="sailing-ferry.webp" alt=""></span></span></div>';
    timeLayout.after(pill);
    card.querySelector('[id^=ferryBar]')?.parentElement.classList.add('departure-old-progress');
-   let visible=false;
-   function motion(){const active=['normal','shortened'].includes(card.dataset.ferryStatus)&&visible&&!document.hidden;card.style.setProperty('--route-motion',active?'running':'paused');}
+   const track=pill.querySelector('.departure-track');
+   function measure(){track.style.setProperty('--sail-distance',Math.max(0,track.clientWidth-64)+'px');}
+   new ResizeObserver(measure).observe(track);measure();
+   let visible=false,paused=reduced.matches;
+   function control(){const lang=window.cocoLanguage?.()||'ko',w=window.COCO_CHOICE_COPY[lang]||window.COCO_CHOICE_COPY.ko,m=window.COCO_JOURNEY_COPY[lang]||window.COCO_JOURNEY_COPY.ko;
+    toggle.textContent=paused?'▶':'Ⅱ';toggle.setAttribute('aria-pressed',String(paused));
+    const name=w[outgoing?'routeLeaving':'routeEntering']+' · '+m[paused?'play':'paused'];toggle.setAttribute('aria-label',name);toggle.title=name;
+   }
+   function motion(){const available=['normal','shortened'].includes(card.dataset.ferryStatus)&&time.dataset.hasDeparture==='true';
+    const active=available&&!paused&&visible&&!document.hidden;
+    card.dataset.routeAvailable=String(available);card.dataset.routePaused=String(paused);toggle.hidden=!available;
+    card.style.setProperty('--route-motion',active?'running':'paused');control();
+   }
+   toggle.addEventListener('click',()=>{paused=!paused;motion();});
+   reduced.addEventListener('change',()=>{if(reduced.matches)paused=true;motion();});
    window.cocoObserveMotion?.(card,v=>{visible=v;motion();});
    new MutationObserver(motion).observe(card,{attributes:true,attributeFilter:['data-ferry-status']});document.addEventListener('visibilitychange',motion);
-   routes.push({pill,label,outgoing,eyebrow,time});
+   routes.push({pill,label,outgoing,eyebrow,time,motion});
   });
   function refresh(){const w=window.COCO_CHOICE_COPY[window.cocoLanguage?.()||'ko']||window.COCO_CHOICE_COPY.ko;
-   routes.forEach(({pill,label,outgoing,eyebrow,time})=>{pill.querySelector('.port-seongsan').textContent=w.portSeongsan;pill.querySelector('.port-udo').textContent=w.portHaumokdong;label.textContent=w[outgoing?'routeLeaving':'routeEntering'];eyebrow.textContent=time.dataset.hasDeparture==='true'?w.nextSailing:w.sailingInfo;});}
+   routes.forEach(({pill,label,outgoing,eyebrow,time,motion})=>{pill.querySelector('.port-seongsan').textContent=w.portSeongsan;pill.querySelector('.port-udo').textContent=w.portHaumokdong;label.textContent=w[outgoing?'routeLeaving':'routeEntering'];eyebrow.textContent=time.dataset.hasDeparture==='true'?w.nextSailing:w.sailingInfo;motion();});}
   refresh();document.addEventListener('coco:language',refresh);document.addEventListener('coconara:ferry-status',()=>queueMicrotask(refresh));
   routes.forEach(({time})=>new MutationObserver(refresh).observe(time,{attributes:true,attributeFilter:['data-has-departure']}));
   document.querySelectorAll('.coupon-funding,.battery-range').forEach(el=>window.cocoObserveMotion?.(el,v=>el.style.setProperty('--notice-motion',v&&!document.hidden?'running':'paused')));

@@ -1,39 +1,57 @@
-/* A departure board: the next departure leads, the animated route follows. */
-#page-home .departure-card,#page-ferry .departure-card{padding:20px!important;border-radius:22px!important}
-.departure-card-heading{display:flex!important;justify-content:space-between;align-items:center;margin-bottom:16px!important}
-.departure-card-heading>span:first-child{font-size:16px!important;line-height:1.4!important;padding:6px 12px!important;border-radius:30px!important;font-weight:900!important}
-.departure-time-eyebrow{font-size:14px;color:#e3fff5;line-height:1.5;letter-spacing:0;margin:0 0 5px;font-weight:700}
-.departure-time-layout{display:flex!important;align-items:center!important;gap:10px!important;margin-bottom:13px!important;min-width:0}
+/* Compact departure boards: readable times, shallow water and one smooth sailing motion. */
+:is(#page-home,#page-ferry) .departure-card{padding:14px!important;border-radius:18px!important}
+.departure-card-heading{position:relative;z-index:1;display:flex!important;justify-content:space-between;align-items:center;gap:8px!important;margin-bottom:8px!important}
+:is(#page-home,#page-ferry) .departure-card-heading>span:first-child{font-size:14px!important;line-height:1.4!important;padding:4px 10px!important;border-radius:24px!important;font-weight:900!important;flex:0 0 auto}
+.departure-header-info{display:flex;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.departure-time-eyebrow{font-size:11px;color:#ecfff8;line-height:1.4;letter-spacing:0;margin:0;text-align:right;word-break:keep-all;font-weight:700}
+.departure-motion-toggle{width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;padding:0;border:1px solid #ffffff50;border-radius:50%;background:#ffffff16;color:white;font:700 12px/1 system-ui;cursor:pointer}
+.departure-motion-toggle:hover{background:#ffffff2b}
+.departure-motion-toggle:focus-visible{outline:2px solid white;outline-offset:3px}
+.departure-motion-toggle[hidden]{display:none}
+:is(#page-home,#page-ferry) .departure-card .ferry-departure-line[data-has-departure=false]{white-space:normal!important;font-size:22px!important;line-height:1.4!important}
+.departure-time-layout{display:flex!important;align-items:center!important;gap:10px!important;margin-bottom:7px!important;min-width:0}
 .departure-time-layout>div:first-child{flex:1;min-width:0}
 .departure-primary{display:block!important;line-height:1.15!important;letter-spacing:0!important}
-.departure-card .ferry-departure-line{display:block!important;font-size:30px!important;line-height:1.25!important;font-weight:900!important;word-break:keep-all}
-.departure-card .ferry-departure-clock{font-size:clamp(40px,10vw,56px)!important;font-weight:950;line-height:1.1!important;font-variant-numeric:tabular-nums;letter-spacing:-1.5px}
-.departure-card .ferry-departure-label{font-size:16px!important;line-height:1.4!important;display:inline-block!important;letter-spacing:0;margin-left:5px}
-.departure-card .departure-detail{font-size:13px!important;line-height:1.65!important;opacity:.95!important;margin-top:9px!important;word-break:keep-all}
-.departure-card .departure-countdown{flex:0 0 auto;background:#ffffffed!important;color:#155e50!important;border:0!important;border-radius:15px!important;padding:11px!important;min-width:62px;box-sizing:border-box;text-align:center}
-.departure-card .departure-countdown>[id^=remainMin]{font-size:29px!important;line-height:1.15!important;letter-spacing:-.5px}
-.departure-card .departure-countdown>div:last-child{font-size:12px!important;line-height:1.4!important;margin-top:4px!important}
+:is(#page-home,#page-ferry) .departure-card .ferry-departure-line{display:block!important;font-size:26px!important;line-height:1.2!important;font-weight:900!important;word-break:keep-all}
+:is(#page-home,#page-ferry) .departure-card .ferry-departure-clock{display:inline!important;font-size:clamp(36px,9.2vw,46px)!important;font-weight:900!important;line-height:1.1!important;font-variant-numeric:tabular-nums;letter-spacing:-1px!important}
+:is(#page-home,#page-ferry) .departure-card .ferry-departure-label{font-size:14px!important;line-height:1.4!important;display:inline-block!important;letter-spacing:0;margin-left:3px}
+.departure-card .departure-detail{font-size:13px!important;line-height:1.5!important;opacity:.95!important;margin-top:5px!important;word-break:keep-all}
+.departure-card .departure-countdown{flex:0 0 auto;background:#ffffffed!important;color:#155e50!important;border:0!important;border-radius:12px!important;padding:7px 8px!important;min-width:55px;box-sizing:border-box;text-align:center}
+.departure-card .departure-countdown>[id^=remainMin]{font-size:26px!important;line-height:1.1!important;letter-spacing:-.5px}
+.departure-card .departure-countdown>div:last-child{font-size:11px!important;line-height:1.4!important;margin-top:3px!important}
 .departure-card[data-direction=outgoing] .departure-countdown{color:#165285!important}
-.departure-route{background:#faffff;color:#125847;border-radius:16px;padding:13px 14px 4px;margin:14px 0;overflow:clip}
+.departure-card .departure-route{display:block!important;background:#faffff;color:#125847;border-radius:12px;padding:8px 11px 2px;margin:8px 0;overflow:clip}
 .departure-card[data-direction=outgoing] .departure-route{color:#16558b}
-.departure-ports{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-.departure-ports>div{max-width:47%;display:flex;align-items:center;gap:7px}
+.departure-ports{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.departure-ports>div{max-width:48%;min-width:0;display:flex;align-items:center;gap:5px}
 .departure-ports>div:last-child{justify-content:flex-end;text-align:right}
-.departure-ports>div>span{font-size:26px;line-height:1.2}
-.departure-ports strong{font-size:17px;line-height:1.5;font-weight:900;word-break:keep-all}
-.departure-track{position:relative;height:51px;margin:0 8px;overflow:clip}
-.departure-track:before{content:'';position:absolute;left:0;right:0;bottom:10px;border-bottom:2px dashed #a5c9c0}
-.departure-traveler{position:absolute;width:68px;height:45px;bottom:4px;left:0;animation:trip-sail-in 7s linear infinite;animation-play-state:var(--route-motion,paused);will-change:left,opacity}
-.departure-traveler img{width:100%!important;height:100%!important;max-width:none!important;object-fit:contain!important;transform-origin:center;animation:none!important}
-.departure-card[data-direction=outgoing] .departure-traveler{animation-name:trip-sail-out}
-.departure-card[data-direction=outgoing] .departure-traveler img{transform:scaleX(-1)}
-@keyframes trip-sail-in{0%{left:-40px;opacity:0}12%{opacity:1}88%{opacity:1}100%{left:calc(100% - 28px);opacity:0}}
-@keyframes trip-sail-out{0%{left:calc(100% - 28px);opacity:0}12%{opacity:1}88%{opacity:1}100%{left:-40px;opacity:0}}
-.departure-card .home-harbor-notice{margin-top:10px;padding:13px!important;background:#ffffff12!important;border:1px solid #ffffff25}
-.departure-card .home-harbor-notice strong{font-size:15px!important;animation:none!important}
-.departure-card .home-harbor-notice p{font-size:13px!important;line-height:1.65!important}
-.departure-card [id^=ferryLastInfo]{font-size:15px!important;line-height:1.7!important;padding:10px 12px!important;border-radius:11px!important;margin-top:11px!important}
-@media(max-width:350px){#page-home .departure-card,#page-ferry .departure-card{padding:16px!important}.departure-ports strong{font-size:15px}.departure-ports>div{gap:4px}.departure-ports>div>span{font-size:22px}.departure-card .ferry-departure-line{font-size:26px!important}.departure-card .ferry-departure-label{display:block!important;margin:5px 0 0}.departure-route{padding:12px 10px 3px}.departure-card-heading>span:first-child{font-size:15px!important}}
+.departure-ports>div>span{font-size:20px;line-height:1.2;flex:0 0 auto}
+.departure-ports strong{font-size:15px;line-height:1.35;font-weight:900;word-break:keep-all;overflow-wrap:anywhere}
+html[lang=ko] .departure-ports strong{white-space:nowrap}
+.departure-track{position:relative;height:40px;margin:0 2px;overflow:clip;isolation:isolate;--sail-distance:200px}
+.departure-track:after{content:'';position:absolute;left:0;right:0;bottom:0;height:8px;background:linear-gradient(transparent,#dff0ee);z-index:0}
+.departure-water{position:absolute;left:0;bottom:0;width:calc(100% + 80px);height:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='12' viewBox='0 0 80 12'%3E%3Cpath d='M-20 6 Q0 0 20 6 T60 6 T100 6' fill='none' stroke='%2395c8c4' stroke-width='1.2' opacity='.65'/%3E%3Cpath d='M-40 10 Q-20 5 0 10 T40 10 T80 10' fill='none' stroke='%23baded9' stroke-width='1'/%3E%3C/svg%3E") repeat-x left bottom;animation:departure-water-drift 6s linear infinite;animation-play-state:var(--route-motion,paused);z-index:1}
+.departure-traveler{position:absolute;width:64px;height:40px;bottom:0;left:0;z-index:2;animation:departure-sail-in 10s cubic-bezier(.4,0,.25,1) infinite;animation-delay:-1s;animation-play-state:var(--route-motion,paused);will-change:transform,opacity}
+.departure-vessel{position:absolute;inset:0;display:block;transform-origin:50% 75%;animation:departure-boat-bob 2.8s ease-in-out infinite;animation-play-state:var(--route-motion,paused)}
+.departure-vessel img{display:block;width:100%!important;height:100%!important;max-width:none!important;object-fit:contain!important;animation:none!important}
+.departure-wake{position:absolute;left:-20px;bottom:4px;width:32px;height:6px;border-radius:50%;background:linear-gradient(90deg,transparent,#a5d2ceaa);transform-origin:right center;animation:departure-wake-breathe 2.3s ease-in-out infinite;animation-play-state:var(--route-motion,paused)}
+.departure-card[data-direction=outgoing] .departure-traveler{animation-name:departure-sail-out}
+.departure-card[data-direction=outgoing] .departure-vessel img{transform:scaleX(-1)}
+.departure-card[data-direction=outgoing] .departure-wake{left:auto;right:-20px;transform-origin:left center;background:linear-gradient(90deg,#9bc9ddaa,transparent)}
+@keyframes departure-sail-in{0%{transform:translate3d(0,0,0);opacity:0}8%{transform:translate3d(0,0,0);opacity:1}92%{transform:translate3d(var(--sail-distance),0,0);opacity:1}100%{transform:translate3d(var(--sail-distance),0,0);opacity:0}}
+@keyframes departure-sail-out{0%{transform:translate3d(var(--sail-distance),0,0);opacity:0}8%{transform:translate3d(var(--sail-distance),0,0);opacity:1}92%{transform:translate3d(0,0,0);opacity:1}100%{transform:translate3d(0,0,0);opacity:0}}
+@keyframes departure-boat-bob{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(1px) rotate(.6deg)}}
+@keyframes departure-water-drift{to{transform:translateX(-80px)}}
+@keyframes departure-wake-breathe{0%,100%{opacity:.45;transform:scaleX(.85)}50%{opacity:.8;transform:scaleX(1.05)}}
+.departure-card[data-route-paused=true] .departure-traveler{opacity:1!important}
+.departure-card[data-route-available=false] .departure-traveler{opacity:.6;animation:none;transform:translateX(calc(var(--sail-distance)/2))}
+.departure-card[data-route-available=false] .departure-wake{display:none}
+.departure-card .home-harbor-notice{margin-top:8px;padding:9px 10px!important;background:#ffffff12!important;border:1px solid #ffffff25;border-radius:10px}
+.departure-card .home-harbor-notice strong{font-size:14px!important;line-height:1.5!important;animation:none!important}
+.departure-card .home-harbor-notice p{font-size:13px!important;line-height:1.5!important;margin:3px 0 0!important}
+.departure-card [id^=ferryLastInfo]{font-size:13px!important;line-height:1.5!important;padding:8px 10px!important;border-radius:9px!important;margin-top:8px!important}
+.departure-old-progress{display:none!important}
+@media(max-width:350px){:is(#page-home,#page-ferry) .departure-card{padding:12px!important}.departure-card-heading{gap:5px!important}:is(#page-home,#page-ferry) .departure-card-heading>span:first-child{font-size:13px!important;padding:4px 8px!important}.departure-header-info{gap:4px}.departure-time-eyebrow{font-size:10px}.departure-motion-toggle{width:28px;height:28px;flex-basis:28px}.departure-ports strong{font-size:14px}.departure-ports>div>span{font-size:17px}.departure-ports>div{gap:4px}.departure-card .departure-route{padding:7px 9px 2px}.departure-card .departure-countdown{min-width:50px;padding:7px!important}.departure-card .departure-countdown>div:last-child{font-size:10px!important}}
 
 /* A compact, calm customer visit above the real coupon. */
 #page-dalkom .customer-journey .coupon-offer-header{padding:16px 18px 8px!important;display:flex!important;align-items:center;gap:8px!important;background:#fff7ec!important}
@@ -70,16 +88,3 @@
 .ocean-scene .ocean-dolphin{height:auto!important;max-width:none!important;filter:drop-shadow(0 2px 2px #05546c15);transform-origin:50% 65%}
 .ocean-scene .dolphin-splash{position:absolute;height:17px!important;object-fit:fill!important;pointer-events:none;z-index:4;opacity:0}
 @media(max-width:350px){.ferry-sailing-scene.ocean-scene{height:240px}}
-/* Legacy timetable ID rules must not shrink the primary clock. */
-:is(#page-home,#page-ferry) .departure-card .ferry-departure-clock{display:inline!important;font-size:clamp(40px,10vw,56px)!important;line-height:1.1!important;letter-spacing:-1px!important}
-:is(#page-home,#page-ferry) .departure-card .ferry-departure-label{font-size:16px!important;display:inline-block!important;line-height:1.4!important}
-.departure-card .departure-route{display:block!important}
-.departure-card .departure-detail,.departure-card .home-harbor-notice p{font-size:14px!important}
-.departure-old-progress{display:none!important}
-:is(#page-home,#page-ferry) .departure-card-heading>span:first-child{font-size:16px!important}
-
-/* Port names stay on one line; the moving boat alone shows direction. */
-.departure-ports>div{max-width:none;flex:0 1 auto;min-width:0}
-.departure-ports strong{white-space:nowrap}
-.departure-ports>div>span{flex:0 0 auto}
-@media(max-width:350px){.departure-ports{gap:8px}.departure-ports strong{font-size:15px}.departure-ports>div>span{font-size:20px}.departure-ports>div{gap:4px}}
