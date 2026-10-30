@@ -60,11 +60,11 @@
    const detail=timeLine.nextElementSibling;detail?.classList.add('departure-detail');
    const countdown=card.querySelector('[id^="remainMin"]')?.parentElement;countdown?.classList.add('departure-countdown');
    pill.className='departure-route';pill.removeAttribute('style');pill.dataset.localized='true';
-   pill.innerHTML='<div class="departure-ports"><div><span aria-hidden="true">⚓</span><strong class="port-seongsan"></strong></div><div><span aria-hidden="true">🏝️</span><strong class="port-udo"></strong></div></div><div class="departure-track" aria-hidden="true"><span class="departure-water"></span><span class="departure-traveler"><span class="departure-wake"></span><span class="departure-vessel"><img src="sailing-ferry.webp" alt=""></span></span></div>';
+   pill.innerHTML='<div class="departure-ports"><div><span aria-hidden="true">⚓</span><strong class="port-seongsan"></strong></div><div><span aria-hidden="true">🏝️</span><strong class="port-udo"></strong></div></div><div class="departure-track" aria-hidden="true"><span class="departure-water"></span><span class="departure-traveler"><span class="departure-wake"></span><span class="departure-vessel"><img src="ferry-emoji.svg" alt=""></span></span></div>';
    timeLayout.after(pill);
    card.querySelector('[id^=ferryBar]')?.parentElement.classList.add('departure-old-progress');
    const track=pill.querySelector('.departure-track');
-   function measure(){track.style.setProperty('--sail-distance',Math.max(0,track.clientWidth-64)+'px');}
+   function measure(){track.style.setProperty('--sail-distance',Math.max(0,track.clientWidth-track.querySelector('.departure-traveler').offsetWidth)+'px');}
    new ResizeObserver(measure).observe(track);measure();
    let visible=false,paused=reduced.matches;
    function control(){const lang=window.cocoLanguage?.()||'ko',w=window.COCO_CHOICE_COPY[lang]||window.COCO_CHOICE_COPY.ko,m=window.COCO_JOURNEY_COPY[lang]||window.COCO_JOURNEY_COPY.ko;
