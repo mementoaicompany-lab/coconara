@@ -44,6 +44,11 @@
 (()=>{'use strict';
  function init(){
   const routes=[],reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const boardingNotes={ko:'하우목동항행 확인 · 만선 시 조기 출발',en:'Check Haumokdong-bound ferries. Full boats may leave early.',ms:'Pastikan feri ke Haumokdong. Feri penuh boleh berlepas awal.',ja:'下牛目洞港行きか確認。満船時は早く出航します。','zh-HK':'請確認前往下牛目洞港，滿船可能提早開出。','zh-TW':'請確認前往下牛目洞港，滿船可能提早開出。'};
+  const banner=document.querySelector('#ferry-status-banner');
+  function matchCardHeight(){if(banner?.classList.contains('normal')&&banner.getBoundingClientRect().height)document.documentElement.style.setProperty('--ferry-card-height',banner.getBoundingClientRect().height+'px');}
+  if(banner)new ResizeObserver(matchCardHeight).observe(banner);
+  matchCardHeight();
   document.querySelectorAll('.mini-ferry-boat.lr,.mini-ferry-boat.rl').forEach(boat=>{
    const pill=boat.parentElement.parentElement,card=pill.closest('.fade-up');
    if(!card)return;
@@ -63,6 +68,8 @@
    pill.innerHTML='<div class="departure-ports"><div><span aria-hidden="true">⚓</span><strong class="port-seongsan"></strong></div><div><span aria-hidden="true">🏝️</span><strong class="port-udo"></strong></div></div><div class="departure-track" aria-hidden="true"><span class="departure-water"></span><span class="departure-traveler"><span class="departure-wake"></span><span class="departure-vessel"><img src="ferry-emoji.svg" alt=""></span></span></div>';
    timeLayout.after(pill);
    card.querySelector('[id^=ferryBar]')?.parentElement.classList.add('departure-old-progress');
+   const notice=card.querySelector('.home-harbor-notice');
+   if(notice){notice.dataset.localized='true';notice.replaceChildren(document.createElement('p'));}
    const track=pill.querySelector('.departure-track');
    function measure(){track.style.setProperty('--sail-distance',Math.max(0,track.clientWidth-track.querySelector('.departure-traveler').offsetWidth)+'px');}
    new ResizeObserver(measure).observe(track);measure();
@@ -80,10 +87,10 @@
    reduced.addEventListener('change',()=>{if(reduced.matches)paused=true;motion();});
    window.cocoObserveMotion?.(card,v=>{visible=v;motion();});
    new MutationObserver(motion).observe(card,{attributes:true,attributeFilter:['data-ferry-status']});document.addEventListener('visibilitychange',motion);
-   routes.push({pill,label,outgoing,eyebrow,time,motion});
+   routes.push({pill,label,outgoing,eyebrow,time,motion,notice});
   });
   function refresh(){const w=window.COCO_CHOICE_COPY[window.cocoLanguage?.()||'ko']||window.COCO_CHOICE_COPY.ko;
-   routes.forEach(({pill,label,outgoing,eyebrow,time,motion})=>{pill.querySelector('.port-seongsan').textContent=w.portSeongsan;pill.querySelector('.port-udo').textContent=w.portHaumokdong;label.textContent=w[outgoing?'routeLeaving':'routeEntering'];eyebrow.textContent=time.dataset.hasDeparture==='true'?w.nextSailing:w.sailingInfo;motion();});}
+   routes.forEach(({pill,label,outgoing,eyebrow,time,motion,notice})=>{if(notice)notice.firstElementChild.textContent=boardingNotes[window.cocoLanguage?.()||'ko']||boardingNotes.ko;pill.querySelector('.port-seongsan').textContent=w.portSeongsan;pill.querySelector('.port-udo').textContent=w.portHaumokdong;label.textContent=w[outgoing?'routeLeaving':'routeEntering'];eyebrow.textContent=time.dataset.hasDeparture==='true'?w.nextSailing:w.sailingInfo;motion();});}
   refresh();document.addEventListener('coco:language',refresh);document.addEventListener('coconara:ferry-status',()=>queueMicrotask(refresh));
   routes.forEach(({time})=>new MutationObserver(refresh).observe(time,{attributes:true,attributeFilter:['data-has-departure']}));
   document.querySelectorAll('.coupon-funding,.battery-range').forEach(el=>window.cocoObserveMotion?.(el,v=>el.style.setProperty('--notice-motion',v&&!document.hidden?'running':'paused')));
