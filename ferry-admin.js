@@ -1,7 +1,7 @@
 /* Firebase compat Auth + RTDB ferry management.
  * Load after Firebase app/database/auth compat SDKs and initializeApp().
  * window.COCONARA_ADMIN_UID must match the single UID enforced by RTDB rules.
- * The UID check below controls the UI; deployed server rules enforce writes.
+ * The Google identity check below controls the UI; deployed server rules enforce writes.
  * No password, ferry status, or authorization flag is persisted by this module.
  */
 (() => {
@@ -14,6 +14,7 @@
   const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
   const $ = id => document.getElementById(id);
   const uid = () => typeof window.COCONARA_ADMIN_UID === 'string' ? window.COCONARA_ADMIN_UID.trim() : '';
+  const ADMIN_EMAIL = 'mementoaicompany@gmail.com';
   const copy = value => value ? { ...value } : null;
   const words = {
     ko: { pending: '오늘 운항 정보 확인 중', pendingSub: '오늘 확인된 운항 정보를 기다리고 있습니다. 탑승 전 항구에 확인해 주세요.', normal: '오늘 배는 정상 운항합니다', normalSub: '오늘 확인된 운항 정보입니다. 탑승 전 항구와 목적지를 꼭 확인해 주세요.', cancel: '오늘 배가 결항됩니다', cancelSub: '방문 전 반드시 확인하세요 · 당일 100% 환불', shortened: '오늘은 단축 운항합니다', shortenedSub: '우도 출항 마지막 배 {time} · 출발 전 항구에 확인해 주세요.', closed: '오늘 단축 운항이 종료되었습니다', closedSub: '안내된 우도 출항 마지막 배 시각 {time}이 지났습니다.', normalBadge: '정상 운항', cancelBadge: '결항', shortenedBadge: '단축 운항', pendingBadge: '확인 중', closedBadge: '운항 종료', memo: '코코나라 관리자 안내', updated: '확인 {time} · 한국시간', dateZone: '한국시간' },
@@ -86,13 +87,15 @@
   let offset = 0, timeReady = false, connected = false, raw = null, received = false;
   let readError = '', auth = null, database = null, ferryRef = null;
   let persistence = null, authReady = false, authenticatedAdmin = false;
+  let persistenceReady = false, authRevision = 0;
   let signingIn = false, signingOut = false, saveInFlight = false, openAfterLogin = false;
   let queuedSnapshot = null, queuedSnapshotReceived = false, draftDirty = false;
   let state, lastEmitted = '', midnightTimer, initialized = false, focusBeforeDialog = null;
   const now = () => Date.now() + (timeReady ? offset : 0);
   const dateKey = (epoch = now()) => new Date(epoch + KST).toISOString().slice(0, 10);
   const dayStart = (epoch = now()) => Math.floor((epoch + KST) / DAY) * DAY - KST;
-  const isAdmin = () => Boolean(authReady && authenticatedAdmin && uid() && auth?.currentUser?.uid === uid());
+  const matchesAdmin = user => Boolean(user && uid() && user.uid === uid() && user.email === ADMIN_EMAIL && user.emailVerified === true);
+  const isAdmin = () => Boolean(authReady && authenticatedAdmin && matchesAdmin(auth?.currentUser));
 
   // Use the same monthly source as normal service, with the month in Korea time.
   function standardLastDeparture(epoch = now()) {
@@ -260,8 +263,8 @@
     setText($('ferryMemoCount'), ($('edit-ferry-memo')?.value.length || 0) + ' / 500');
   }
   function closeLogin() {
+    openAfterLogin = false;
     $('adminLoginBg')?.classList.remove('open');
-    if ($('adminPw')) $('adminPw').value = '';
     loginMessage('');
     restoreFocus();
   }
@@ -270,7 +273,7 @@
     focusBeforeDialog = document.activeElement;
     $('adminLoginBg')?.classList.add('open');
     loginMessage(!uid() ? '관리자 UID 설정이 필요합니다.' : !auth ? '인증 서비스를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.' : '');
-    $('adminId')?.focus();
+    $('cocoAdminLoginButton')?.focus();
   }
   function closePanel() { $('adminPanelBg')?.classList.remove('open'); $('adminPanel')?.classList.remove('open'); restoreFocus(); }
   function restoreFocus() { if (focusBeforeDialog?.isConnected && typeof focusBeforeDialog.focus === 'function') focusBeforeDialog.focus(); }
@@ -301,37 +304,67 @@
   }
   function authError(error) {
     const code = error?.code || '';
-    if (code === 'auth/not-authorized') return '이 계정에는 관리자 권한이 없습니다.';
+    if (code === 'auth/not-authorized') return ADMIN_EMAIL + ' 계정의 구글 로그인만 사용할 수 있습니다.';
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return '로그인이 취소되었습니다. 다시 눌러 로그인할 수 있습니다.';
+    if (code === 'auth/popup-blocked') return '로그인 창이 차단되었습니다. 이 사이트의 팝업을 허용한 뒤 다시 눌러주세요.';
+    if (code === 'auth/operation-not-supported-in-this-environment') return 'Chrome 또는 Safari에서 이 사이트를 열어 로그인해 주세요.';
     if (code === 'auth/network-request-failed') return '네트워크 연결을 확인하고 다시 로그인해 주세요.';
     if (code === 'auth/too-many-requests') return '로그인 시도가 많습니다. 잠시 후 다시 시도해 주세요.';
     if (['auth/operation-not-allowed', 'auth/invalid-api-key', 'auth/unauthorized-domain'].includes(code)) return 'Firebase 인증 설정을 확인해야 합니다. 관리자에게 문의해 주세요.';
     if (['auth/web-storage-unsupported', 'auth/unsupported-persistence-type'].includes(code)) return '이 브라우저에서 세션을 저장할 수 없습니다. 다른 브라우저로 시도해 주세요.';
-    return '이메일 또는 비밀번호를 확인해 주세요.';
+    return '구글 로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+  }
+  async function authorizeUser(user) {
+    const revision = ++authRevision;
+    const reopenPanel = $('adminPanel')?.classList.contains('open');
+    authReady = false;
+    reflectAuth(false);
+    if (!user) { authReady = true; return false; }
+    try {
+      if (!matchesAdmin(user)) throw { code: 'auth/not-authorized' };
+      const { claims } = await user.getIdTokenResult();
+      // A linked Google provider is not enough: this session must use Google.
+      const allowed = claims.email === ADMIN_EMAIL && claims.email_verified === true && claims.firebase?.sign_in_provider === 'google.com';
+      if (revision !== authRevision || auth.currentUser !== user) return false;
+      if (!allowed) throw { code: 'auth/not-authorized' };
+      authReady = true; reflectAuth(true);
+      if (openAfterLogin) { closeLogin(); openPanel(); }
+      else if (reopenPanel) openPanel();
+      return true;
+    } catch (error) {
+      if (revision !== authRevision || auth.currentUser !== user) return false;
+      authReady = true; openAfterLogin = false; reflectAuth(false);
+      loginMessage(authError(error));
+      try { await auth.signOut(); }
+      catch (_) { loginMessage('관리자 권한을 확인하지 못했습니다. 새로고침 후 지정된 구글 계정으로 로그인해 주세요.'); }
+      return false;
+    }
   }
   async function login() {
     if (signingIn) return false;
     if (!auth || !uid()) { loginMessage('관리자 인증 설정을 확인해야 합니다.'); return false; }
-    const form = $('cocoAdminLoginForm'); if (form && !form.reportValidity()) return false;
-    const email = $('adminId')?.value.trim(), password = $('adminPw')?.value;
-    if (!email || !password) { loginMessage('이메일과 비밀번호를 입력해 주세요.'); return false; }
+    if (!persistenceReady) { loginMessage('로그인을 준비하고 있습니다. 잠시 후 다시 눌러주세요.'); return false; }
     signingIn = true; openAfterLogin = true;
-    $('cocoAdminLoginButton').disabled = true; loginMessage('로그인 정보를 확인하고 있습니다…');
+    $('cocoAdminLoginButton').disabled = true; loginMessage('구글 로그인 창에서 관리자 계정을 선택해 주세요.');
     try {
-      await persistence;
-      const credential = await auth.signInWithEmailAndPassword(email, password);
-      if (credential.user.uid !== uid()) { const error = new Error('Not authorized'); error.code = 'auth/not-authorized'; throw error; }
-      // Only onAuthStateChanged may show the badge and authenticated panel.
-      return true;
+      const provider = new window.firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ login_hint: ADMIN_EMAIL, prompt: 'select_account' });
+      // Invoke directly from the click: awaiting setup here can block mobile popups.
+      const credential = await auth.signInWithPopup(provider);
+      if (auth.currentUser !== credential.user) return false;
+      if (isAdmin()) return true;
+      return await authorizeUser(credential.user);
     } catch (error) {
       openAfterLogin = false; loginMessage(authError(error)); return false;
     } finally {
-      signingIn = false; $('cocoAdminLoginButton').disabled = false; $('adminPw').value = '';
+      signingIn = false; $('cocoAdminLoginButton').disabled = !persistenceReady;
     }
   }
   async function logout() {
     if (!auth || signingOut) return false;
     if (saveInFlight) { adminMessage('저장 응답을 기다리는 중입니다. 완료 후 로그아웃해 주세요.', 'error'); return false; }
     signingOut = true; $('ferryAdminLogout').disabled = true;
+    ++authRevision; openAfterLogin = false; authReady = false; reflectAuth(false);
     try { await auth.signOut(); draftDirty = false; return true; }
     catch (_) { adminMessage('로그아웃하지 못했습니다. 연결을 확인하고 다시 시도해 주세요.', 'error'); return false; }
     finally { signingOut = false; $('ferryAdminLogout').disabled = false; }
@@ -388,7 +421,7 @@
     let loginBg = $('adminLoginBg');
     if (!loginBg) { loginBg = document.createElement('div'); loginBg.id = 'adminLoginBg'; document.body.append(loginBg); }
     loginBg.className = 'admin-modal-bg coco-ferry-login'; loginBg.dataset.localized = 'true';
-    loginBg.innerHTML = '<section class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="cocoAdminLoginHeading"><div class="ferry-admin-eyebrow">COCONARA ADMIN</div><h2 id="cocoAdminLoginHeading">관리자 로그인</h2><p>등록된 이메일 계정으로 로그인해 주세요.</p><form id="cocoAdminLoginForm"><label for="adminId">이메일</label><input class="admin-input" type="email" id="adminId" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required placeholder="이메일 주소"><label for="adminPw">비밀번호</label><input class="admin-input" type="password" id="adminPw" autocomplete="current-password" required placeholder="비밀번호"><button class="admin-login-btn" type="submit" id="cocoAdminLoginButton">로그인</button><div class="admin-err" id="adminErr" role="status" aria-live="polite"></div><button class="ferry-admin-text-button" type="button" id="cocoAdminLoginCancel">닫기</button></form></section>';
+    loginBg.innerHTML = `<section class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="cocoAdminLoginHeading" aria-describedby="cocoAdminLoginDescription"><div class="ferry-admin-eyebrow">COCONARA ADMIN</div><h2 id="cocoAdminLoginHeading">관리자 로그인</h2><p id="cocoAdminLoginDescription">아래 구글 계정으로 간편하게 로그인하세요.<strong class="ferry-admin-account">${ADMIN_EMAIL}</strong></p><form id="cocoAdminLoginForm"><button class="admin-login-btn" type="submit" id="cocoAdminLoginButton" disabled><svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.61 24.46c0-1.36-.12-2.67-.35-3.93H24v7.43h11a9.4 9.4 0 0 1-4.08 6.18v5.14h6.62c3.88-3.57 6.07-8.83 6.07-14.82z"/><path fill="#34A853" d="M24 44c5.5 0 10.1-1.83 13.47-4.96l-6.62-5.14c-1.83 1.23-4.17 1.96-6.85 1.96-5.3 0-9.78-3.58-11.38-8.39H5.8v5.3A20.3 20.3 0 0 0 24 44z"/><path fill="#FBBC05" d="M12.62 27.47a12.1 12.1 0 0 1 0-7.74v-5.3H5.8a20.1 20.1 0 0 0 0 18.34z"/><path fill="#EA4335" d="M24 11.34c3 0 5.68 1.03 7.8 3.06l5.85-5.85C34.1 5.24 29.5 3.2 24 3.2A20.3 20.3 0 0 0 5.8 14.43l6.82 5.3c1.6-4.81 6.08-8.39 11.38-8.39z"/></svg><span>구글로 로그인</span></button><div class="admin-err" id="adminErr" role="status" aria-live="polite"></div><button class="ferry-admin-text-button" type="button" id="cocoAdminLoginCancel">닫기</button></form></section>`;
     let backdrop = $('adminPanelBg');
     if (!backdrop) { backdrop = document.createElement('div'); backdrop.id = 'adminPanelBg'; document.body.append(backdrop); }
     backdrop.className = 'admin-panel-bg coco-ferry-admin-backdrop'; backdrop.removeAttribute('onclick');
@@ -464,16 +497,10 @@
       persistence = auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
       // Attach both branches immediately: blocked storage cannot leave an unhandled rejection.
       persistence.then(() => {
-        auth.onAuthStateChanged(user => {
-          authReady = true;
-          const allowed = Boolean(user && uid() && user.uid === uid());
-          reflectAuth(allowed);
-          if (allowed && openAfterLogin) { openAfterLogin = false; closeLogin(); openPanel(); }
-          if (user && !allowed) {
-            openAfterLogin = false; loginMessage('이 계정에는 관리자 권한이 없습니다.');
-            auth.signOut().catch(() => { loginMessage('관리자 권한이 없는 계정입니다. 로그아웃을 다시 시도해 주세요.'); });
-          }
-        }, () => { authReady = false; reflectAuth(false); loginMessage('인증 상태를 확인하지 못했습니다. 다시 로그인해 주세요.'); });
+        persistenceReady = true; $('cocoAdminLoginButton').disabled = false;
+        auth.onIdTokenChanged(user => { authorizeUser(user); }, () => {
+          ++authRevision; authReady = false; reflectAuth(false); loginMessage('인증 상태를 확인하지 못했습니다. 다시 로그인해 주세요.');
+        });
       }, error => { authReady = false; reflectAuth(false); loginMessage(authError(error)); });
     } catch (_) { auth = null; loginMessage('인증 서비스를 불러오지 못했습니다.'); }
   }
