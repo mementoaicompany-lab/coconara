@@ -59,7 +59,7 @@ function translateUnit(el){let prev=saved.get(el), current=el.nodeType===3?el.te
 }
 function walk(el){if(el.nodeType===3){if(clean(el.textContent))translateUnit(el);return;}if(el.nodeType!==1||el.matches(excluded))return;if(eligible(el)&&translateUnit(el))return;[...el.childNodes].forEach(walk);}
 let queued=false;const observer=new MutationObserver(()=>{if(!queued){queued=true;queueMicrotask(()=>{queued=false;localize();});}});
-function localize(){observer.disconnect();walk(document.body);document.documentElement.lang=lang;document.title=lang==='ko'?'우도 코코나라':'Coconara · Udo';$$('.language-bar button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===lang)));updateMotionLabels();observer.observe(document.body,{subtree:true,childList:true,characterData:true});}
+function localize(){observer.disconnect();walk(document.body);document.documentElement.lang=lang;document.title=lang==='ko'?"우도 배시간·전기차·스쿠터 이용안내 | 코코나라":'Coconara · Udo';$$('.language-bar button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===lang)));updateMotionLabels();observer.observe(document.body,{subtree:true,childList:true,characterData:true});}
 window.cocoLocalize=localize;window.cocoLanguage=()=>lang;
 window.cocoTranslate=tr;
 function tr(source){const id=lookup.get(clean(source));return lang==='ko'?source:(data.languages[lang]?.[id]||source);}
